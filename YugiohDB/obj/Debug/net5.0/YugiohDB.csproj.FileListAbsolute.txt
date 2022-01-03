@@ -1,0 +1,5 @@
+C:\Users\d_dia\source\repos\YuGiOhTCG\YugiohDB\obj\Debug\net5.0\YugiohDB.csproj.AssemblyReference.cache
+C:\Users\d_dia\source\repos\YuGiOhTCG\YugiohDB\obj\Debug\net5.0\YugiohDB.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\d_dia\source\repos\YuGiOhTCG\YugiohDB\obj\Debug\net5.0\YugiohDB.AssemblyInfoInputs.cache
+C:\Users\d_dia\source\repos\YuGiOhTCG\YugiohDB\obj\Debug\net5.0\YugiohDB.AssemblyInfo.cs
+C:\Users\d_dia\source\repos\YuGiOhTCG\YugiohDB\obj\Debug\net5.0\YugiohDB.csproj.CoreCompileInputs.cache
