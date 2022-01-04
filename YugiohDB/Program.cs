@@ -19,7 +19,7 @@ namespace YugiohDB
             {
                 Console.WriteLine($"{card.Name} / {card.Type} ");
             }
-            
+
             Console.WriteLine("New search? y/n:");
             var response = Console.ReadLine();
             if (response == "y" || response == "Y") {goto Start;}
@@ -39,7 +39,7 @@ namespace YugiohDB
             {
                 var content = await request.Content.ReadAsStringAsync();
                 var model = JsonSerializer.Deserialize<ygoModel>(content, new JsonSerializerOptions());
-                Console.WriteLine("found: " + model.Data.Length);
+                Console.WriteLine("Cards found: " + model.Data.Length);
                 return model;
             }
             else 
