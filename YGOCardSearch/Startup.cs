@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using YGOCardSearch.DataProviders;
 
 namespace YGOCardSearch
 {
@@ -23,8 +24,12 @@ namespace YGOCardSearch
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Dependency Injection, inyección de dependencias
+            services.AddSingleton<ICardsProvider, YGOProvider>();
+
+
             services.AddRazorPages();
-            services.AddSingleton<YGOCardProvider, ICardProdiver>();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

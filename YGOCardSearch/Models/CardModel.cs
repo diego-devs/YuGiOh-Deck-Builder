@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 namespace YGOCardSearch.Models
 {
     
-        public partial class ygoModel
+        public partial class CardModel
         {
             [JsonPropertyName("data")]
-            public ygoModel[] Data { get; set; }
+            public CardModel[] Data { get; set; }
         }
 
-        public partial class ygoModel
+        public partial class CardModel
         {
             [JsonPropertyName("id")]
             public long Id { get; set; }
