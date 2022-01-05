@@ -1,7 +1,7 @@
 ﻿@page
-@model IndexModel
+@model YGOCardSearch.Pages.RandomCardModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Random Card";
 }
 
 <div class="text-center">
@@ -15,21 +15,11 @@
         <div class="input-group">
             <input type="search"
                    class="form-control"
-                   asp-for="Search" />
+                   asp-for="GetRandomCard" />
             <button class="btn btn-light">Search</button>
         </div>
     </div>
 </form>
 <table>
-    @foreach (var card in Model.Cards)
-    {
-        <tr>
-            <td>@card.Name</td>
-            <td>@card.Type</td>
-            <td>@card.Desc</td>
-            <td><img href="@card.CardImages[0].ImageUrlSmall" /></td>
-            <td>@card.CardPrices[0].TcgplayerPrice.ToString()</td>
-
-        </tr>
-    }
+    
 </table>

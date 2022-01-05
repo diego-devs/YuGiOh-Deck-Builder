@@ -15639,6 +15639,11 @@
       "FileKind": "mvc"
     },
     {
+      "FilePath": "c:\\Users\\d_dia\\source\\repos\\YuGiOhTCG\\YGOCardSearch\\Pages\\CardViewer.cshtml",
+      "TargetPath": "Pages\\CardViewer.cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "c:\\Users\\d_dia\\source\\repos\\YuGiOhTCG\\YGOCardSearch\\Pages\\_ViewStart.cshtml",
       "TargetPath": "Pages\\_ViewStart.cshtml",
       "FileKind": "mvc"

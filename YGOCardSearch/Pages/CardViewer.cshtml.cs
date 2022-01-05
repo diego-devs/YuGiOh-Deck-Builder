@@ -8,30 +8,42 @@ using YGOCardSearch.Models;
 
 namespace YGOCardSearch.Pages
 {
-    public class CardViewerModel : PageModel
+    public class CardsViewerModel : PageModel
     {
-        public void OnGet()
+        public ICardsProvider cardsProvider { get; set; }
+        public List<CardModel> Cards { get; set; }
+        public CardModel Card { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public string Search {get; set;} 
+
+        public CardsViewerModel(ICardsProvider cardsProvider)
         {
-            public ICardProdiver cardProvider { get; set; }
-            public List<ygoModel> Movies { get; set; }
-            public ygoModel Card { get; set; }
+            this.cardsProvider = cardsProvider;
+        }
 
-            public MoviesModel(IMoviesProvider moviesProvider)
+        public async Task<IActionResult> OnGet()
+        {
+            if (!string.IsNullOrWhiteSpace(Search)) 
             {
-                this.cardProvider = moviesProvider;
-            }
-
-            public async Task<IActionResult> OnGet()
-            {
-                var popularMovies = await cardProvider.GetAllAsync();
-                if (popularMovies != null)
+                var results = await cardsProvider.GetSearchAsync(Search);
+                if (results != null) 
                 {
-                    Movies = new List<Movie>(popularMovies);
+                    Cards = new List<CardModel>(results); 
                 }
-                return Page();
-
-
             }
+            else 
+            {
+                var results = await cardsProvider.GetAllCardsAsync();
+                if (results != null)
+                {
+                    Cards = new List<CardModel>(results);
+                };
+                
+            }
+            return Page();
+
+        } 
         
     }
 }
