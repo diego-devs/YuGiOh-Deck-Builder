@@ -12,16 +12,19 @@ namespace YGOCardSearch.Pages
     public class IndexModel : PageModel
     {
         [BindProperty(SupportsGet = true)]
-        public string Search { get; set; }
+        public string Search { get; set; } = "dark magician";
         public ICardsProvider cardsProvider { get; set; }
         public List<CardModel> Cards { get; set; }
         public CardModel Card { get; set; }
 
-        private readonly ILogger<IndexModel> _logger;
-
-        public IndexModel(ILogger<IndexModel> logger)
+        public IndexModel(ICardsProvider cardsProvider)
         {
-            _logger = logger;
+            this.cardsProvider = cardsProvider;
+        }
+        public static double GetCurrentChange(string price) 
+        {
+            double returnPrice = Convert.ToDouble(price);
+            return returnPrice * 20.55;
         }
 
         public async Task<IActionResult> OnGet()
