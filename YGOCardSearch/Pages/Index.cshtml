@@ -2,6 +2,7 @@
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
+    
 }
 
 <div class="text-center">
@@ -20,16 +21,20 @@
         </div>
     </div>
 </form>
-<table>
+<table class="table table-dark">
     @foreach (var card in Model.Cards)
     {
-        <tr>
-            <td>@card.Name</td>
-            <td>@card.Type</td>
-            <td>@card.Desc</td>
-            <td><img href="@card.CardImages[0].ImageUrlSmall" /></td>
-            <td>@card.CardPrices[0].TcgplayerPrice.ToString()</td>
+    <tr>
+        <td>@card.Name</td>
+        <td>@card.Type</td>
+        <td>@card.Desc</td>
+        <td><img src="@card.CardImages[0].ImageUrlSmall" /></td>
+        <td>$
+            @card.CardPrices[0].TcgplayerPrice.ToString() 
+            usd
+        </td>
+        <td>$@{} mxn</td>
 
-        </tr>
+    </tr>
     }
 </table>
