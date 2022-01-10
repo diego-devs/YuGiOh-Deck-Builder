@@ -26,8 +26,6 @@ namespace YGOCardSearch
         {
             // Dependency Injection, inyección de dependencias
             services.AddSingleton<ICardsProvider, YGOProvider>();
-
-
             services.AddRazorPages();
             
         }
@@ -46,7 +44,7 @@ namespace YGOCardSearch
                 app.UseHsts();
             }
             
-
+            
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

@@ -2,15 +2,17 @@
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
-    
+    static double GetCurrency(double tcgCardPrice, double usdPrice) 
+    {
+        return tcgCardPrice * usdPrice;
+    }
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">ygoprodeck API here.</a>.</p>
+    <h1>YuGiOh! TCG</h1>
+    <h1>search for cards</h1>>
 </div>
-<h1>YuGiOh! TCG</h1>
-<h1>enter a word to search</h1>>
+
 <form method="GET">
     <div class="form-group">
         <div class="input-group">
@@ -29,11 +31,20 @@
         <td>@card.Type</td>
         <td>@card.Desc</td>
         <td><img src="@card.CardImages[0].ImageUrlSmall" /></td>
-        <td>$
-            @card.CardPrices[0].TcgplayerPrice.ToString() 
+        <td>
+            $
+            @card.CardPrices[0].TcgplayerPrice.ToString()
             usd
+            
         </td>
-        <td>$@{} mxn</td>
+        <td>$@GetCurrency(Convert.ToDouble(card.CardPrices[0].TcgplayerPrice), 20.55). mxn </td>
+        <td>
+            <a class="btn btn-link"
+               asp-page="CardViewer"
+               asp-route-id="@card.Id">
+               View more...
+            </a>
+        <td>
 
     </tr>
     }
