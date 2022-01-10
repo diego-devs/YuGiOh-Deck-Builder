@@ -16,34 +16,23 @@ namespace YGOCardSearch.Pages
 
         [BindProperty(SupportsGet = true)]
         public string Search {get; set;} 
+        public string CardId { get; set; }
 
         public CardsViewerModel(ICardsProvider cardsProvider)
         {
             this.cardsProvider = cardsProvider;
         }
 
-        public async Task<IActionResult> OnGet()
+        public async Task<ActionResult> OnGet(int id)
         {
-            if (!string.IsNullOrWhiteSpace(Search)) 
+            var card = await cardsProvider.GetCardAsync(id);
+            if (card != null)
             {
-                var results = await cardsProvider.GetSearchAsync(Search);
-                if (results != null) 
-                {
-                    Cards = new List<CardModel>(results); 
-                }
+                Card = card;
+                return Page();
             }
-            else 
-            {
-                var results = await cardsProvider.GetAllCardsAsync();
-                if (results != null)
-                {
-                    Cards = new List<CardModel>(results);
-                };
-                
-            }
-            return Page();
+            return RedirectToPage("Index");
+        }
 
-        } 
-        
     }
 }
