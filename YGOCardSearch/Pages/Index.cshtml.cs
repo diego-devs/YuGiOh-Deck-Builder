@@ -24,7 +24,7 @@ namespace YGOCardSearch.Pages
         public static double GetCurrentChange(string price) 
         {
             double returnPrice = Convert.ToDouble(price);
-            return returnPrice * 20.55;
+            return returnPrice * 20;
         }
 
         public async Task<IActionResult> OnGet()

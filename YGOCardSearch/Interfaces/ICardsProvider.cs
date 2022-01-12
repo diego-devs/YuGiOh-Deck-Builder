@@ -10,5 +10,8 @@ namespace YGOCardSearch
         public Task<ICollection<CardModel>> GetSearchAsync(string search);
         public Task<ICollection<CardModel>> GetAllCardsAsync();
         public Task<CardModel> GetCardAsync(int id);
+        public Task<CardModel> GetRandomCardAsync();
+        public Task<List<long>> GetAllCardsIdsAsync();
+
     }
 }
