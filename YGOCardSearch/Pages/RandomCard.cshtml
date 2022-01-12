@@ -4,17 +4,24 @@
     ViewData["Title"] = "Random Card";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">ygoprodeck API here.</a>.</p>
-</div>
-<h1>YuGiOh! TCG</h1>
-<h1>enter a word to search</h1>>
-<form method="GET">
-    <div class="form-group">
-        <div class="input-group">
-            <button class="btn-dark" asp-action="">get card</button>
+
+
+
+<h1 style="align-self: center; color:blue">YOUR RANDOM CARD IS:</h1>
+<h2>@Model.Card.Name</h2>>
+
+
+    <div class="card mb-3" style="max-width: auto;">
+        <div class="row no-gutters">
+            <div class="col-md-4">
+                <img src="@Model.Card.CardImages[0].ImageUrl" class="card-img" alt="imagehere">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">@Model.Card.Name</h5>
+                    <p class="card-text">@Model.Card.Desc</p>
+                    <p class="card-text"><small class="text-muted">$ @Model.Card.CardPrices[0].TcgplayerPrice.ToString() USD</small></p>
+                </div>
+            </div>
         </div>
     </div>
-</form>
-<img href=""/>
