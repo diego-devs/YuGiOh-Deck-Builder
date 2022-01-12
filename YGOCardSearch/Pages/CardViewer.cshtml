@@ -4,21 +4,22 @@
     ViewData["Title"] = "CardViewer";
 }
 
-<h1>YuGiOh! TCG</h1>
-<h1>@Model.Card.Name</h1>>
+
+<h1 style="align-self: center; color:blue">@Model.Card.Name</h1>
+<h2>@Model.Card.Name</h2>>
 
 
-<table>
-    <tr>
-        <img src="@Model.Card.CardImages[0].ImageUrl" alt="Alternate Text" />
-    </tr>
-    <tr>
-        <td>@Model.Card.Name</td>
-        <td>@Model.Card.Type</td>
-        <td>@Model.Card.Desc</td>
-        <td><img href="@Model.Card.CardImages[0].ImageUrlSmall" /></td>
-        <td>@Model.Card.CardPrices[0].TcgplayerPrice.ToString()</td>
-        
-    </tr>
-</table>
-
+<div class="card mb-3" style="max-width: auto;">
+    <div class="row no-gutters">
+        <div class="col-md-4">
+            <img src="@Model.Card.CardImages[0].ImageUrl" class="card-img" alt="imagehere">
+        </div>
+        <div class="col-md-8">
+            <div class="card-body">
+                <h5 class="card-title">@Model.Card.Name</h5>
+                <p class="card-text">@Model.Card.Desc</p>
+                <p class="card-text"><small class="text-muted">$ @Model.Card.CardPrices[0].TcgplayerPrice.ToString() USD</small></p>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using YGOCardSearch.Models;
 
@@ -96,5 +98,64 @@ namespace YGOCardSearch.DataProviders
             }
 
         }
+        public async Task<CardModel> GetRandomCardAsync() 
+        {
+            List<long> CardIdList = JsonSerializer.Deserialize<List<long>>
+                (File.ReadAllText(@"C:\Users\d_dia\source\repos\YuGiOhTCG\YugiohDB\data\ids.txt"));
+
+            Random random = new Random();
+            long randomId = CardIdList[random.Next(0, CardIdList.Count)];
+            string url = "https://db.ygoprodeck.com/api/v7/cardinfo.php?id=" + randomId.ToString();
+            var ygoClient = new HttpClient() { BaseAddress = new Uri(url) };
+
+            Thread.Sleep(3000);
+
+            try
+            {
+                var request = await ygoClient.GetAsync(url);
+                if (request.IsSuccessStatusCode)
+                {
+                    var content = await request.Content.ReadAsStringAsync();
+                    var model = JsonSerializer.Deserialize<CardModel>(content, new JsonSerializerOptions());
+                    Console.WriteLine("Cards found: " + model.Data.Length);
+                    var data = model.Data[0];
+
+                    return data;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch
+            {
+                throw new Exception(message: "ërror");
+            }
+        }
+        public async Task<List<long>> GetAllCardsIdsAsync() 
+        {
+            string url = "https://db.ygoprodeck.com/api/v7/cardinfo.php?";
+
+            var ygoClient = new HttpClient() { BaseAddress = new Uri(url) };
+            var request = await ygoClient.GetAsync(url);
+            if (request.IsSuccessStatusCode)
+            {
+                var content = await request.Content.ReadAsStringAsync();
+                var model = JsonSerializer.Deserialize<CardModel>(content, new JsonSerializerOptions());
+                Console.WriteLine("Cards found: " + model.Data.Length);
+                var idList = new List<long>();
+                foreach (var card in model.Data)
+                {
+                    idList.Add(card.Id);
+                }
+                return idList;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        
     }
 }
