@@ -13,17 +13,17 @@ namespace YugiohDB
         static async Task Main(string[] args)
         {
             
-            var IdsList = await Connection.GetAllCardsIds();
+            // var IdsList = await Connection.GetAllCardsIds();
 
-            var serializedList = JsonSerializer.Serialize(IdsList, new JsonSerializerOptions()) ;
+            // var serializedList = JsonSerializer.Serialize(IdsList, new JsonSerializerOptions()) ;
             
-            File.WriteAllText(@"C:\Users\d_dia\source\repos\YuGiOhTCG\YugiohDB\data\ids.txt", serializedList);
-            Console.WriteLine("\nTodas las cartas ids han sido guardadas exitosamente");
+            // File.WriteAllText(@"C:\Users\d_dia\source\repos\YuGiOhTCG\YugiohDB\data\ids.txt", serializedList);
+            // Console.WriteLine("\nTodas las cartas ids han sido guardadas exitosamente");
 
 
-            Console.WriteLine("IDS Created and saved");
-            Thread.Sleep(3000);
-            Environment.Exit(0); 
+            // Console.WriteLine("IDS Created and saved");
+            // Thread.Sleep(3000);
+            // Environment.Exit(0); 
 
         Start:
 
