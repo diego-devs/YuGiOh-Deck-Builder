@@ -1,45 +1,24 @@
 ﻿@page
-@model YGOCardSearch.Pages.CardViewerModel
+@model YGOCardSearch.Pages.CardsViewerModel
 @{
     ViewData["Title"] = "CardViewer";
 }
 
-<div class="d-flex justify-content-center">
-    <h1 style="align-self: center; color:blue">@Model.Card.Name</h1>
-</div>
 
+<h1 style="align-self: center; color:blue">@Model.Card.Name</h1>
+<h2>@Model.Card.Name</h2>>
 
 
 <div class="card mb-3" style="max-width: auto;">
     <div class="row no-gutters">
-        <div class="col-md-4">     
-                <img src="@Model.Card.CardImages[0].ImageUrl" class="card-img" alt="imagehere">
+        <div class="col-md-4">
+            <img src="@Model.Card.CardImages[0].ImageUrl" class="card-img" alt="imagehere">
         </div>
         <div class="col-md-8">
             <div class="card-body">
                 <h5 class="card-title">@Model.Card.Name</h5>
                 <p class="card-text">@Model.Card.Desc</p>
                 <p class="card-text"><small class="text-muted">$ @Model.Card.CardPrices[0].TcgplayerPrice.ToString() USD</small></p>
-                <div class="card">
-                    @{
-                        foreach (var set in Model.Card.CardSets)
-                        {
-                            <div class="card mb-4" style="max-width: auto;">
-                                <div class="row no-gutters">
-                                    <p class="card-text">@set.SetName</p>
-                                    <p class="card-text">@set.SetRarity</p>
-                                    <p class="card-text">@set.SetPrice</p>
-                                </div>
-
-                            </div>
-                           
-                        }
-
-                    }
-                </div>
-               
-                
-
             </div>
         </div>
     </div>

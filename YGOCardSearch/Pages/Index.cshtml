@@ -2,15 +2,15 @@
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
-    static double GetCurrency(double tcgCardPrice, double usdPrice)
+    static double GetCurrency(double tcgCardPrice, double usdPrice) 
     {
         return tcgCardPrice * usdPrice;
     }
 }
 
 <div class="text-center">
-    <h1 style="text-align: center">YuGiOh! TCG Search</h1>
-    <h1>Busca cualquier carta del universo de YuGiOh!</h1>
+    <h1>YuGiOh! TCG</h1>
+    <h1>search for cards</h1>>
 </div>
 
 <form method="GET">
@@ -19,62 +19,33 @@
             <input type="search"
                    class="form-control"
                    asp-for="Search" />
-            <button class="btn btn-light">Buscar</button>
+            <button class="btn btn-light">Search</button>
         </div>
     </div>
 </form>
-
-@{
-    try
+<table class="table table-dark">
+    @foreach (var card in Model.Cards)
     {
-        if (Model.Cards != null)
-        {
-            foreach (var card in Model.Cards)
-            {
-                <table class="table table-dark">
-                    <tr>
-                        <td>
-                            <div class="inner">
-                                <a asp-page="CardViewer" asp-route-id="@card.Id">
-                                    <img src="@card.CardImages[0].ImageUrlSmall" />
-                                </a>
-                            </div>
-                            
+    <tr>
+        <td>@card.Name</td>
+        <td>@card.Type</td>
+        <td>@card.Desc</td>
+        <td><img src="@card.CardImages[0].ImageUrlSmall" /></td>
+        <td>
+            $
+            @card.CardPrices[0].TcgplayerPrice.ToString()
+            usd
+            
+        </td>
+        <td>$@GetCurrency(Convert.ToDouble(card.CardPrices[0].TcgplayerPrice), 20) mxn </td>
+        <td>
+            <a class="btn btn-link"
+               asp-page="CardViewer"
+               asp-route-id="@card.Id">
+               View more...
+            </a>
+        <td>
 
-                        </td>
-
-                        <td>@card.Name</td>
-                        <td>@card.Type</td>
-                        <td>@card.Desc</td>
-                        <td>
-                            $
-                            @card.CardPrices[0].TcgplayerPrice.ToString()
-                            usd
-
-                        </td>
-                        <td>$@GetCurrency(Convert.ToDouble(card.CardPrices[0].TcgplayerPrice), 20) mxn </td>
-                        <td>
-                            <a class="btn btn-link"
-                               asp-page="CardViewer"
-                               asp-route-id="@card.Id">
-                                Ver detalles
-                            </a>
-                        <td>
-
-                    </tr>
-                </table>
-            }
-        }
-
+    </tr>
     }
-    catch
-    {
-        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            <strong>>:O!</strong> No se encontraron cartas con ese nombre.
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    }
-}
-
+</table>

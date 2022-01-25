@@ -12,7 +12,7 @@ namespace YGOCardSearch.Pages
     public class IndexModel : PageModel
     {
         [BindProperty(SupportsGet = true)]
-        public string Search { get; set; } = "odd-eyes";
+        public string Search { get; set; } = "dragon";
         public ICardsProvider cardsProvider { get; set; }
         public List<CardModel> Cards { get; set; }
         public CardModel Card { get; set; }
@@ -26,6 +26,7 @@ namespace YGOCardSearch.Pages
             double returnPrice = Convert.ToDouble(price);
             return returnPrice * 20;
         }
+
         public async Task<IActionResult> OnGet()
         {
             if (!string.IsNullOrWhiteSpace(Search))
@@ -43,6 +44,7 @@ namespace YGOCardSearch.Pages
                 {
                     Cards = new List<CardModel>(results);
                 };
+
             }
             return Page();
         }
