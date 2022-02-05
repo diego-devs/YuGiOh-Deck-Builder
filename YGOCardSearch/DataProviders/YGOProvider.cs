@@ -98,14 +98,10 @@ namespace YGOCardSearch.DataProviders
             }
 
         }
-        public async Task<CardModel> GetRandomCardAsync() 
+        public async Task<CardModel> GetRandomCardAsync(int Id) 
         {
-            List<long> CardIdList = JsonSerializer.Deserialize<List<long>>
-                (File.ReadAllText(@"C:\Users\d_dia\source\repos\YuGiOhTCG\YugiohDB\data\ids.txt"));
-
-            Random random = new Random();
-            long randomId = CardIdList[random.Next(0, CardIdList.Count)];
-            string url = "https://db.ygoprodeck.com/api/v7/cardinfo.php?id=" + randomId.ToString();
+            
+            string url = "https://db.ygoprodeck.com/api/v7/cardinfo.php?id=" + Id.ToString();
             var ygoClient = new HttpClient() { BaseAddress = new Uri(url) };
 
             Thread.Sleep(3000);
