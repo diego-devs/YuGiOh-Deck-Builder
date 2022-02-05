@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -20,19 +21,15 @@ namespace YGOCardSearch.Pages
             this.cardsProvider = cardsProvider;
         }
         
-        public async Task<CardModel> GetCard() 
+        public static int GenerateRandomIdAsync() 
         {
-            var randomCard = await cardsProvider.GetRandomCardAsync();
-            return randomCard;
-        }
+            var CardIdList = JsonSerializer.Deserialize<List<int>>
+                (System.IO.File.ReadAllText(@"C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\data\ids.txt"));
 
+            Random random = new Random();
+            int randomId = CardIdList[random.Next(0, CardIdList.Count)];
 
-        public async Task<IActionResult> OnGet()
-        {
-            Card = await cardsProvider.GetRandomCardAsync();
-            CardId = Card.Id;
-
-            return Page();
+            return randomId ;
         }
     }
 }

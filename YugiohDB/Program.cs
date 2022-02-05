@@ -13,17 +13,16 @@ namespace YugiohDB
         static async Task Main(string[] args)
         {
             
-            var IdsList = await Connection.GetAllCardsIds();
+            // var IdsList = await Connection.GetAllCardsIds();
 
-            var serializedList = JsonSerializer.Serialize(IdsList, new JsonSerializerOptions()) ;
+            // var serializedList = JsonSerializer.Serialize(IdsList, new JsonSerializerOptions()) ;
             
-            File.WriteAllText(@"C:\Users\d_dia\source\repos\YuGiOhTCG\YugiohDB\data\ids.txt", serializedList);
-            Console.WriteLine("\nTodas las cartas ids han sido guardadas exitosamente");
+            // File.WriteAllText(@"C:\Users\d_dia\source\repos\YuGiOhTCG\YugiohDB\data\ids.txt", serializedList);
+            // Console.WriteLine("\nTodas las cartas ids han sido guardadas exitosamente");
 
-
-            Console.WriteLine("IDS Created and saved");
-            Thread.Sleep(3000);
-            Environment.Exit(0); 
+            // Console.WriteLine("IDS Created and saved");
+            // Thread.Sleep(3000);
+            // Environment.Exit(0); 
 
         Start:
 
@@ -45,7 +44,7 @@ namespace YugiohDB
     }
     public static class Connection 
     {
-        public static async Task<ygoModel> SearchAsync(string search) 
+        public static async Task<CardModel> SearchAsync(string search) 
         {
             string url = "https://db.ygoprodeck.com/api/v7/cardinfo.php?fname=" + search;
             
@@ -54,7 +53,7 @@ namespace YugiohDB
             if (request.IsSuccessStatusCode) 
             {
                 var content = await request.Content.ReadAsStringAsync();
-                var model = JsonSerializer.Deserialize<ygoModel>(content, new JsonSerializerOptions());
+                var model = JsonSerializer.Deserialize<CardModel>(content, new JsonSerializerOptions());
                 Console.WriteLine("Cards found: " + model.Data.Length);
                 return model;
             }
@@ -63,29 +62,22 @@ namespace YugiohDB
                 return null; 
             }
         }
-        public static async Task<List<long>> GetAllCardsIds() 
+        public static async Task<IEnumerable<CardModel>> GetAllCardsAsync() 
         {
-            string url = "https://db.ygoprodeck.com/api/v7/cardinfo.php?";
+            string url = "https://db.ygoprodeck.com/api/v7/cardinfo.php?"; //Gets all cards!
 
             var ygoClient = new HttpClient() { BaseAddress = new Uri(url) };
             var request = await ygoClient.GetAsync(url);
             if (request.IsSuccessStatusCode)
             {
                 var content = await request.Content.ReadAsStringAsync();
-                var model = JsonSerializer.Deserialize<ygoModel>(content, new JsonSerializerOptions());
+                var model = JsonSerializer.Deserialize<CardModel>(content, new JsonSerializerOptions());
                 Console.WriteLine("Cards found: " + model.Data.Length);
-                List<long> CardsIds = new List<long>();
-
-                foreach (var card in model.Data) 
-                {
-                    CardsIds.Add(card.Id);
-                }
-                return CardsIds;
+                var allCards = model.Data;
+                return allCards;
+                
             }
-            else
-            {
-                return null;
-            }
+            return null;
         }
     }
 }
