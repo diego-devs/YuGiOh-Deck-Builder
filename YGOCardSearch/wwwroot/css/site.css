@@ -1,8 +1,12 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
+body {
+    background-color: #808080;
+}
 
 a.navbar-brand {
+   
   white-space: normal;
   text-align: center;
   word-break: break-all;
@@ -41,10 +45,10 @@ html {
     overflow: hidden;
 }
 .inner img {
-    transition: all 1.5s ease;
+    transition: all 0.5s ease;
 }
 .inner:hover img {
-    transform: scale(1.5;
+    transform: scale(1.1);
 }
 .border-top {
   border-top: 1px solid #e5e5e5;
