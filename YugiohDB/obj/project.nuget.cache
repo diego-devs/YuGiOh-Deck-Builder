@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "f92e4SgI6Jy6Xn/iPVtjCb5E2sVgyrkEawdYQmZbzUlFEOULlONqfPzskit4wwBJp+cL+vZ0fvXfwrrdMqzvxg==",
+  "dgSpecHash": "lsNBVWCLLE9QYC29+mp+IirClJ93b9Fp8cDBDWPhpACY6ZGsyzBX9TM/bgYHRk5ww1uMUOktGGTzUwvCZuQmTQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\d_dia\\source\\repos\\YuGiOhTCG\\YugiohDB\\YugiohDB.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\d_dia\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\5.0.14\\microsoft.netcore.app.host.win-x64.5.0.14.nupkg.sha512"
+  ],
   "logs": []
 }

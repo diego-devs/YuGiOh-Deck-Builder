@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "hv+xVinxwzGORbfZGL3J+wgzwy2oIp3yd8zuOBMQgWhvs5fzlgbw+pGwSdgGryQ9ksYrdheDTvKEu4Ov2TI4TA==",
+  "dgSpecHash": "ILuKkUIaV3L+NUI954xIyWaqnEsh/HQupdyihZo60BWy7MZIkSac2HOSAeimaeDtOcVOpc4dueKG20kmOjAYaA==",
   "success": true,
   "projectFilePath": "C:\\Users\\d_dia\\source\\repos\\YuGiOhTCG\\YGOCardSearch\\YGOCardSearch.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\d_dia\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\5.0.14\\microsoft.netcore.app.host.win-x64.5.0.14.nupkg.sha512"
+  ],
   "logs": []
 }
