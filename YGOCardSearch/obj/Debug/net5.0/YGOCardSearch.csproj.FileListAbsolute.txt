@@ -5,7 +5,6 @@ C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\bin\Debug\net5.0\YGOCardSear
 C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\bin\Debug\net5.0\YGOCardSearch.runtimeconfig.json
 C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\bin\Debug\net5.0\YGOCardSearch.runtimeconfig.dev.json
 C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\bin\Debug\net5.0\YGOCardSearch.dll
-C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\bin\Debug\net5.0\ref\YGOCardSearch.dll
 C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\bin\Debug\net5.0\YGOCardSearch.pdb
 C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\bin\Debug\net5.0\YGOCardSearch.Views.dll
 C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\bin\Debug\net5.0\YGOCardSearch.Views.pdb
@@ -18,7 +17,6 @@ C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\obj\Debug\net5.0\YGOCardSear
 C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\obj\Debug\net5.0\YGOCardSearch.RazorAssemblyInfo.cache
 C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\obj\Debug\net5.0\YGOCardSearch.RazorAssemblyInfo.cs
 C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\obj\Debug\net5.0\staticwebassets\YGOCardSearch.StaticWebAssets.Manifest.cache
-C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\obj\Debug\net5.0\staticwebassets\YGOCardSearch.StaticWebAssets.xml
 C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\obj\Debug\net5.0\scopedcss\bundle\YGOCardSearch.styles.css
 C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\obj\Debug\net5.0\YGOCardSearch.TagHelpers.input.cache
 C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\obj\Debug\net5.0\YGOCardSearch.TagHelpers.output.cache
@@ -40,3 +38,5 @@ C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\obj\Debug\net5.0\YGOCardSear
 C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\obj\Debug\net5.0\YGOCardSearch.genruntimeconfig.cache
 C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\obj\Debug\net5.0\YGOCardSearch.csproj.CopyComplete
 C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\obj\Debug\net5.0\Razor\Pages\RandomCard.cshtml.g.cs
+C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\obj\Debug\net5.0\refint\YGOCardSearch.dll
+C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\obj\Debug\net5.0\Razor\Pages\DeckBuilder.cshtml.g.cs

@@ -1,0 +1,15 @@
+﻿@page
+@model YGOCardSearch.Pages.DeckBuilder
+<h1>
+    @Model.Deck.DeckName
+</h1>
+@{
+    if (Model.Deck.MainDeck != null)
+    {      
+        foreach (var card in Model.Deck.MainDeck)
+        {
+            <img src=@card.Name>
+        }
+    }
+    
+}

@@ -15654,6 +15654,11 @@
       "FileKind": "mvc"
     },
     {
+      "FilePath": "c:\\Users\\d_dia\\source\\repos\\YuGiOhTCG\\YGOCardSearch\\Pages\\DeckBuilder.cshtml",
+      "TargetPath": "Pages\\DeckBuilder.cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "c:\\Users\\d_dia\\source\\repos\\YuGiOhTCG\\YGOCardSearch\\Pages\\_ViewImports.cshtml",
       "TargetPath": "Pages\\_ViewImports.cshtml",
       "FileKind": "mvc"
