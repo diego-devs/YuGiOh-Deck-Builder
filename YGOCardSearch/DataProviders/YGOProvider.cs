@@ -38,9 +38,6 @@ namespace YGOCardSearch.DataProviders
             }
 
         }
-
-
-
         public async Task<CardModel> GetCardAsync(int id)
         {
             string url = "http://db.ygoprodeck.com/api/v7/cardinfo.php?id=" + id.ToString();
@@ -69,7 +66,6 @@ namespace YGOCardSearch.DataProviders
                 
             }
         }
-
         async Task<ICollection<CardModel>> ICardsProvider.GetSearchAsync(string search)
         {
             string url = "https://db.ygoprodeck.com/api/v7/cardinfo.php?fname=" + search;

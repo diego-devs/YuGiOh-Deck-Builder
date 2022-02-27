@@ -8,9 +8,9 @@ C:\Users\d_dia\source\repos\YuGiOhTCG\YugiohDB\bin\Debug\net5.0\YugiohDB.deps.js
 C:\Users\d_dia\source\repos\YuGiOhTCG\YugiohDB\bin\Debug\net5.0\YugiohDB.runtimeconfig.json
 C:\Users\d_dia\source\repos\YuGiOhTCG\YugiohDB\bin\Debug\net5.0\YugiohDB.runtimeconfig.dev.json
 C:\Users\d_dia\source\repos\YuGiOhTCG\YugiohDB\bin\Debug\net5.0\YugiohDB.dll
-C:\Users\d_dia\source\repos\YuGiOhTCG\YugiohDB\bin\Debug\net5.0\ref\YugiohDB.dll
 C:\Users\d_dia\source\repos\YuGiOhTCG\YugiohDB\bin\Debug\net5.0\YugiohDB.pdb
 C:\Users\d_dia\source\repos\YuGiOhTCG\YugiohDB\obj\Debug\net5.0\YugiohDB.dll
 C:\Users\d_dia\source\repos\YuGiOhTCG\YugiohDB\obj\Debug\net5.0\ref\YugiohDB.dll
 C:\Users\d_dia\source\repos\YuGiOhTCG\YugiohDB\obj\Debug\net5.0\YugiohDB.pdb
 C:\Users\d_dia\source\repos\YuGiOhTCG\YugiohDB\obj\Debug\net5.0\YugiohDB.genruntimeconfig.cache
+C:\Users\d_dia\source\repos\YuGiOhTCG\YugiohDB\obj\Debug\net5.0\refint\YugiohDB.dll

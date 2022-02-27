@@ -8,21 +8,32 @@ using System.Threading.Tasks;
 
 namespace YugiohDB
 {
+    public static class YugiohCards 
+    {
+        public static List<CardModel> Cards {get; set;}
+    }
     class Program
     {
         static async Task Main(string[] args)
         {
             
-            // var IdsList = await Connection.GetAllCardsIds();
-
-            // var serializedList = JsonSerializer.Serialize(IdsList, new JsonSerializerOptions()) ;
             
-            // File.WriteAllText(@"C:\Users\d_dia\source\repos\YuGiOhTCG\YugiohDB\data\ids.txt", serializedList);
-            // Console.WriteLine("\nTodas las cartas ids han sido guardadas exitosamente");
+            // Where cards are saved
+            var path = @"C:\Users\d_dia\source\repos\YuGiOhTCG\YugiohDB\data\allCards.txt";
+            System.IO.File.Create(path);
 
-            // Console.WriteLine("IDS Created and saved");
-            // Thread.Sleep(3000);
-            // Environment.Exit(0); 
+            // Create all cards in a text file to /YGOCardSearch/data
+            var allCards = await Connection.GetAllCardsAsync();
+            YugiohCards.Cards = new List<CardModel>(allCards);
+
+
+            var jsonCards = JsonSerializer.Serialize<List<CardModel>>(YugiohCards.Cards, new JsonSerializerOptions());
+            
+            System.IO.File.WriteAllText(path, jsonCards);
+
+
+            Thread.Sleep(3000);
+            Environment.Exit(0); 
 
         Start:
 
@@ -78,6 +89,12 @@ namespace YugiohDB
                 
             }
             return null;
+        }
+
+        public static async void SaveAllCards() 
+        {
+            var allCards = await GetAllCardsAsync();
+            
         }
     }
 }
