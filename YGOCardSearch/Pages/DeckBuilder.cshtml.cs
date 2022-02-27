@@ -3,24 +3,45 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using System.Collections.Generic;
 using YGOCardSearch.Models;
+using YGOCardSearch.DataProviders;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace YGOCardSearch.Pages
 {
     public class DeckBuilder : PageModel
     {
+        // Deck a visualizar
         public DeckModel Deck { get; set; }
-        public void OnGet()
+
+        // Proveedor de datos, archivo de texto
+        public List<CardModel> repo { get; set; }
+
+        public async Task<IActionResult> OnGet()
         {
-            Deck = new DeckModel();
-            Deck.DeckName = "deckfromcode";
+            // Load all cards from local repo? 
+            repo = LoadCardsLocalRepo();
 
-            //  Load a test deck
-            string path = @"C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\Decks\deck2.ydk";
+            //  Load a local deck file
+            string path = @"C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\Decks\deck1.ydk";
+            Deck = LoadDeck(path);
+            return Page();
 
-            string[] deckCardsIds = System.IO.File.ReadAllLines(path);
-            List<string> deckIds = new List<string>(deckCardsIds);
+        }
+        public List<CardModel> LoadCardsLocalRepo() 
+        {
+            // Buen lugar para cargar los datos
+            var allCardsPath = @"C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\data\allCards.txt";
+            var jsonCards = System.IO.File.ReadAllText(allCardsPath);
+            var AllCards = JsonSerializer.Deserialize<List<CardModel>>(jsonCards);
+            return AllCards;
+        }
+        public DeckModel LoadDeck(string path)
+        {
+            string[] ydkDeck = System.IO.File.ReadAllLines(path);
+            List<string> deckIds = new List<string>(ydkDeck);
 
             List<int> mainDeckIds = new List<int>();
             List<int> extraDeckIds = new List<int>();
@@ -48,11 +69,38 @@ namespace YGOCardSearch.Pages
             {
                 sideDecksIds.Add(Convert.ToInt32(cardId));
             }
-        }
+            // Get all cards one by one 
+            var mainDeck = new List<CardModel>();
+            var extraDeck = new List<CardModel>();
+            var sideDeck = new List<CardModel>();
 
-        public void AddCard(CardModel card) 
-        {
-            Deck.MainDeck.Add(card);
+            foreach (var id in mainDeckIds)
+            {
+                var card = repo.Where(c => c.Id == id);
+                mainDeck.AddRange(card);
+            }
+
+            foreach (var id in extraDeckIds)
+            {
+                var card = repo.Where(c => c.Id == id);
+                extraDeck.AddRange(card);
+            }
+            foreach (var id in sideDecksIds)
+            {
+                var card = repo.Where(c => c.Id == id);
+                sideDeck.AddRange(card);
+            }
+
+            // Create deck with cards retrieved
+            DeckModel newDeck = new DeckModel();
+
+            newDeck.MainDeck = mainDeck;
+            newDeck.ExtraDeck = extraDeck;
+            newDeck.SideDeck = sideDeck;
+            newDeck.DeckName = mainDeck[0].Name.ToLower() + "_deck";
+            return newDeck;
+
         }
+        
     }
 }
