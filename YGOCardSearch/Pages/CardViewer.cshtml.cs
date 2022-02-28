@@ -11,7 +11,7 @@ namespace YGOCardSearch.Pages
 {
     public class CardViewerModel : PageModel
     {
-        public ICardsProvider cardsProvider { get; set; }
+        public ICardsProvider CardsProvider { get; set; }
         public List<CardModel> Cards { get; set; }
         public CardModel Card { get; set; }
 
@@ -21,12 +21,12 @@ namespace YGOCardSearch.Pages
 
         public CardViewerModel(ICardsProvider cardsProvider)
         {
-            this.cardsProvider = cardsProvider;
+            this.CardsProvider = cardsProvider;
         }
 
         public async Task<ActionResult> OnGet(int id)
         {
-            var card = await cardsProvider.GetCardAsync(id);
+            var card = await CardsProvider.GetCardAsync(id);
             if (card != null)
             {
                 Card = card;

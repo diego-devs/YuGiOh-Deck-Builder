@@ -4,6 +4,7 @@ namespace YGOCardSearch.Models
 {
     public class DeckModel
     {
+        public int Id { get; set; }
         public List<CardModel> MainDeck { get; set; }
         public List<CardModel> ExtraDeck { get; set; }
         public List<CardModel> SideDeck { get; set; }
