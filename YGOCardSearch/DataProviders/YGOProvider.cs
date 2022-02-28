@@ -22,7 +22,7 @@ namespace YGOCardSearch.DataProviders
                 {
                     var content = await request.Content.ReadAsStringAsync();
                     var model = JsonSerializer.Deserialize<CardModel>(content, new JsonSerializerOptions());
-                    Console.WriteLine("Cards found: " + model.Data.Length);
+                    Console.WriteLine("Cards found: " + model.Data.Count);
                     var data = model.Data;
 
                     return data;
@@ -78,7 +78,7 @@ namespace YGOCardSearch.DataProviders
                 {
                     var content = await request.Content.ReadAsStringAsync();
                     var model = JsonSerializer.Deserialize<CardModel>(content, new JsonSerializerOptions());
-                    Console.WriteLine("Cards found: " + model.Data.Length);
+                    Console.WriteLine("Cards found: " + model.Data.Count);
                     var data = model.Data;
 
                     return data;
@@ -109,7 +109,7 @@ namespace YGOCardSearch.DataProviders
                 {
                     var content = await request.Content.ReadAsStringAsync();
                     var model = JsonSerializer.Deserialize<CardModel>(content, new JsonSerializerOptions());
-                    Console.WriteLine("Cards found: " + model.Data.Length);
+                    Console.WriteLine("Cards found: " + model.Data.Count);
                     var data = model.Data[0];
 
                     return data;
@@ -134,7 +134,7 @@ namespace YGOCardSearch.DataProviders
             {
                 var content = await request.Content.ReadAsStringAsync();
                 var model = JsonSerializer.Deserialize<CardModel>(content, new JsonSerializerOptions());
-                Console.WriteLine("Cards found: " + model.Data.Length);
+                Console.WriteLine("Cards found: " + model.Data.Count);
                 var idList = new List<long>();
                 foreach (var card in model.Data)
                 {
