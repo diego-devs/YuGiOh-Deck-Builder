@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
@@ -10,7 +11,7 @@ namespace YGOCardSearch.Models
         public partial class CardModel
         {
             [JsonPropertyName("data")]
-            public CardModel[] Data { get; set; }
+            public List<CardModel> Data { get; set; }
         }
 
         public partial class CardModel
@@ -43,13 +44,13 @@ namespace YGOCardSearch.Models
             public string Attribute { get; set; }
 
             [JsonPropertyName("card_sets")]
-            public CardSet[] CardSets { get; set; }
+            public List<CardSet> CardSets { get; set; }
 
             [JsonPropertyName("card_images")]
-            public CardImage[] CardImages { get; set; }
+            public List<CardImage> CardImages { get; set; }
 
             [JsonPropertyName("card_prices")]
-            public CardPrice[] CardPrices { get; set; }
+            public List<CardPrice> CardPrices { get; set; }
         }
 
         public partial class CardImage
@@ -64,7 +65,8 @@ namespace YGOCardSearch.Models
             public Uri ImageUrlSmall { get; set; }
         }
 
-        public partial class CardPrice
+    [Keyless]
+    public partial struct CardPrice
         {
             [JsonPropertyName("cardmarket_price")]
             public string CardmarketPrice { get; set; }

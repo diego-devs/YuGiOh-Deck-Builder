@@ -57,7 +57,7 @@
                         <td>@card.Attribute</td>
                         <td>@card.Type</td>
                         <td>@card.Desc</td>
-                        @for (int i = 0; i < card.CardPrices.Length; i++)
+                        @for (int i = 0; i < card.CardPrices.Count; i++)
                         {
                             <td>TCGPlayer.com $@card.CardPrices[i].TcgplayerPrice usd</td>
                         }
