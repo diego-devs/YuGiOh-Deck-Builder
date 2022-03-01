@@ -11,8 +11,7 @@ namespace YGOCardSearch.Pages
 {
     public class CardViewerModel : PageModel
     {
-        public ICardsProvider CardsProvider { get; set; }
-        public List<CardModel> Cards { get; set; }
+        public ICardsProvider CardsProvider;
         public CardModel Card { get; set; }
 
         [BindProperty(SupportsGet = true)]
@@ -37,8 +36,8 @@ namespace YGOCardSearch.Pages
         public static int GenerateRandomIdAsync()
         {
             var CardIdList = JsonSerializer.Deserialize<List<int>>
-                (System.IO.File.ReadAllText(@"C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\data\ids.txt"));
-
+                (System.IO.File.ReadAllText(@"C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\DataLayer\ids.txt"));
+            
             Random random = new Random();
             int randomId = CardIdList[random.Next(0, CardIdList.Count)];
 
