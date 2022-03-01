@@ -1,13 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using YGOCardSearch.DataLayer;
 using YGOCardSearch.DataProviders;
 
 namespace YGOCardSearch
@@ -26,8 +29,10 @@ namespace YGOCardSearch
         {
             // Dependency Injection, inyección de dependencias
             services.AddSingleton<ICardsProvider, YGOProvider>();
+            services.AddDbContext<ygoDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("yugiContext")));
             services.AddRazorPages();
-            
+           
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
