@@ -94,14 +94,11 @@ namespace YGOCardSearch.DataProviders
             }
 
         }
-        public async Task<CardModel> GetRandomCardAsync(int Id) 
+        public async Task<CardModel> GetRandomCardAsync() 
         {
             
-            string url = "https://db.ygoprodeck.com/api/v7/cardinfo.php?id=" + Id.ToString();
+            string url = "https://db.ygoprodeck.com/api/v7/randomcard.php" ;
             var ygoClient = new HttpClient() { BaseAddress = new Uri(url) };
-
-            Thread.Sleep(3000);
-
             try
             {
                 var request = await ygoClient.GetAsync(url);

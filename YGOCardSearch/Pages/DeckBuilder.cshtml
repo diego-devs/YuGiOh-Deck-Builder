@@ -1,12 +1,6 @@
 ﻿@page
 @model YGOCardSearch.Pages.DeckBuilder
 
-
-
-
-
-
-
 <h1>
     @Model.Deck.DeckName
 </h1>
@@ -15,8 +9,7 @@
     {      
         foreach (var card in Model.Deck.MainDeck)
         {
-            <img src=@card.CardImages[0].ImageUrlSmall>
+            <a asp-page="CardViewer" asp-route-id="@card.Id"><img src=@card.CardImages[0].ImageUrlSmall></a>
         }
     }
-    
 }
