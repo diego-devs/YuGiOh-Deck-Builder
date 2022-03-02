@@ -13,47 +13,62 @@ namespace YGOCardSearch.Pages
 {
     public class DeckBuilder : PageModel
     {
+        public List<DeckModel> LoadedDecks; 
         // Deck a visualizar
         public DeckModel Deck { get; set; }
 
-        // Proveedor de datos, archivo de texto
-        public List<CardModel> repo { get; set; }
+        // Repo de todas las cartas (migrar a db) 
+        public List<CardModel> AllCards { get; set; }
 
         public async Task<IActionResult> OnGet()
         {
-            // Load all cards from local repo? 
-            repo = LoadCardsLocalRepo();
+            AllCards = LoadAllCards();
 
             //  Load a local deck file
             string path = @"C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\Decks\deck1.ydk";
             Deck = LoadDeck(path);
+            LoadedDecks.Add(Deck);
             return Page();
 
         }
-        public List<CardModel> LoadCardsLocalRepo() 
+        public List<CardModel> LoadAllCards() 
         {
-            // Buen lugar para cargar los datos
+            // Carga todas las cartas de un json
             var allCardsPath = @"C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\DataLayer\allCards.txt";
             var jsonCards = System.IO.File.ReadAllText(allCardsPath);
             var AllCards = JsonSerializer.Deserialize<List<CardModel>>(jsonCards);
             return AllCards;
         }
-        public static void CleanDeck(List<string> deck) // 
+        /// <summary>
+        /// Revisa si el deck no tiene ningún error, de lo contrario lo corrige y regresa el deck.
+        /// </summary>
+        /// <param name="deckList"></param>
+        public static List<string> CleanDeck(List<string> deckList) 
         {
-            foreach (var item in deck)
+            var returnedDeckList = new List<string>(deckList);
+
+            foreach (var cardId in deckList)
             {
-                var cardChars = item.ToCharArray();
-                // Cierto si está limpio de letras:
-                bool letterClean = cardChars.Any(x => !char.IsLetter(x));
+                var cardChars = cardId.ToCharArray();
+                bool allClean = cardChars.All(c => char.IsDigit(c));
+                if (allClean) 
+                {
+                    continue;
+                }
+                else 
+                {
+                    var onlyDigitsIds = cardChars.Where(c => char.IsDigit(c));
+                    var stringId = new string(onlyDigitsIds.ToArray());
+                    
+                    returnedDeckList.Add(stringId);
+                    returnedDeckList.Remove(cardId);
+                    continue;
+                }
+               
             }
             
-            if (deck.All(c => !c.Contains('t')))
-            {
-
-            }
+            return returnedDeckList;
         } 
-        
-
         ///<summary>
         ///<para>Regresa un DeckModel tomando un archivo .ydk como parámetro</para>
         ///<para>archivos .ydk</para>
@@ -61,95 +76,50 @@ namespace YGOCardSearch.Pages
         public DeckModel LoadDeck(string path)
         {
             // Asegurarnos que la extensión sea .ydk (?)...
-
-            string[] ydkDeck = System.IO.File.ReadAllLines(path);
+            string[] ydkDeck = System.IO.File.ReadAllLines(path); // De donde sea se encuentren los decks? 
             List<string> deckIds = new List<string>(ydkDeck);
-
-            var mainDeckIds = new List<int>();
-            var extraDeckIds = new List<int>();
-            var sideDecksIds = new List<int>();
 
             int mainIndex = deckIds.FindIndex(c => c.Contains("#main"));
             int extraIndex = deckIds.FindIndex(r => r.Contains("#extra"));
             int sideIndex = deckIds.FindIndex(c => c.Contains("!side"));
+            
+            var mainDeckResult = deckIds.Skip(mainIndex + 1).Take(extraIndex - (mainIndex + 1)).ToList();
+            var extraDeckResult = deckIds.Skip(extraIndex + 1).Take(sideIndex - (extraIndex + 1)).ToList();
+            var sideDeckResult = deckIds.Skip(sideIndex + 1).Take(sideIndex - (extraIndex + 1)).ToList();
 
-            // Limpiar los decks que se carguen, algunos podrían traer errores como: "1123456f" 
-            var mainDeckResult = deckIds.Skip(mainIndex + 1).Take(extraIndex - (mainIndex + 1));
-            var extraDeckResult = deckIds.Skip(extraIndex + 1).Take(sideIndex - (extraIndex + 1));
-            var sideDeckResult = deckIds.Skip(sideIndex + 1).Take(sideIndex - (extraIndex + 1));
+            // Limpiar las listas de IDS, algunos decks podrían tener errores como: "112345f" 
+            var cleanedMain = CleanDeck(mainDeckResult);
+            var cleanedExtra = CleanDeck(extraDeckResult);
+            var cleanedSide = CleanDeck(sideDeckResult);
+            
+            // Obtener todas las cartas de las listas de Ids a listas de cartas
+            var mainDeck = new List<CardModel>(getCards(cleanedMain));
+            var extraDeck = new List<CardModel>(getCards(cleanedExtra));
+            var sideDeck = new List<CardModel>(getCards(cleanedSide));
 
-
-            
-            // Ids from main deck
-            foreach (var cardId in mainDeckResult)
-            {
-                mainDeckIds.Add(Int32.Parse(cardId));
-            }
-
-            // Ids from extra deck
-            if (extraDeckResult.Count() > 0) 
-            {
-                foreach (var cardId in extraDeckResult)
-                {
-                    extraDeckIds.Add(Int32.Parse(cardId));
-                }
-            }
-                
-            
-            
-            
-            
-            if (sideDeckResult.Count() > 0) // Ver si la colección contiene elementos
-            {
-                // Ids from side deck
-                foreach (var cardId in sideDeckResult)
-                {
-                    sideDecksIds.Add(Int32.Parse(cardId));
-                }
-            }
-            // No sideDeck
-                
-                
-            
-            
-            
-            // Get all cards one by one 
-            var mainDeck = new List<CardModel>();
-            var extraDeck = new List<CardModel>();
-            var sideDeck = new List<CardModel>();
-
-            foreach (var id in mainDeckIds)
-            {
-                var card = repo.Where(c => c.Id == id);
-                mainDeck.AddRange(card);
-            }
-
-            foreach (var id in extraDeckIds)
-            {
-                var card = repo.Where(c => c.Id == id);
-                extraDeck.AddRange(card);
-            }
-           
-            foreach (var id in sideDecksIds)
-            {
-                var card = repo.Where(c => c.Id == id);
-                sideDeck.AddRange(card);
-            }
-
-            // Create deck with cards retrieved
+            // Finalmente crear el deck retornado
             var newDeck = new DeckModel();
-
             newDeck.MainDeck = mainDeck;
             newDeck.ExtraDeck = extraDeck;
             newDeck.SideDeck = sideDeck;
-            newDeck.DeckName = mainDeck[0].Name.ToLower() + "_deck";
+            newDeck.DeckName = mainDeck[0].Name.ToLower();
             return newDeck;
 
         }
-        public void CleanYDKFile()
+        /// <summary>
+        /// Regresa una lista de cartas del modelo apartir de una lista de strings
+        /// </summary>
+        /// <param name="cardList"></param>
+        /// <returns></returns>
+        public List<CardModel> getCards(List<string> cardList) 
         {
-
-            // Aquí deberíamos eliminar todos los caracteres no deseados en el deck
+            var returnList = new List<CardModel>();
+            foreach (var id in cardList)
+            {
+                var card = AllCards.Single(c => c.Id == Int32.Parse(id));
+                returnList.Add(card);
+            }
+            return returnList;
         }
         
     }

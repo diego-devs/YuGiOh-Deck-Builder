@@ -19,7 +19,7 @@ namespace YGOCardSearch.Models
         {
         [Key]
         [JsonPropertyName("id")]
-            public long Id { get; set; }
+            public int Id { get; set; }
 
             [JsonPropertyName("name")]
             public string Name { get; set; }
@@ -59,7 +59,7 @@ namespace YGOCardSearch.Models
         {
             [Key]
             [JsonPropertyName("id")]
-            public long Id { get; set; }
+            public int Id { get; set; }
 
             [JsonPropertyName("image_url")]
             public Uri ImageUrl { get; set; }
