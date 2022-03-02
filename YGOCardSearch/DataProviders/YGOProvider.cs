@@ -88,9 +88,9 @@ namespace YGOCardSearch.DataProviders
                     return null;
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                throw new Exception(message: "ërror");
+                throw new Exception(ex.Message);
             }
 
         }
@@ -121,7 +121,7 @@ namespace YGOCardSearch.DataProviders
                 throw new Exception(message: "ërror");
             }
         }
-        public async Task<List<long>> GetAllCardsIdsAsync() 
+        public async Task<List<string>> GetAllCardsIdsAsync() 
         {
             string url = "https://db.ygoprodeck.com/api/v7/cardinfo.php?";
 
@@ -132,10 +132,10 @@ namespace YGOCardSearch.DataProviders
                 var content = await request.Content.ReadAsStringAsync();
                 var model = JsonSerializer.Deserialize<CardModel>(content, new JsonSerializerOptions());
                 Console.WriteLine("Cards found: " + model.Data.Count);
-                var idList = new List<long>();
+                var idList = new List<string>();
                 foreach (var card in model.Data)
                 {
-                    idList.Add(card.Id);
+                    idList.Add(card.Id.ToString());
                 }
                 return idList;
             }
