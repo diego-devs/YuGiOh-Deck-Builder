@@ -28,8 +28,8 @@ namespace YGOCardSearch
         public void ConfigureServices(IServiceCollection services)
         {
             // Dependency Injection, inyección de dependencias
-            services.AddSingleton<ICardsProvider, ygoApiProvider>();
-            services.AddDbContext<YgoContext>(options => options.UseSqlServer(@"Server=.\SQLEXPRESS;Database=YgoDB;Trusted_Connection=True;"));
+            services.AddSingleton<ICardsProvider, YGOProvider>();
+            services.AddDbContext<ygoDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("yugiContext")));
             services.AddRazorPages();
            
 

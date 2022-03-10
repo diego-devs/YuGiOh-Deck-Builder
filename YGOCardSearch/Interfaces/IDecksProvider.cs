@@ -7,9 +7,7 @@ namespace YGOCardSearch.Interfaces
 {
     public interface IDecksProvider
     {
-        // Load all decks
-        // Load one deck from file
-        public Task<DeckModel> GetDeck(string path);
+        public Task<DeckModel> GetSearchAsync(string path);
         
     }
 }
