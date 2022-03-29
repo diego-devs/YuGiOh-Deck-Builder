@@ -9,7 +9,7 @@ using YGOCardSearch.Models;
 
 namespace YGOCardSearch.DataProviders
 {
-    public class YGOProvider : ICardsProvider
+    public class ygoApiProvider : ICardsProvider
     {
         public async Task<ICollection<CardModel>> GetAllCardsAsync()
         {
