@@ -8,24 +8,45 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Text.Json;
+using YGOCardSearch.DataLayer;
+using Microsoft.EntityFrameworkCore;
 
 namespace YGOCardSearch.Pages
 {
     public class DeckBuilder : PageModel
     {
-        public List<DeckModel> LoadedDecks; 
+        // Esto también debería cambiar por db:
+        public List<DeckModel> LoadedDecks;
+        
         // Deck a visualizar
-        public DeckModel Deck { get; set; }
+        public DeckModel Deck { get; set; } 
 
         // Repo de todas las cartas (migrar a db) 
         public List<CardModel> AllCards { get; set; }
 
+
+
+        private readonly YgoContext ygoContext;
+
+        public DeckBuilder(YgoContext context)
+        {
+            ygoContext = context;
+        }
+
+
+
+
         public async Task<IActionResult> OnGet()
         {
+            // Good place to initialize data ?
             AllCards = LoadAllCards();
+            using (var context = new YgoContext())
+            {
+                context.AddRange(AllCards);
 
-            //  Load a local deck file
-            string path = @"C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\Decks\deck1.ydk";
+            }
+                //  Load a local deck file
+                string path = @"C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\Decks\deck1.ydk";
             Deck = LoadDeck(path);
             LoadedDecks.Add(Deck);
             return Page();
