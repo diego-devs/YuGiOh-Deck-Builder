@@ -17,45 +17,44 @@ namespace YGOCardSearch.Pages
     {
         // Esto también debería cambiar por db:
         public List<DeckModel> LoadedDecks;
-        
         // Deck a visualizar
-        public DeckModel Deck { get; set; } 
-
+        public DeckModel Deck { get; set; }
         // Repo de todas las cartas (migrar a db) 
         public List<CardModel> AllCards { get; set; }
+        public readonly YgoContext Context;
 
 
-
-        private readonly YgoContext ygoContext;
-
-        public DeckBuilder(YgoContext context)
+        public DeckBuilder(YgoContext db)
         {
-            ygoContext = context;
-        }
-
-
-
-
-        public async Task<IActionResult> OnGet()
-        {
+            Context = db;
+            
             // Good place to initialize data ?
             AllCards = LoadAllCards();
-            using (var context = new YgoContext())
-            {
-                context.AddRange(AllCards);
+            Deck = new DeckModel();
+            LoadedDecks = new List<DeckModel>();
+            //  Load a local deck file
+            string path = @"C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\Data\Decks\deck2.ydk";
+            LoadedDecks.Add(LoadDeck(path));
+            Deck = LoadedDecks.First();
 
-            }
-                //  Load a local deck file
-                string path = @"C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\Decks\deck1.ydk";
-            Deck = LoadDeck(path);
-            LoadedDecks.Add(Deck);
+            Context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT [dbo].[ ] ON");
+            db.AddRange(AllCards);
+            db.SaveChanges();
+        }
+
+        
+        
+        public async Task<IActionResult> OnGet()
+        {
+            
             return Page();
 
         }
         public List<CardModel> LoadAllCards() 
         {
+           
             // Carga todas las cartas de un json
-            var allCardsPath = @"C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\DataLayer\allCards.txt";
+            var allCardsPath = @"C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\Data\allCards.txt";
             var jsonCards = System.IO.File.ReadAllText(allCardsPath);
             var AllCards = JsonSerializer.Deserialize<List<CardModel>>(jsonCards);
             return AllCards;
@@ -137,8 +136,12 @@ namespace YGOCardSearch.Pages
             var returnList = new List<CardModel>();
             foreach (var id in cardList)
             {
-                var card = AllCards.Single(c => c.Id == Int32.Parse(id));
-                returnList.Add(card);
+                if (AllCards.Exists(c => c.Id == Convert.ToInt32(id)))
+                {
+                    var card = AllCards.Single(c => c.Id == Convert.ToInt32(id));
+                    returnList.Add(card);
+                }
+                
             }
             return returnList;
         }
