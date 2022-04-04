@@ -37,7 +37,7 @@ namespace YGOCardSearch.Pages
             LoadedDecks.Add(LoadDeck(path));
             Deck = LoadedDecks.First();
 
-            Context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT [dbo].[ ] ON");
+            Context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT [dbo].[YGODB] ON");
             db.AddRange(AllCards);
             db.SaveChanges();
         }
@@ -95,6 +95,10 @@ namespace YGOCardSearch.Pages
         ///</summary>
         public DeckModel LoadDeck(string path)
         {
+            foreach (string file in Directory.EnumerateFiles(@"C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\Data\Decks", " *.ydk"))
+            {
+                string contents = System.IO.File.ReadAllText(file);
+            }
             // Asegurarnos que la extensión sea .ydk (?)...
             string[] ydkDeck = System.IO.File.ReadAllLines(path); // De donde sea se encuentren los decks? 
             List<string> deckIds = new List<string>(ydkDeck);
