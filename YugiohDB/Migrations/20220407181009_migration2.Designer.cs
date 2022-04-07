@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using YugiohDB;
 
@@ -11,9 +12,10 @@ using YugiohDB;
 namespace YugiohDB.Migrations
 {
     [DbContext(typeof(YugiohContext))]
-    partial class YugiohContextModelSnapshot : ModelSnapshot
+    [Migration("20220407181009_migration2")]
+    partial class migration2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
