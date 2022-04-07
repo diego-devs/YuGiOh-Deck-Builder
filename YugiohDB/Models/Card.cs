@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace YugiohDB.Models
@@ -13,6 +14,7 @@ namespace YugiohDB.Models
         [JsonPropertyName("data")]
         public ICollection<Card> Data { get; set; }
 
+        [Key]
         [JsonPropertyName("id")]
         public long Id { get; set; }
 
