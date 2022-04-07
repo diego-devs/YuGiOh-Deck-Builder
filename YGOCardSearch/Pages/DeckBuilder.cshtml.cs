@@ -38,6 +38,7 @@ namespace YGOCardSearch.Pages
             Deck = LoadedDecks.First();
 
             Context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT [dbo].[YGODB] ON");
+            
             db.AddRange(AllCards);
             db.SaveChanges();
         }
