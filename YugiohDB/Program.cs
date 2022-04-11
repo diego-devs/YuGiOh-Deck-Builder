@@ -41,10 +41,8 @@ namespace YugiohDB
                 {
                     context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT [YugiohDatabase].[dbo].[Cards] ON");
                     context.Cards.AddRange(selectedCards);
-                    context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT [YugiohDatabase].[dbo].[Cards] OFF");
-                    
                     context.SaveChanges();
-                    
+                    context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT [YugiohDatabase].[dbo].[Cards] OFF");
                     transaction.Commit();
 
 
