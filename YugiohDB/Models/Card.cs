@@ -43,13 +43,13 @@ namespace YugiohDB.Models
         public string Attribute { get; set; }
 
         [JsonPropertyName("card_sets")]
-        public ICollection<CardSet> CardSets { get; set; }
+        public ICollection<Object> CardSets { get; set; }
 
         [JsonPropertyName("card_images")]
-        public ICollection<CardImage> CardImages { get; set; }
+        public ICollection<Object> CardImages { get; set; }
 
         [JsonPropertyName("card_prices")]
-        public ICollection<CardPrice> CardPrices { get; set; }
+        public ICollection<Object> CardPrices { get; set; }
     }
 
     

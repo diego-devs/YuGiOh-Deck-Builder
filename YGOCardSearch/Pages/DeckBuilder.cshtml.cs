@@ -15,7 +15,7 @@ namespace YGOCardSearch.Pages
 {
     public class DeckBuilder : PageModel
     {
-        // Esto también debería cambiar por db:
+        // Esto tambiï¿½n deberï¿½a cambiar por db:
         public List<DeckModel> LoadedDecks;
         // Deck a visualizar
         public DeckModel Deck { get; set; }
@@ -37,8 +37,6 @@ namespace YGOCardSearch.Pages
             LoadedDecks.Add(LoadDeck(path));
             Deck = LoadedDecks.First();
 
-            Context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT [dbo].[YGODB] ON");
-            
             db.AddRange(AllCards);
             db.SaveChanges();
         }
@@ -61,7 +59,7 @@ namespace YGOCardSearch.Pages
             return AllCards;
         }
         /// <summary>
-        /// Revisa si el deck no tiene ningún error, de lo contrario lo corrige y regresa el deck.
+        /// Revisa si el deck no tiene ningï¿½n error, de lo contrario lo corrige y regresa el deck.
         /// </summary>
         /// <param name="deckList"></param>
         public static List<string> CleanDeck(List<string> deckList) 
@@ -91,7 +89,7 @@ namespace YGOCardSearch.Pages
             return returnedDeckList;
         } 
         ///<summary>
-        ///<para>Regresa un DeckModel tomando un archivo .ydk como parámetro</para>
+        ///<para>Regresa un DeckModel tomando un archivo .ydk como parï¿½metro</para>
         ///<para>archivos .ydk</para>
         ///</summary>
         public DeckModel LoadDeck(string path)
@@ -100,7 +98,7 @@ namespace YGOCardSearch.Pages
             {
                 string contents = System.IO.File.ReadAllText(file);
             }
-            // Asegurarnos que la extensión sea .ydk (?)...
+            // Asegurarnos que la extensiï¿½n sea .ydk (?)...
             string[] ydkDeck = System.IO.File.ReadAllLines(path); // De donde sea se encuentren los decks? 
             List<string> deckIds = new List<string>(ydkDeck);
 
@@ -112,7 +110,7 @@ namespace YGOCardSearch.Pages
             var extraDeckResult = deckIds.Skip(extraIndex + 1).Take(sideIndex - (extraIndex + 1)).ToList();
             var sideDeckResult = deckIds.Skip(sideIndex + 1).Take(sideIndex - (extraIndex + 1)).ToList();
 
-            // Limpiar las listas de IDS, algunos decks podrían tener errores como: "112345f" 
+            // Limpiar las listas de IDS, algunos decks podrï¿½an tener errores como: "112345f" 
             var cleanedMain = CleanDeck(mainDeckResult);
             var cleanedExtra = CleanDeck(extraDeckResult);
             var cleanedSide = CleanDeck(sideDeckResult);
