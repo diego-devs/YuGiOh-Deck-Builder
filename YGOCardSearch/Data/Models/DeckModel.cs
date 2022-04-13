@@ -1,14 +1,19 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace YGOCardSearch.Models
 {
     public class DeckModel
     {
+        [Key]
+        [JsonPropertyName("id")]
         public int Id { get; set; }
-        public List<CardModel> MainDeck { get; set; }
-        public List<CardModel> ExtraDeck { get; set; }
-        public List<CardModel> SideDeck { get; set; }
         public string DeckName { get; set; }
+        public ICollection<CardModel> MainDeck { get; set; }
+        public ICollection<CardModel> ExtraDeck { get; set; }
+        public ICollection<CardModel> SideDeck { get; set; }
+        
 
         public DeckModel()
         {

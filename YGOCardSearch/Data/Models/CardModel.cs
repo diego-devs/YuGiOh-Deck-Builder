@@ -39,16 +39,16 @@ namespace YGOCardSearch.Models
             public string Attribute { get; set; }
 
             [JsonPropertyName("card_sets")]
-            public List<SetModel> CardSets { get; set; }
+            public ICollection<Object> CardSets { get; set; }
 
             [JsonPropertyName("card_images")]
-            public List<ImageModel> CardImages { get; set; }
+            public ICollection<Object> CardImages { get; set; }
 
             [JsonPropertyName("card_prices")]
-            public List<PriceModel> CardPrices { get; set; }
+            public ICollection<Object> CardPrices { get; set; }
 
             [JsonPropertyName("data")]
-            public List<CardModel> Data { get; set; }
+            public ICollection<CardModel> Data { get; set; }
     }
 
 
