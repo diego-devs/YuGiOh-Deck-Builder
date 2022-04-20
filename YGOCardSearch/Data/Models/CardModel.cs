@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using YGOCardSearch.Data.Models;
 
 namespace YGOCardSearch.Models
 { 
@@ -42,13 +43,13 @@ namespace YGOCardSearch.Models
             public ICollection<Object> CardSets { get; set; }
 
             [JsonPropertyName("card_images")]
-            public ICollection<Object> CardImages { get; set; }
+            public List<CardImage> CardImages { get; set; }
 
             [JsonPropertyName("card_prices")]
             public ICollection<Object> CardPrices { get; set; }
 
             [JsonPropertyName("data")]
-            public ICollection<CardModel> Data { get; set; }
+            public List<CardModel> Data { get; set; }
     }
 
 

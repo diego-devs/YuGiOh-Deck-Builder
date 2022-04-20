@@ -100,7 +100,7 @@ namespace YGOCardSearch.Pages
             }
             // Asegurarnos que la extensi�n sea .ydk (?)...
             string[] ydkDeck = System.IO.File.ReadAllLines(path); // De donde sea se encuentren los decks? 
-            List<string> deckIds = new List<string>(ydkDeck);
+            var deckIds = new List<string>(ydkDeck);
 
             int mainIndex = deckIds.FindIndex(c => c.Contains("#main"));
             int extraIndex = deckIds.FindIndex(r => r.Contains("#extra"));
