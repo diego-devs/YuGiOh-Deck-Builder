@@ -11,7 +11,7 @@
 
 <div class="text-center">
     <h1 style="text-align: center">YuGiOh! Todas las cartas</h1>
-    <h1>Busca cualquier carta del universo de YuGiOh!</h1>
+    <h1>Busca cualquier carta del universo de YuGiOh TCG</h1>
 </div>
 
 <form method="GET">
@@ -57,12 +57,8 @@
                         <td>@card.Attribute</td>
                         <td>@card.Type</td>
                         <td>@card.Desc</td>
-                        @for (int i = 0; i < card.CardPrices.Count; i++)
-                        {
-                            <td>TCGPlayer.com $@card.CardPrices[i].TcgplayerPrice usd</td>
-                        }
 
-                        <td>$@GetCurrency(Convert.ToDouble(card.CardPrices[0].TcgplayerPrice), 21) mxn </td>
+                        <td>here goes the average price</td>
                         <td>
                             <a class="btn btn-link"
                                asp-page="CardViewer"
