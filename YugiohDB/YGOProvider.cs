@@ -5,7 +5,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using YugiohDB.Models;
 
-namespace YugiohDB ;
+namespace YugiohDB;
 public static class YGOProvider 
     {
         /// <summary>
@@ -13,7 +13,7 @@ public static class YGOProvider
         /// </summary>
         /// <param name="search"></param>
         /// <returns></returns>
-        public static async Task<ResponseModel> SearchAsync(string search) 
+        public static async Task<CardModel> SearchAsync(string search) 
         {
             string url = "https://db.ygoprodeck.com/api/v7/cardinfo.php?fname=" + search;
             
@@ -22,7 +22,7 @@ public static class YGOProvider
             if (request.IsSuccessStatusCode) 
             {
                 var content = await request.Content.ReadAsStringAsync();
-                var model = JsonSerializer.Deserialize<ResponseModel>(content, new JsonSerializerOptions());
+                var model = JsonSerializer.Deserialize<CardModel>(content, new JsonSerializerOptions());
                 Console.WriteLine("Cards found: " + model.Data.Count);
                 return model;
             }
@@ -35,7 +35,7 @@ public static class YGOProvider
         /// Gets searched card by TCG id
         /// </summary>
         /// <returns></returns>
-        public static async Task<IEnumerable<Card>> GetAllCardsAsync() 
+        public static async Task<IEnumerable<CardModel>> GetAllCardsAsync() 
         {
             string url = "https://db.ygoprodeck.com/api/v7/cardinfo.php?"; //Gets all cards!
 
@@ -44,7 +44,7 @@ public static class YGOProvider
             if (request.IsSuccessStatusCode)
             {
                 var content = await request.Content.ReadAsStringAsync();
-                var model = JsonSerializer.Deserialize<ResponseModel>(content, new JsonSerializerOptions());
+                var model = JsonSerializer.Deserialize<CardModel>(content, new JsonSerializerOptions());
                 Console.WriteLine("Cards found: " + model.Data.Count);
                 var allCards = model.Data;
                 return allCards;
