@@ -11,8 +11,8 @@ namespace YGOCardSearch.Models
 { 
         public partial class CardModel
         {
-        [Key]
-        [JsonPropertyName("id")]
+            [Key]
+            [JsonPropertyName("id")]
             public int Id { get; set; }
 
             [JsonPropertyName("name")]
@@ -40,13 +40,13 @@ namespace YGOCardSearch.Models
             public string Attribute { get; set; }
 
             [JsonPropertyName("card_sets")]
-            public ICollection<Object> CardSets { get; set; }
+            public List<SetModel> CardSets { get; set; }
 
             [JsonPropertyName("card_images")]
             public List<CardImage> CardImages { get; set; }
 
             [JsonPropertyName("card_prices")]
-            public ICollection<Object> CardPrices { get; set; }
+            public List<PriceModel> CardPrices { get; set; }
 
             [JsonPropertyName("data")]
             public List<CardModel> Data { get; set; }

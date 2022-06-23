@@ -33,6 +33,7 @@ namespace YGOCardSearch.Pages
             }
             return RedirectToPage("Index");
         }
+        // (obsolete)
         public static int GenerateRandomIdAsync()
         {
             var CardIdList = JsonSerializer.Deserialize<List<int>>
@@ -46,3 +47,4 @@ namespace YGOCardSearch.Pages
 
     }
 }
+
