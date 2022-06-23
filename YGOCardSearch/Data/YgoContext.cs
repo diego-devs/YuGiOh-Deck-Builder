@@ -13,6 +13,7 @@ namespace YGOCardSearch.DataLayer
 
         public DbSet<CardModel> Cards { get; set; }
         public DbSet<DeckModel> Decks { get; set; }
+        
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)     
         {
