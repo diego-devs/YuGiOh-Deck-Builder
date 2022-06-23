@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace YGOCardSearch.Data.Models
+namespace YugiohDB.Models
 {
     public class SetModel
     {

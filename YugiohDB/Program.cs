@@ -8,8 +8,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
-using YGOCardSearch.Models;
-
+using YugiohDB.Models;
 
 namespace YugiohDB
 {
@@ -28,16 +27,15 @@ namespace YugiohDB
             };
             
             var readedCards = JsonSerializer.Deserialize<ICollection<CardModel>>(r, options);
-            
-
-            var selectedCards = new List<CardModel>(readedCards.Where(c => c.Atk == 1000)) ;
+            var filteredCards = readedCards.Where(c => c.Race == "Wyrm");
 
             
 
             // Connect to database in Artemis
             using (var context = new YugiohContext())
             {
-                context.Cards.AddRange(selectedCards);
+                context.Cards.AddRange(readedCards);
+                context.SaveChanges();
             }
         }
 
