@@ -6,6 +6,7 @@ namespace YugiohDB.Models
     public class SetModel
     {
         [Key]
+        
         [JsonPropertyName("id")]
         public int Id { get; set; }
         

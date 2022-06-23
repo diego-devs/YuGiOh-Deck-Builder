@@ -27,15 +27,40 @@ namespace YugiohDB
             };
             
             var readedCards = JsonSerializer.Deserialize<ICollection<CardModel>>(r, options);
-            var filteredCards = readedCards.Where(c => c.Race == "Wyrm");
+            
+
+            
 
             
 
             // Connect to database in Artemis
             using (var context = new YugiohContext())
+            //using (var transaction = context.Database.BeginTransaction())
             {
-                context.Cards.AddRange(readedCards);
-                context.SaveChanges();
+                try
+                {
+                    //context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT [YgoDB].[dbo].[Cards] ON");
+                    //context.Cards.AddRange(readedCards);
+                    
+                    //context.SaveChanges();
+                    //context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT [YgoDB].[dbo].[Cards] OFF");
+                    
+                    
+                    //transaction.Commit();
+
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Los cambios no pudieron hacerse");
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine(e.InnerException.Message);
+                }
+                finally
+                {
+                    Console.WriteLine($"{readedCards.Count} cards saved in {context.Database.ProviderName}");
+                }
+                
             }
         }
 

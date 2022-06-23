@@ -10,8 +10,12 @@ namespace YugiohDB.Models
         public partial class CardModel
         {
             [Key]
+            [JsonPropertyName("InternalID")]
+            public int InternalID {get;set;}
+
+
             [JsonPropertyName("id")]
-            public int Id { get; set; }
+            public int CardID { get; set; }
 
             [JsonPropertyName("name")]
             public string Name { get; set; }

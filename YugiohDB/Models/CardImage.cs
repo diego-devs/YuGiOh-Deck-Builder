@@ -7,8 +7,11 @@ namespace YugiohDB.Models
     public class CardImage
     {
         [Key]
+        [JsonPropertyName("InternalId")]
+        public int InternalId { get; set; }
+
         [JsonPropertyName("id")]
-        public int Id { get; set; }
+        public int CardId { get; set; }
         [JsonPropertyName("image_url")]
         public string ImageUrl { get; set; }
 
