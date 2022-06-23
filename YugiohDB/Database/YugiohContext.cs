@@ -1,17 +1,18 @@
 using Microsoft.EntityFrameworkCore;
-using YugiohDB.Models;
+using YGOCardSearch.Data.Models;
+using YGOCardSearch.Models;
 
-namespace YugiohDB 
+namespace YugiohDB
 {
     public class YugiohContext : DbContext 
     {
-        public DbSet<Card> Cards { get; set; }
-        public DbSet<CardPrice> CardPrices { get; set; }
-        public DbSet<CardSet> CardSets { get; set; }
+        public DbSet<CardModel> Cards { get; set; }
+        public DbSet<PriceModel> CardPrices { get; set; }
+        public DbSet<SetModel> CardSets { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=.\SQLEXPRESS;Database=YugiohDatabase;Trusted_Connection=True;");
+            optionsBuilder.UseSqlServer(@"Server=.\SQLEXPRESS;Database=YgoDB;Trusted_Connection=True;");
         }
 
     }
