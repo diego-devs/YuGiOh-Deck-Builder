@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using YGOCardSearch.Data.Models;
-using YGOCardSearch.Models;
+using YugiohDB.Models;
 
 namespace YugiohDB
 {
