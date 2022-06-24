@@ -9,6 +9,11 @@ namespace YGOCardSearch.DataLayer
     {
         public YgoContext(DbContextOptions options) : base(options)
         {
+
+        }
+        public YgoContext()
+        {
+
         }
 
         public DbSet<CardModel> Cards { get; set; }

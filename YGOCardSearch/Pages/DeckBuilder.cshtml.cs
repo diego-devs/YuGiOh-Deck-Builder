@@ -19,26 +19,28 @@ namespace YGOCardSearch.Pages
         public List<DeckModel> LoadedDecks;
         // Deck a visualizar
         public DeckModel Deck { get; set; }
-        // Repo de todas las cartas (migrar a db) 
+        // Repo de todas las cartas (migrar a db) - sera obsoleto 
         public List<CardModel> AllCards { get; set; }
+        // Database
         public readonly YgoContext Context;
 
 
         public DeckBuilder(YgoContext db)
         {
-            Context = db;
-            
-            // Good place to initialize data ?
-            AllCards = LoadAllCards();
-            Deck = new DeckModel();
+            // Good place to initialize data
+            this.Context = db;
+            AllCards = new List<CardModel>(Context.Cards) ;
             LoadedDecks = new List<DeckModel>();
+
+            // LoadAllDecks();
+            Deck = new DeckModel();
             //  Load a local deck file
             string path = @"C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\Data\Decks\deck2.ydk";
             LoadedDecks.Add(LoadDeck(path));
             Deck = LoadedDecks.First();
 
-            db.AddRange(AllCards);
-            db.SaveChanges();
+            //db.AddRange(AllCards);
+            //db.SaveChanges();
         }
 
         
@@ -49,7 +51,7 @@ namespace YGOCardSearch.Pages
             return Page();
 
         }
-        public List<CardModel> LoadAllCards() 
+        public List<CardModel> LoadAllCardsFromJSON() 
         {
            
             // Carga todas las cartas de un json
@@ -129,24 +131,26 @@ namespace YGOCardSearch.Pages
             return newDeck;
 
         }
+        
         /// <summary>
-        /// Regresa una lista de cartas del modelo apartir de una lista de strings
+        /// Regresa lista de CardModel a partir de una lista de CardId, buscando en YgoDB.
         /// </summary>
         /// <param name="cardList"></param>
         /// <returns></returns>
         public List<CardModel> getCards(List<string> cardList) 
         {
-            var returnList = new List<CardModel>();
-            foreach (var id in cardList)
-            {
-                if (AllCards.Exists(c => c.Id == Convert.ToInt32(id)))
+                var cards = new List<CardModel>();
+                foreach (var cardId in cardList)
                 {
-                    var card = AllCards.Single(c => c.Id == Convert.ToInt32(id));
-                    returnList.Add(card);
+                    if (AllCards.Exists(c => c.Id == Convert.ToInt32(cardId)))
+                    {
+                        var card = AllCards.Single(c => c.Id == Convert.ToInt32(cardId));
+                        cards.Add(card);
+                    }
+
                 }
-                
-            }
-            return returnList;
+ 
+            return cards;
         }
         
     }
