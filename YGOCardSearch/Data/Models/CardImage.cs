@@ -7,11 +7,8 @@ namespace YGOCardSearch.Data.Models
     public class CardImage
     {
         [Key]
-        [JsonPropertyName("InternalId")]
-        public int InternalId { get; set; }
-
         [JsonPropertyName("id")]
-        public int CardId { get; set; }
+        public int Id { get; set; }
         [JsonPropertyName("image_url")]
         public string ImageUrl { get; set; }
 

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
 using YGOCardSearch.Interfaces;
-using YGOCardSearch.Data.Models;
+using YGOCardSearch.Models;
 
 namespace YGOCardSearch.DataProviders
 {

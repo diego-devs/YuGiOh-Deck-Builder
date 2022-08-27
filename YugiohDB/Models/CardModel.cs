@@ -5,15 +5,17 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using YGOCardSearch.Data.Models;
-
-namespace YGOCardSearch.Models
+namespace YugiohDB.Models
 { 
         public partial class CardModel
         {
             [Key]
+            [JsonPropertyName("InternalID")]
+            public int InternalID {get;set;}
+
+
             [JsonPropertyName("id")]
-            public int Id { get; set; }
+            public int CardID { get; set; }
 
             [JsonPropertyName("name")]
             public string Name { get; set; }

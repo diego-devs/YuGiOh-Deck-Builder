@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace YugiohDB.Models
 {
-    public class Price
+    public class PriceModel
     {
         [Key]
         [JsonPropertyName("id")]

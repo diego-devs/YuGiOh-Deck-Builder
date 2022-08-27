@@ -6,10 +6,9 @@ namespace YGOCardSearch.Data.Models
     public class SetModel
     {
         [Key]
-
         [JsonPropertyName("id")]
         public int Id { get; set; }
-
+        
         [JsonPropertyName("set_name")]
         public string Name { get; set; }
         [JsonPropertyName("set_code")]

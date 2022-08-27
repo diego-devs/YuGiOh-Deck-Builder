@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.SqlServer;
 using Microsoft.EntityFrameworkCore.Migrations;
-using YGOCardSearch.Data.Models;
+using YGOCardSearch.Models;
 
-namespace YGOCardSearch.Data
+namespace YGOCardSearch.DataLayer
 {
     public class YgoContext : DbContext
     {
@@ -15,10 +15,10 @@ namespace YGOCardSearch.Data
         {
 
         }
+
         public DbSet<CardModel> Cards { get; set; }
-        public DbSet<PriceModel> CardPrices { get; set; }
-        public DbSet<SetModel> CardSets { get; set; }
-        public DbSet<CardImage> CardImages { get; set; }
+        public DbSet<DeckModel> Decks { get; set; }
+        
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)     
         {

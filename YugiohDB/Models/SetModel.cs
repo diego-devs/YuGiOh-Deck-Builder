@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace YugiohDB.Models
 {
-    public class CardSet
+    public class SetModel
     {
         [Key]
         

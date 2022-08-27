@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace YGOCardSearch.Models
+namespace YugiohDB.Models
 {
     public class DeckModel
     {

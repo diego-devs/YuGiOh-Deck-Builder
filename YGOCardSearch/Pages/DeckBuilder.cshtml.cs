@@ -2,44 +2,46 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using System.Collections.Generic;
-using YGOCardSearch.Data.Models;
+using YGOCardSearch.Models;
 using YGOCardSearch.DataProviders;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Text.Json;
-using YGOCardSearch.Data;
+using YGOCardSearch.DataLayer;
 using Microsoft.EntityFrameworkCore;
 
 namespace YGOCardSearch.Pages
 {
     public class DeckBuilder : PageModel
     {
-        // Esto tambien debera cambiar por db:
+        // Esto tambi�n deber�a cambiar por db:
         public List<DeckModel> LoadedDecks;
         // Deck a visualizar
         public DeckModel Deck { get; set; }
         // Repo de todas las cartas (migrar a db) - sera obsoleto 
-        public List<CardModel> AllCards { get; set; } 
+        public List<CardModel> AllCards { get; set; }
         // Database
         public readonly YgoContext Context;
 
-        // Dependency injection 
+
         public DeckBuilder(YgoContext db)
         {
             // Good place to initialize data
             this.Context = db;
+            AllCards = new List<CardModel>(Context.Cards) ;
             LoadedDecks = new List<DeckModel>();
-            this.AllCards = new List<CardModel>(Context.Cards);
+
             // LoadAllDecks();
             Deck = new DeckModel();
             //  Load a local deck file.
             //  This should be automated.
-            string path = @"C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\Data\Decks\deck1.ydk";
+            string path = @"C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\Data\Decks\deck2.ydk";
             LoadedDecks.Add(LoadDeck(path));
             Deck = LoadedDecks.First();
 
-            
+            //db.AddRange(AllCards);
+            //db.SaveChanges();
         }
 
         
@@ -54,14 +56,13 @@ namespace YGOCardSearch.Pages
         {
            
             // Carga todas las cartas de un json
-            // Esto eventualmente tendria que estar en un archivo de configuracion
             var allCardsPath = @"C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\Data\allCards.txt";
             var jsonCards = System.IO.File.ReadAllText(allCardsPath);
             var AllCards = JsonSerializer.Deserialize<List<CardModel>>(jsonCards);
             return AllCards;
         }
         /// <summary>
-        /// Revisa si el deck tiene ning�n error, lo corrige y regresa el deck.
+        /// Revisa si el deck no tiene ning�n error, de lo contrario lo corrige y regresa el deck.
         /// </summary>
         /// <param name="deckList"></param>
         public static List<string> CleanDeck(List<string> deckList) 
@@ -142,9 +143,9 @@ namespace YGOCardSearch.Pages
                 var cards = new List<CardModel>();
                 foreach (var cardId in cardList)
                 {
-                    if (AllCards.Exists(c => c.CardID == Convert.ToInt32(cardId)))
+                    if (AllCards.Exists(c => c.Id == Convert.ToInt32(cardId)))
                     {
-                        var card = AllCards.Single(c => c.CardID == Convert.ToInt32(cardId));
+                        var card = AllCards.Single(c => c.Id == Convert.ToInt32(cardId));
                         cards.Add(card);
                     }
 
