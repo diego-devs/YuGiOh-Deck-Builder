@@ -34,7 +34,8 @@ namespace YGOCardSearch.Pages
 
             // LoadAllDecks();
             Deck = new DeckModel();
-            //  Load a local deck file
+            //  Load a local deck file.
+            //  This should be automated.
             string path = @"C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\Data\Decks\deck2.ydk";
             LoadedDecks.Add(LoadDeck(path));
             Deck = LoadedDecks.First();
