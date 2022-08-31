@@ -5,11 +5,11 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using YGOCardSearch.Models;
+using YGOCardSearch.Data.Models;
 
 namespace YGOCardSearch.DataProviders
 {
-    public class ygoApiProvider : ICardsProvider
+    public class YgoAPIProvider : ICardsProvider
     {
         public async Task<ICollection<CardModel>> GetAllCardsAsync()
         {
@@ -135,7 +135,7 @@ namespace YGOCardSearch.DataProviders
                 var idList = new List<string>();
                 foreach (var card in model.Data)
                 {
-                    idList.Add(card.Id.ToString());
+                    idList.Add(card.CardID.ToString());
                 }
                 return idList;
             }

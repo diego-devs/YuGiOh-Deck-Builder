@@ -5,7 +5,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using YGOCardSearch.Models;
+using YGOCardSearch.Data.Models;
 
 namespace YGOCardSearch.Pages
 {
