@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using YGOCardSearch.DataLayer;
+using YGOCardSearch.Data;
 using YGOCardSearch.DataProviders;
 
 namespace YGOCardSearch
@@ -28,7 +28,7 @@ namespace YGOCardSearch
         public void ConfigureServices(IServiceCollection services)
         {
             // Dependency Injection, inyección de dependencias
-            services.AddSingleton<ICardsProvider, ygoApiProvider>();
+            services.AddSingleton<ICardsProvider, YgoAPIProvider>();
             services.AddDbContext<YgoContext>(options => options.UseSqlServer(@"Server=.\SQLEXPRESS;Database=YgoDB;Trusted_Connection=True;"));
             services.AddRazorPages();
            
