@@ -5,9 +5,9 @@ namespace YugiohDB
 {
     public class YugiohContext : DbContext 
     {
-        public DbSet<CardModel> Cards { get; set; }
-        public DbSet<PriceModel> CardPrices { get; set; }
-        public DbSet<SetModel> CardSets { get; set; }
+        public DbSet<Card> Cards { get; set; }
+        public DbSet<Price> Prices { get; set; }
+        public DbSet<CardSet> CardSets { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

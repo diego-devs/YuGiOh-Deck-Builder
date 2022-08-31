@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using YGOCardSearch.Models;
+using YGOCardSearch.Data.Models;
 
 namespace YGOCardSearch.Interfaces
 {
