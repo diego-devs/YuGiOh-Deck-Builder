@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace YGOCardSearch.Models
+namespace YGOCardSearch.Data.Models
 {
     public class DeckModel
     {
@@ -13,13 +13,13 @@ namespace YGOCardSearch.Models
         public ICollection<CardModel> MainDeck { get; set; }
         public ICollection<CardModel> ExtraDeck { get; set; }
         public ICollection<CardModel> SideDeck { get; set; }
-        
+
 
         public DeckModel()
         {
             MainDeck = new List<CardModel>();
-            ExtraDeck = new List<CardModel>();  
-            SideDeck = new List<CardModel>();   
+            ExtraDeck = new List<CardModel>();
+            SideDeck = new List<CardModel>();
         }
     }
 }
