@@ -15,4 +15,4 @@ CardDetails.cshtml is the details card page. Here we will be all the information
 This project is et in development. 
 
 
-[Diego Diáz](https://github.com/diego-devs)
+[Diego Diaz](https://github.com/diego-devs)
