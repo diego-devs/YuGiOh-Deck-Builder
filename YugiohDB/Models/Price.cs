@@ -6,8 +6,8 @@ namespace YugiohDB.Models
     public class Price
     {
         [Key]
-        [JsonPropertyName("id")]
-        public int Id { get; set; }
+        [JsonPropertyName("price_id")]
+        public long PriceId { get; set; }
 
         [JsonPropertyName("cardmarket_price")]
         public string CardMarket { get; set; }

@@ -8,11 +8,11 @@ namespace YugiohDB.Models
     {
         // Image ID (internal)
         [Key]
-        [JsonPropertyName("InternalImageId")]
-        public int ImageId { get; set; }
+        [JsonPropertyName("image_id")]
+        public long ImageId { get; set; }
 
         [JsonPropertyName("id")]
-        public int CardId { get; set; }
+        public long CardImageId { get; set; }
         
         [JsonPropertyName("image_url")]
         public string ImageUrl { get; set; }
@@ -22,7 +22,7 @@ namespace YugiohDB.Models
 
         [JsonPropertyName("ImageLocalUrl")]
         public string ImageLocalUrl { get; set; }
-        [JsonPropertyName("ImageLocalUrlSmal")] 
-        public string ImageLocalUrlSmal { get; set; }
+        [JsonPropertyName("ImageLocalUrlSmall")] 
+        public string ImageLocalUrlSmall { get; set; }
     }
 }

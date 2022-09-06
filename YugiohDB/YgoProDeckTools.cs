@@ -14,9 +14,10 @@ namespace YugiohDB
 {
     public class YgoProDeckTools
     {
+        
         public static void DownloadToLocal()
         {
-            string path = "C:/Users/d_dia/source/repos/YuGiOhTCG/YugiohDB/data/images/"; //Change this path to your local directory // should be on a web config file
+            string path = "C:/Users/d_dia/source/repos/YuGiOhTCG/YugiohDB/data/images/"; // Change this path to your local directory // should be on a web config file
             var allCards = YgoProDeckTools.ReadAllCards();
             YgoProDeckTools.DownloadAllImages(allCards);
 
@@ -66,7 +67,6 @@ namespace YugiohDB
             Console.WriteLine($"Completed. {AllCards.Count} images downloaded to local.");
             Console.WriteLine($"Elapsed time: ");
         }
-
         public static async Task DownloadImage(Card card)
         {
             string path = "C:/Users/d_dia/source/repos/YuGiOhTCG/YugiohDB/data/images/"; // This should be changed in prod
@@ -77,16 +77,23 @@ namespace YugiohDB
                 client.DownloadFile(new Uri(url), $"{path}" + $"{card.CardId}.jpg");
             }
         }
-        
-       
+        public static void SaveCards(List<Card> cards)
+        {
+            var path = @"C:\Users\d_dia\source\repos\YuGiOhTCG\YugiohDB\data\allCards.txt";
+
+            var serializedCards = JsonSerializer.Serialize(cards);
+            File.WriteAllText(path, serializedCards);
+            Console.WriteLine("Cards saved to: " + path);
+        }
         public static List<Card> ReadAllCards()
         {
             var path = @"C:\Users\d_dia\source\repos\YuGiOhTCG\YugiohDB\data\allCards.txt";
             var r = File.ReadAllText(path);
+            
             // Option for serialization, hoping to avoid null values
             JsonSerializerOptions options = new()
             {
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            //    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
             };
             // all cards from json file deserialized to a list
             List<Card> readedCards = JsonSerializer.Deserialize<List<Card>>(r, options);
@@ -130,10 +137,29 @@ namespace YugiohDB
                 }
                 finally
                 {
-                    Console.WriteLine($"{readedCards.Count} cards saved in {context.Database.ProviderName}");
+                    Console.WriteLine($"from total {readedCards.Count} cards");
+                    Console.WriteLine($"{context.Cards.Count()} cards saved in {context.Database.ProviderName}");
                 }
 
             }
+        }
+        public static void MapImages(List<Card> cards)
+        {
+            var LocalImagesPath = @"C:/Users/d_dia/source/repos/YuGiOhTCG/YugiohDB/data/images"; // This should go to a web config file
+
+            foreach (var card in cards)
+            {
+                if (card.CardImages != null)
+                {
+                    foreach (var img in card.CardImages)
+                    {
+                        img.ImageLocalUrl = LocalImagesPath + $"/{img.CardImageId}.jpg";
+                        img.ImageLocalUrlSmall = LocalImagesPath + $"/small/{img.CardImageId}.jpg";
+                    }
+                }
+               
+            }
+            Console.WriteLine("All cards linked to local images");
         }
     }
 }

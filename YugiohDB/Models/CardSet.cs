@@ -7,8 +7,8 @@ namespace YugiohDB.Models
     {
         [Key]
         
-        [JsonPropertyName("id")]
-        public int Id { get; set; }
+        [JsonPropertyName("cardset_id")]
+        public long CardSetId { get; set; }
         
         [JsonPropertyName("set_name")]
         public string Name { get; set; }
