@@ -16,8 +16,14 @@ namespace YugiohDB
     {
         static async Task Main(string[] args)
         {
-            
-            
+            var allCards = YgoProDeckTools.ReadAllCards();
+            YgoProDeckTools.MapImages(allCards);
+
+            Console.WriteLine("Finished.");
+            Console.WriteLine(allCards[0].CardImages[0].ImageLocalUrl);
+
+            //Save the cards with the correct local image path
+            YgoProDeckTools.SaveCards(allCards);
         }
 
    
