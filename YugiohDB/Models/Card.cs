@@ -2,20 +2,22 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 namespace YugiohDB.Models
 {
+    [Table("Cards")]
     public class Card
     {
         // key just for testing.Delete this as foreign key in SQL and delete this property
         [Key]
         [JsonPropertyName("card_id")]
-        public long CardId { get; set; }
+        public int CardId { get; set; }
 
         [JsonPropertyName("id")]
-        public long KonamiCardId { get; set; }
+        public int KonamiCardId { get; set; }
 
         [JsonPropertyName("name")]
         public string Name { get; set; }
@@ -48,8 +50,6 @@ namespace YugiohDB.Models
         public int Scale { get; set; }
         [JsonPropertyName("linkval")]
         public int LinkVal { get; set; }
-        [JsonPropertyName("linkmarkers")]
-        public List<string> LinkMarkers { get; set; }
 
         [JsonPropertyName("banlist_info")]
         public BanlistInfo BanlistInfo { get; set; }

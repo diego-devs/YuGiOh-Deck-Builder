@@ -15,21 +15,33 @@ public static class YGOProvider
     /// <returns></returns>
     public static async Task<Card> SearchAsync(string search) 
     {
-        string url = "https://db.ygoprodeck.com/api/v7/cardinfo.php?fname=" + search;
+        string url = @"https://db.ygoprodeck.com/api/v7/cardinfo.php?fname=" + search;
             
         var ygoClient = new HttpClient() {BaseAddress = new Uri(url)};
-        var request = await ygoClient.GetAsync(url);
-        if (request.IsSuccessStatusCode) 
+        
+        try
         {
-            var content = await request.Content.ReadAsStringAsync();
-            var model = JsonSerializer.Deserialize<Card>(content, new JsonSerializerOptions());
-            Console.WriteLine("Cards found: " + model.Data.Count);
-            return model;
+            var request = await ygoClient.GetAsync(url);
+            if (request != null)
+            {
+                var content = await request.Content.ReadAsStringAsync();
+                var model = JsonSerializer.Deserialize<Card>(content, new JsonSerializerOptions());
+                Console.WriteLine("Cards found: " + model.Data.Count);
+                return model;
+            }
+            else
+            {
+                return null;
+            }
         }
-        else 
+        catch (Exception e)
         {
-            return null; 
+
+            throw;
         }
+        
+        
+        
     }
     /// <summary>
     /// Gets searched card by TCG id
