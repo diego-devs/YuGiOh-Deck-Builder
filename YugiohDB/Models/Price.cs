@@ -1,13 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace YugiohDB.Models
 {
+    [Table("Prices")]
     public class Price
     {
         [Key]
         [JsonPropertyName("price_id")]
-        public long PriceId { get; set; }
+        public int PriceId { get; set; }
 
         [JsonPropertyName("cardmarket_price")]
         public string CardMarket { get; set; }

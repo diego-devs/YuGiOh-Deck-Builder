@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,7 +19,7 @@ namespace YugiohDB
         public static void DownloadToLocal()
         {
             string path = "C:/Users/d_dia/source/repos/YuGiOhTCG/YugiohDB/data/images/"; // Change this path to your local directory // should be on a web config file
-            var allCards = YgoProDeckTools.ReadAllCards();
+            var allCards = YgoProDeckTools.ReadAllCards(path);
             YgoProDeckTools.DownloadAllImages(allCards);
 
             Console.WriteLine("All cards succesfully downloaded at: " + path);
@@ -77,19 +78,15 @@ namespace YugiohDB
                 client.DownloadFile(new Uri(url), $"{path}" + $"{card.CardId}.jpg");
             }
         }
-        public static void SaveCards(List<Card> cards)
+        public static void SaveCards(List<Card> cards, string path)
         {
-            var path = @"C:\Users\d_dia\source\repos\YuGiOhTCG\YugiohDB\data\allCards.txt";
-
             var serializedCards = JsonSerializer.Serialize(cards);
             File.WriteAllText(path, serializedCards);
-            Console.WriteLine("Cards saved to: " + path);
+            Console.WriteLine($"{cards.Count} cards saved to: " + path);
         }
-        public static List<Card> ReadAllCards()
+        public static List<Card> ReadAllCards(string path)
         {
-            var path = @"C:\Users\d_dia\source\repos\YuGiOhTCG\YugiohDB\data\allCards.txt";
             var r = File.ReadAllText(path);
-            
             // Option for serialization, hoping to avoid null values
             JsonSerializerOptions options = new()
             {
@@ -103,29 +100,24 @@ namespace YugiohDB
         /// Adds all cards from json file to Database
         /// </summary>
         /// <returns></returns>
-        public static async Task AddAllCards()
+        public static async Task AddAllCards(string allCardsPath)
         {
             // This is the process to add all cards to Database
             // path to allcards.txt file json file
-            var path = @"C:\Users\d_dia\source\repos\YuGiOhTCG\YugiohDB\data\allCards.txt";
-            var r = File.ReadAllText(path);
+
+            var allCards = ReadAllCards(allCardsPath);
             // Option for serialization, hoping to avoid null values
-            JsonSerializerOptions options = new()
-            {
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-            };
-            // all cards from json file deserialized to a list
-            var readedCards = JsonSerializer.Deserialize<ICollection<Card>>(r, options);
+
             // Connect to database in Artemis
-            using (var context = new YugiohContext())
+            using (var context = new YgoContext())
             //using (var transaction = context.Database.BeginTransaction())
             {
                 try
                 {
                     // Add all the cards to database excecuting SQL commands and using EF
                     //context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT [YgoDB].[dbo].[Cards] ON");
-                    //context.Cards.AddRange(readedCards);
-                    //context.SaveChanges();
+                    context.Cards.AddRange(allCards);
+                    context.SaveChanges();
                     //context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT [YgoDB].[dbo].[Cards] OFF");
                     //transaction.Commit();
                 }
@@ -137,16 +129,14 @@ namespace YugiohDB
                 }
                 finally
                 {
-                    Console.WriteLine($"from total {readedCards.Count} cards");
+                    Console.WriteLine($"from total {allCards.Count} cards");
                     Console.WriteLine($"{context.Cards.Count()} cards saved in {context.Database.ProviderName}");
                 }
 
             }
         }
-        public static void MapImages(List<Card> cards)
+        public static void MapImages(List<Card> cards, string LocalImagesPath)
         {
-            var LocalImagesPath = @"C:/Users/d_dia/source/repos/YuGiOhTCG/YugiohDB/data/images"; // This should go to a web config file
-
             foreach (var card in cards)
             {
                 if (card.CardImages != null)
@@ -159,7 +149,7 @@ namespace YugiohDB
                 }
                
             }
-            Console.WriteLine("All cards linked to local images");
+            Console.WriteLine($"All cards linked to local images at {LocalImagesPath}");
         }
     }
 }
