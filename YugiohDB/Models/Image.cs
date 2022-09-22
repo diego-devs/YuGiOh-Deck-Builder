@@ -1,18 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace YugiohDB.Models
 {
+    [Table("Images")]
     public class Image
     {
         // Image ID (internal)
         [Key]
         [JsonPropertyName("image_id")]
-        public long ImageId { get; set; }
+        public int ImageId { get; set; }
 
         [JsonPropertyName("id")]
-        public long CardImageId { get; set; }
+        public int CardImageId { get; set; }
         
         [JsonPropertyName("image_url")]
         public string ImageUrl { get; set; }

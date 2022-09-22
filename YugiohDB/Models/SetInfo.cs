@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -8,11 +9,12 @@ using System.Threading.Tasks;
 
 namespace YugiohDB.Models
 {
+    [Table("SetInformation")]
     public class SetInfo
     {
         [Key]
         [JsonPropertyName("setinfo_id")]
-        public long SetInfoId { get; set; }
+        public int SetId { get; set; }
         [JsonPropertyName("set_name")]
         public string SetName { get; set; }
         [JsonPropertyName("set_code")]
