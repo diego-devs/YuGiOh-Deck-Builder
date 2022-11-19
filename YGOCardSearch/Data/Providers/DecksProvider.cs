@@ -8,7 +8,7 @@ namespace YGOCardSearch.DataProviders
 {
     public class DecksProvider : IDecksProvider
     {
-        public Task<DeckModel> GetDeck(string path)
+        public Task<Deck> GetDeck(string path)
         {
             throw new System.NotImplementedException();
         }

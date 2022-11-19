@@ -270,3 +270,8 @@ C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\obj\Debug\net6.0\YGOCardSear
 C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\obj\Debug\net6.0\YGOCardSearch.genruntimeconfig.cache
 C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\bin\Debug\net6.0\YGOCardSearch.pdb
 C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\obj\Debug\net6.0\ref\YGOCardSearch.dll
+C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\obj\Debug\net6.0\staticwebassets\msbuild.YGOCardSearch.Microsoft.AspNetCore.StaticWebAssets.props
+C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\obj\Debug\net6.0\staticwebassets\msbuild.build.YGOCardSearch.props
+C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\obj\Debug\net6.0\staticwebassets\msbuild.buildMultiTargeting.YGOCardSearch.props
+C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\obj\Debug\net6.0\staticwebassets\msbuild.buildTransitive.YGOCardSearch.props
+C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\obj\Debug\net6.0\staticwebassets.pack.json
