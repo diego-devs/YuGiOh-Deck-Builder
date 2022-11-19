@@ -16,11 +16,11 @@ namespace YGOCardSearch.Pages
     public class DeckBuilder : PageModel
     {
         // Esto tambien debera cambiar por db:
-        public List<DeckModel> LoadedDecks;
+        public List<Deck> LoadedDecks;
         // Deck a visualizar
-        public DeckModel Deck { get; set; }
+        public Deck Deck { get; set; }
         // Repo de todas las cartas (migrar a db) - sera obsoleto 
-        public List<CardModel> AllCards { get; set; } 
+        public List<Card> AllCards { get; set; } 
         // Database
         public readonly YgoContext Context;
 
@@ -29,10 +29,10 @@ namespace YGOCardSearch.Pages
         {
             // Good place to initialize data
             this.Context = db;
-            LoadedDecks = new List<DeckModel>();
-            this.AllCards = new List<CardModel>(Context.Cards);
+            LoadedDecks = new List<Deck>();
+            this.AllCards = new List<Card>(Context.Cards);
             // LoadAllDecks();
-            Deck = new DeckModel();
+            Deck = new Deck();
             //  Load a local deck file.
             //  This should be automated.
             string path = @"C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\Data\Decks\deck1.ydk";
@@ -50,14 +50,14 @@ namespace YGOCardSearch.Pages
             return Page();
 
         }
-        public List<CardModel> LoadAllCardsFromJSON() 
+        public List<Card> LoadAllCardsFromJSON() 
         {
            
             // Carga todas las cartas de un json
             // Esto eventualmente tendria que estar en un archivo de configuracion
             var allCardsPath = @"C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\Data\allCards.txt";
             var jsonCards = System.IO.File.ReadAllText(allCardsPath);
-            var AllCards = JsonSerializer.Deserialize<List<CardModel>>(jsonCards);
+            var AllCards = JsonSerializer.Deserialize<List<Card>>(jsonCards);
             return AllCards;
         }
         /// <summary>
@@ -94,7 +94,7 @@ namespace YGOCardSearch.Pages
         ///<para>Regresa un DeckModel tomando un archivo .ydk como par�metro</para>
         ///<para>archivos .ydk</para>
         ///</summary>
-        public DeckModel LoadDeck(string path)
+        public Deck LoadDeck(string path)
         {
             foreach (string file in Directory.EnumerateFiles(@"C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\Data\Decks", " *.ydk"))
             {
@@ -118,16 +118,16 @@ namespace YGOCardSearch.Pages
             var cleanedSide = CleanDeck(sideDeckResult);
             
             // Obtener todas las cartas de las listas de Ids a listas de cartas
-            var mainDeck = new List<CardModel>(getCards(cleanedMain));
-            var extraDeck = new List<CardModel>(getCards(cleanedExtra));
-            var sideDeck = new List<CardModel>(getCards(cleanedSide));
+            var mainDeck = new List<Card>(getCards(cleanedMain));
+            var extraDeck = new List<Card>(getCards(cleanedExtra));
+            var sideDeck = new List<Card>(getCards(cleanedSide));
 
             // Finalmente crear el deck retornado
-            var newDeck = new DeckModel();
+            var newDeck = new Deck();
             newDeck.MainDeck = mainDeck;
             newDeck.ExtraDeck = extraDeck;
             newDeck.SideDeck = sideDeck;
-            newDeck.DeckName = mainDeck[0].Name.ToLower();
+            newDeck.DeckName = newDeck.MainDeck.First().Name.ToString().ToLower(); 
             return newDeck;
 
         }
@@ -137,14 +137,14 @@ namespace YGOCardSearch.Pages
         /// </summary>
         /// <param name="cardList"></param>
         /// <returns></returns>
-        public List<CardModel> getCards(List<string> cardList) 
+        public List<Card> getCards(List<string> cardList) 
         {
-                var cards = new List<CardModel>();
+                var cards = new List<Card>();
                 foreach (var cardId in cardList)
                 {
-                    if (AllCards.Exists(c => c.CardID == Convert.ToInt32(cardId)))
+                    if (AllCards.Exists(c => c.KonamiCardId == Convert.ToInt32(cardId)))
                     {
-                        var card = AllCards.Single(c => c.CardID == Convert.ToInt32(cardId));
+                        Card card = AllCards.Single(c => c.KonamiCardId == Convert.ToInt32(cardId));
                         cards.Add(card);
                     }
 

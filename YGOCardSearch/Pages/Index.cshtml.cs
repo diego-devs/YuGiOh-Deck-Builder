@@ -14,8 +14,8 @@ namespace YGOCardSearch.Pages
         [BindProperty(SupportsGet = true)]
         public string Search { get; set; } = "blue-eyes white dragon";
         public ICardsProvider cardsProvider { get; set; }
-        public List<CardModel> Cards { get; set; }
-        public CardModel Card { get; set; }
+        public List<Card> Cards { get; set; }
+        public Card Card { get; set; }
 
         public IndexModel(ICardsProvider cardsProvider)
         {
@@ -33,7 +33,7 @@ namespace YGOCardSearch.Pages
                 var results = await cardsProvider.GetSearchAsync(Search);
                 if (results != null)
                 {
-                    Cards = new List<CardModel>(results);
+                    Cards = new List<Card>(results);
                 }
             }
             else
@@ -41,7 +41,7 @@ namespace YGOCardSearch.Pages
                 var results = await cardsProvider.GetAllCardsAsync();
                 if (results != null)
                 {
-                    Cards = new List<CardModel>(results);
+                    Cards = new List<Card>(results);
                 };
             }
             return Page();
