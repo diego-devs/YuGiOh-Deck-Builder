@@ -11,7 +11,7 @@ namespace YGOCardSearch.DataProviders
 {
     public class YgoAPIProvider : ICardsProvider
     {
-        public async Task<ICollection<CardModel>> GetAllCardsAsync()
+        public async Task<ICollection<Card>> GetAllCardsAsync()
         {
             string url = "https://db.ygoprodeck.com/api/v7/cardinfo.php";
             var ygoClient = new HttpClient() { BaseAddress = new Uri(url) };
@@ -21,7 +21,7 @@ namespace YGOCardSearch.DataProviders
                 if (request.IsSuccessStatusCode)
                 {
                     var content = await request.Content.ReadAsStringAsync();
-                    var model = JsonSerializer.Deserialize<CardModel>(content, new JsonSerializerOptions());
+                    var model = JsonSerializer.Deserialize<Card>(content, new JsonSerializerOptions());
                     Console.WriteLine("Cards found: " + model.Data.Count);
                     var data = model.Data;
 
@@ -38,7 +38,7 @@ namespace YGOCardSearch.DataProviders
             }
 
         }
-        public async Task<CardModel> GetCardAsync(int id)
+        public async Task<Card> GetCardAsync(int id)
         {
             string url = "http://db.ygoprodeck.com/api/v7/cardinfo.php?id=" + id.ToString();
             var ygoClient= new HttpClient() { BaseAddress = new Uri(url) };
@@ -48,7 +48,7 @@ namespace YGOCardSearch.DataProviders
                 if (request.IsSuccessStatusCode)
                 {
                     var content = await request.Content.ReadAsStringAsync();
-                    var model = JsonSerializer.Deserialize<CardModel>(content, new JsonSerializerOptions());
+                    var model = JsonSerializer.Deserialize<Card>(content, new JsonSerializerOptions());
                     Console.Write("Card found");
                     var data = model.Data[0];
 
@@ -66,7 +66,7 @@ namespace YGOCardSearch.DataProviders
                 
             }
         }
-        async Task<ICollection<CardModel>> ICardsProvider.GetSearchAsync(string search)
+        async Task<ICollection<Card>> ICardsProvider.GetSearchAsync(string search)
         {
             string url = "https://db.ygoprodeck.com/api/v7/cardinfo.php?fname=" + search;
             var ygoClient = new HttpClient() { BaseAddress = new Uri(url) };
@@ -77,7 +77,7 @@ namespace YGOCardSearch.DataProviders
                 if (request.IsSuccessStatusCode)
                 {
                     var content = await request.Content.ReadAsStringAsync();
-                    var model = JsonSerializer.Deserialize<CardModel>(content, new JsonSerializerOptions());
+                    var model = JsonSerializer.Deserialize<Card>(content, new JsonSerializerOptions());
                     Console.WriteLine("Cards found: " + model.Data.Count);
                     var data = model.Data;
 
@@ -94,7 +94,7 @@ namespace YGOCardSearch.DataProviders
             }
 
         }
-        public async Task<CardModel> GetRandomCardAsync() 
+        public async Task<Card> GetRandomCardAsync() 
         {
             
             string url = "https://db.ygoprodeck.com/api/v7/randomcard.php" ;
@@ -105,7 +105,7 @@ namespace YGOCardSearch.DataProviders
                 if (request.IsSuccessStatusCode)
                 {
                     var content = await request.Content.ReadAsStringAsync();
-                    var model = JsonSerializer.Deserialize<CardModel>(content, new JsonSerializerOptions());
+                    var model = JsonSerializer.Deserialize<Card>(content, new JsonSerializerOptions());
                     Console.WriteLine("Cards found: " + model.Data.Count);
                     var data = model.Data[0];
 
@@ -130,12 +130,12 @@ namespace YGOCardSearch.DataProviders
             if (request.IsSuccessStatusCode)
             {
                 var content = await request.Content.ReadAsStringAsync();
-                var model = JsonSerializer.Deserialize<CardModel>(content, new JsonSerializerOptions());
+                var model = JsonSerializer.Deserialize<Card>(content, new JsonSerializerOptions());
                 Console.WriteLine("Cards found: " + model.Data.Count);
                 var idList = new List<string>();
                 foreach (var card in model.Data)
                 {
-                    idList.Add(card.CardID.ToString());
+                    idList.Add(card.CardId.ToString());
                 }
                 return idList;
             }

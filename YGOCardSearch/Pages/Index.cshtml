@@ -46,7 +46,7 @@
                     <tr>
                         <td>
                             <div class="inner">
-                                <a asp-page="CardViewer" asp-route-id="@card.CardID">
+                                <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
                                     <img src="@card.CardImages[0].ImageUrlSmall" />
                                 </a>
                             </div>
@@ -62,7 +62,7 @@
                         <td>
                             <a class="btn btn-link"
                                asp-page="CardViewer"
-                               asp-route-id="@card.CardID">
+                               asp-route-id="@card.KonamiCardId">
                                 Ver detalles...
                             </a>
                         <td>

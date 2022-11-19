@@ -9,7 +9,7 @@ namespace YGOCardSearch.Interfaces
     {
         // Load all decks
         // Load one deck from file
-        public Task<DeckModel> GetDeck(string path);
+        public Task<Deck> GetDeck(string path);
         
     }
 }
