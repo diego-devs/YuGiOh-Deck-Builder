@@ -27,8 +27,8 @@
         {
             
                 <span class="inner">
-                    <a asp-page="CardViewer" asp-route-id="@card.CardID">
-                        <img class ="inner" src=@card.CardImages[0].ImageUrlSmall>
+                    <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
+                        <img class ="inner" src="@card.CardImages.First().ImageLocalUrlSmall">
                     </a>
                 </span>
             
@@ -42,8 +42,8 @@
         {
             
                 <span class="inner">
-                    <a asp-page="CardViewer" asp-route-id="@card.CardID">
-                        <img class ="inner" src=@card.CardImages[0].ImageUrlSmall>
+                    <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
+                        <img class ="inner" src="@card.CardImages[0].ImageUrlSmall">
                     </a>
                 </span>
             
@@ -55,8 +55,8 @@
         {
             
                 <span class="inner">
-                    <a asp-page="CardViewer" asp-route-id="@card.CardID">
-                        <img class ="inner" src=@card.CardImages[0].ImageUrlSmall>
+                    <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
+                        <img class ="inner" src="@card.CardImages[0].ImageUrlSmall">
                     </a>
                 </span>
             

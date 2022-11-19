@@ -12,7 +12,7 @@ namespace YGOCardSearch.Pages
     public class CardViewerModel : PageModel
     {
         public ICardsProvider CardsProvider;
-        public CardModel Card { get; set; }
+        public Card Card { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public string Search {get; set;} 

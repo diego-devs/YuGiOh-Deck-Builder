@@ -15,10 +15,14 @@ namespace YGOCardSearch.Data
         {
 
         }
-        public DbSet<CardModel> Cards { get; set; }
-        public DbSet<PriceModel> CardPrices { get; set; }
-        public DbSet<SetModel> CardSets { get; set; }
-        public DbSet<CardImage> CardImages { get; set; }
+        public DbSet<Card> Cards { get; set; }
+        public DbSet<Price> Prices { get; set; }
+        public DbSet<CardSet> CardSets { get; set; }
+        public DbSet<Deck> Decks { get; set; }
+        public DbSet<Image> Images { get; set; }
+        public DbSet<SetInfo> SetsInfo { get; set; }
+        public DbSet<BanlistInfo> CardsBanlist { get; set; }
+        public DbSet<MiscInfo> MiscInfos { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)     
         {

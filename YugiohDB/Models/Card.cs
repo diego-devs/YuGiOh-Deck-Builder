@@ -2,20 +2,22 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 namespace YugiohDB.Models
-{ 
-    public partial class Card
+{
+    [Table("Cards")]
+    public class Card
     {
         // key just for testing.Delete this as foreign key in SQL and delete this property
         [Key]
-        [JsonPropertyName("InternalCardID")]
-        public int InternalCardID {get;set;}
+        [JsonPropertyName("card_id")]
+        public int CardId { get; set; }
 
         [JsonPropertyName("id")]
-        public int CardId { get; set; }
+        public int KonamiCardId { get; set; }
 
         [JsonPropertyName("name")]
         public string Name { get; set; }
@@ -27,13 +29,13 @@ namespace YugiohDB.Models
         public string Desc { get; set; }
 
         [JsonPropertyName("atk")]
-        public long Atk { get; set; }
+        public int? Atk { get; set; }
 
         [JsonPropertyName("def")]
-        public long Def { get; set; }
+        public int? Def { get; set; }
 
         [JsonPropertyName("level")]
-        public long Level { get; set; }
+        public int Level { get; set; }
 
         [JsonPropertyName("race")]
         public string Race { get; set; }
@@ -48,8 +50,9 @@ namespace YugiohDB.Models
         public int Scale { get; set; }
         [JsonPropertyName("linkval")]
         public int LinkVal { get; set; }
-        [JsonPropertyName("linkmarkers")]
-        public List<string> LinkMarkers { get; set; }
+
+        [JsonPropertyName("banlist_info")]
+        public BanlistInfo BanlistInfo { get; set; }
 
         [JsonPropertyName("card_sets")]
         public List<CardSet> CardSets { get; set; }
@@ -59,6 +62,9 @@ namespace YugiohDB.Models
 
         [JsonPropertyName("card_prices")]
         public List<Price> CardPrices { get; set; }
+
+        [JsonPropertyName("misc_info")]
+        public List<MiscInfo> MiscInfo { get; set; }
 
         [JsonPropertyName("data")]
         public List<Card> Data { get; set; }
