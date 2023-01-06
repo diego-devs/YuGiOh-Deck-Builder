@@ -1,32 +1,37 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\d_dia\\source\\repos\\YuGiOhTCG\\YugiohDB\\YugiohDB.csproj": {}
+    "C:\\Users\\PC Gamer\\source\\repos\\YuGiOhTCG\\YugiohDB\\YugiohDB.csproj": {}
   },
   "projects": {
-    "C:\\Users\\d_dia\\source\\repos\\YuGiOhTCG\\YugiohDB\\YugiohDB.csproj": {
+    "C:\\Users\\PC Gamer\\source\\repos\\YuGiOhTCG\\YugiohDB\\YugiohDB.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\d_dia\\source\\repos\\YuGiOhTCG\\YugiohDB\\YugiohDB.csproj",
+        "projectUniqueName": "C:\\Users\\PC Gamer\\source\\repos\\YuGiOhTCG\\YugiohDB\\YugiohDB.csproj",
         "projectName": "YugiohDB",
-        "projectPath": "C:\\Users\\d_dia\\source\\repos\\YuGiOhTCG\\YugiohDB\\YugiohDB.csproj",
-        "packagesPath": "C:\\Users\\d_dia\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\d_dia\\source\\repos\\YuGiOhTCG\\YugiohDB\\obj\\",
+        "projectPath": "C:\\Users\\PC Gamer\\source\\repos\\YuGiOhTCG\\YugiohDB\\YugiohDB.csproj",
+        "packagesPath": "C:\\Users\\PC Gamer\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\PC Gamer\\source\\repos\\YuGiOhTCG\\YugiohDB\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\d_dia\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\PC Gamer\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
-          "net6.0"
+          "net7.0"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net6.0": {
-            "targetAlias": "net6.0",
+          "net7.0": {
+            "targetAlias": "net7.0",
             "projectReferences": {}
           }
         },
@@ -37,18 +42,22 @@
         }
       },
       "frameworks": {
-        "net6.0": {
-          "targetAlias": "net6.0",
+        "net7.0": {
+          "targetAlias": "net7.0",
           "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[7.0.1, )"
+            },
             "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",
-              "version": "[6.0.8, )"
+              "version": "[7.0.1, )"
             },
             "Microsoft.EntityFrameworkCore.Tools": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
-              "version": "[6.0.6, )"
+              "version": "[7.0.1, )"
             },
             "Microsoft.EntityFrameworkCore.Tools.DotNet": {
               "target": "Package",
@@ -71,7 +80,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.101\\RuntimeIdentifierGraph.json"
         }
       }
     }
