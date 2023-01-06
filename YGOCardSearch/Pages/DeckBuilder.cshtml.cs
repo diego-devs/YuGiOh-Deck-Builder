@@ -35,7 +35,7 @@ namespace YGOCardSearch.Pages
             Deck = new Deck();
             //  Load a local deck file.
             //  This should be automated.
-            string path = @"C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\Data\Decks\deck1.ydk";
+            string path = @"C:\Users\PC Gamer\source\repos\YuGiOhTCG\YGOCardSearch\Data\Decks\deck1.ydk";
             LoadedDecks.Add(LoadDeck(path));
             Deck = LoadedDecks.First();
 
@@ -55,7 +55,7 @@ namespace YGOCardSearch.Pages
            
             // Carga todas las cartas de un json
             // Esto eventualmente tendria que estar en un archivo de configuracion
-            var allCardsPath = @"C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\Data\allCards.txt";
+            var allCardsPath = @"C:\Users\PC Gamer\source\repos\YuGiOhTCG\YGOCardSearch\Data\allCards.txt";
             var jsonCards = System.IO.File.ReadAllText(allCardsPath);
             var AllCards = JsonSerializer.Deserialize<List<Card>>(jsonCards);
             return AllCards;
@@ -96,7 +96,7 @@ namespace YGOCardSearch.Pages
         ///</summary>
         public Deck LoadDeck(string path)
         {
-            foreach (string file in Directory.EnumerateFiles(@"C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\Data\Decks", " *.ydk"))
+            foreach (string file in Directory.EnumerateFiles(@"C:\Users\PC Gamer\source\repos\YuGiOhTCG\YGOCardSearch\Data\Decks", " *.ydk"))
             {
                 string contents = System.IO.File.ReadAllText(file);
             }

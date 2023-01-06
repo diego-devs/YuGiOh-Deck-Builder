@@ -37,7 +37,7 @@ namespace YGOCardSearch.Pages
         public static int GenerateRandomIdAsync()
         {
             var CardIdList = JsonSerializer.Deserialize<List<int>>
-                (System.IO.File.ReadAllText(@"C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\Data\ids.txt"));
+                (System.IO.File.ReadAllText(@"C:\Users\PC Gamer\source\repos\YuGiOhTCG\YGOCardSearch\Data\ids.txt"));
             
             Random random = new Random();
             int randomId = CardIdList[random.Next(0, CardIdList.Count)];

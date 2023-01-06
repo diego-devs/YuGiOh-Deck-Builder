@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -15,10 +16,10 @@ namespace YGOCardSearch.Data.Models
         // key just for testing.Delete this as foreign key in SQL and delete this property
         [Key]
         [JsonPropertyName("card_id")]
-        public int CardId { get; set; }
+        public int? CardId { get; set; }
 
         [JsonPropertyName("id")]
-        public int KonamiCardId { get; set; }
+        public int? KonamiCardId { get; set; }
 
         [JsonPropertyName("name")]
         public string Name { get; set; }
@@ -36,7 +37,9 @@ namespace YGOCardSearch.Data.Models
         public int? Def { get; set; }
 
         [JsonPropertyName("level")]
-        public int Level { get; set; }
+        [AllowNull]
+        [MaybeNull]
+        public int? Level { get; set; }
 
         [JsonPropertyName("race")]
         public string Race { get; set; }
@@ -48,9 +51,11 @@ namespace YGOCardSearch.Data.Models
         public string Archetype { get; set; }
 
         [JsonPropertyName("scale")]
-        public int Scale { get; set; }
+        [AllowNull]
+        public int? Scale { get; set; }
         [JsonPropertyName("linkval")]
-        public int LinkVal { get; set; }
+        [AllowNull]
+        public int? LinkVal { get; set; }
 
         [JsonPropertyName("banlist_info")]
         public BanlistInfo BanlistInfo { get; set; }

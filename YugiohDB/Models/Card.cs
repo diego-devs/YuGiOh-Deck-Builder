@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -14,10 +15,10 @@ namespace YugiohDB.Models
         // key just for testing.Delete this as foreign key in SQL and delete this property
         [Key]
         [JsonPropertyName("card_id")]
-        public int CardId { get; set; }
+        public int? CardId { get; set; }
 
         [JsonPropertyName("id")]
-        public int KonamiCardId { get; set; }
+        public int? KonamiCardId { get; set; }
 
         [JsonPropertyName("name")]
         public string Name { get; set; }
@@ -35,7 +36,8 @@ namespace YugiohDB.Models
         public int? Def { get; set; }
 
         [JsonPropertyName("level")]
-        public int Level { get; set; }
+        [MaybeNull]
+        public int? Level { get; set; }
 
         [JsonPropertyName("race")]
         public string Race { get; set; }
@@ -47,9 +49,9 @@ namespace YugiohDB.Models
         public string Archetype { get; set; }
 
         [JsonPropertyName("scale")]
-        public int Scale { get; set; }
+        public int? Scale { get; set; }
         [JsonPropertyName("linkval")]
-        public int LinkVal { get; set; }
+        public int? LinkVal { get; set; }
 
         [JsonPropertyName("banlist_info")]
         public BanlistInfo BanlistInfo { get; set; }

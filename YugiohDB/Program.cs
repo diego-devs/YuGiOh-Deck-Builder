@@ -17,23 +17,37 @@ namespace YugiohDB
         private const string AppVersion = "v0.1";
         static async Task Main(string[] args)
         {
-            // search cards
-            await MainApplication();
-            
-
-            // This should go to a web config ??
-            var path = @"C:/Users/d_dia/source/repos/YuGiOhTCG/YGOCardSearch/Data/allCards.txt";
-            //var LocalImagesPath = @"C:/Users/d_dia/source/repos/YuGiOhTCG/YGOCardSearch/Data/images";
-
-            //var allCards = YgoProDeckTools.ReadAllCards(path); // Get all cards from .txt file
-            //YgoProDeckTools.MapImages(allCards, LocalImagesPath); // Map images to correct path in local machine
-            //YgoProDeckTools.SaveCards(allCards, path); // Save modified cards to local folder
-            //Console.WriteLine("Finished.");
+            // Main Console app for consulting cards. Comment code to test the YgoProDeckTools
+            //await MainApplication();
 
 
-            // Currently all cards already added o YgoDB in local SQL instance
-            //Add all cards to database
-            //await YgoProDeckTools.AddAllCards(path);
+            // Change this path to your local machine path. This should go to a web config ?
+            var dataPath = @"C:/Users/PC Gamer/source/repos/YuGiOhTCG/YGOCardSearch/Data";
+            var allCardsPath = @"C:/Users/PC Gamer/source/repos/YuGiOhTCG/YGOCardSearch/Data/allCards.json";
+            var imagesLocalPath = @"C:/Users/d_dia/source/repos/YuGiOhTCG/YGOCardSearch/Data/images";
+
+            // Download and save all cards from API
+            //var allcards = await YGOProvider.GetAllCardsAsync();
+
+            //YgoProDeckTools.SaveCards(allcards, allCardsPath);
+      
+
+            // Load all cards from json file
+            //List<Card> allCards = YgoProDeckTools.ReadAllCards(allCardsPath);
+
+            //Download all images and images small first
+            //await YgoProDeckTools.DownloadCardImages(allCards, "small");
+
+            // Map images to correct path in local machine
+            //YgoProDeckTools.MapImages(allCards, imagesLocalPath);
+
+            // Save and overwrite modified cards to local folder
+            //YgoProDeckTools.SaveCards(allCards, allCardsPath); 
+            //Console.WriteLine("All cards and images have been downloaded and mapped to local. ");
+
+
+            // Add all cards to database
+            //await YgoProDeckTools.AddAllCards(allCardsPath);
         }
         private static async Task MainApplication()
         {
