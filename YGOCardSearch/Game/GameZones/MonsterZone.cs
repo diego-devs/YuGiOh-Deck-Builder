@@ -17,7 +17,10 @@ namespace YGOCardSearch.Game.GameZones
             {
                 System.Console.WriteLine("monster slot ocupied");
             }
-            
+        }
+        public void SendToGraveyard(Card card)
+        {
+
         }
     }
 }
