@@ -1,15 +1,13 @@
 ﻿@page
 @model YGOCardSearch.Pages.DeckBuilder
 
+
 <select class="form-select" aria-label="deck-select">
     <option selected>Selecciona un deck</option>
     <option value="1">One</option>
     <option value="2">Two</option>
     <option value="3">Three</option>
-    @foreach (var deck in Model.LoadedDecks)
-    {
-        
-    }
+    
 </select>
 
 @{
@@ -22,17 +20,34 @@
         <div>
             <h1 class="text text-black-50 text-center">Extra Deck [@Model.Deck.MainDeck.Count]</h1>
         </div>
-
-        foreach (var card in Model.Deck.MainDeck)
+        try
         {
-            
+            foreach (var card in Model.Deck.MainDeck)
+            {
+
                 <span class="inner">
                     <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
-                        <img class ="inner" src="@card.CardImages.First().ImageLocalUrlSmall">
+                        @{
+                            if (card.CardImages != null)
+                            {
+                                <img class="inner" src="@card.CardImages.First().ImageLocalUrlSmall">
+                            }
+                            else
+                            {
+                                <label>no image found for card @card.KonamiCardId</label>
+                            }
+                        }
+                        
                     </a>
                 </span>
-            
+
+            }
         }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+        
 
         <div>
             <h1 class="text text-black-50 text-center">Extra Deck [@Model.Deck.ExtraDeck.Count]</h1>

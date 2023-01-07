@@ -46,7 +46,8 @@ namespace YugiohDB.Models
         public string Attribute { get; set; }
 
         [JsonPropertyName("archetype")]
-        public string Archetype { get; set; }
+        [MaybeNull]
+        public string? Archetype { get; set; }
 
         [JsonPropertyName("scale")]
         public int? Scale { get; set; }
@@ -69,6 +70,7 @@ namespace YugiohDB.Models
         public List<MiscInfo> MiscInfo { get; set; }
 
         [JsonPropertyName("data")]
+        [MaybeNull]
         public List<Card> Data { get; set; }
     }
 

@@ -21,5 +21,7 @@ namespace YugiohDB.Models
         public string Amazon { get; set; }
         [JsonPropertyName("coolstuffinc_price")]
         public string CoolStuffInc { get; set; }
+        [JsonPropertyName("card_id")]
+        public int CardId { get; set; }
     }
 }
