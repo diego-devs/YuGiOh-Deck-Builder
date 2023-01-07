@@ -18,7 +18,7 @@ namespace YugiohDB
 {
     public class YgoProDeckTools
     {
-
+        public readonly YgoContext Context;
         public static async Task DownloadCardImages(List<Card> cards, string largeOrSmall)
         {
             if (largeOrSmall == "small")
@@ -240,5 +240,6 @@ namespace YugiohDB
             }
             Console.WriteLine($"All cards linked to local images at {LocalImagesPath}");
         }
+        
     }
 }

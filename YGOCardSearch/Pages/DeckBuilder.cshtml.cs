@@ -28,6 +28,7 @@ namespace YGOCardSearch.Pages
         public DeckBuilder(YgoContext db)
         {
             // Good place to initialize data
+            // Also we need to map correctly the images, sets and prices from all the cards using linq: 
             this.Context = db;
             LoadedDecks = new List<Deck>();
             this.AllCards = new List<Card>(Context.Cards);
@@ -49,16 +50,6 @@ namespace YGOCardSearch.Pages
             
             return Page();
 
-        }
-        public List<Card> LoadAllCardsFromJSON() 
-        {
-           
-            // Carga todas las cartas de un json
-            // Esto eventualmente tendria que estar en un archivo de configuracion
-            var allCardsPath = @"C:\Users\PC Gamer\source\repos\YuGiOhTCG\YGOCardSearch\Data\allCards.txt";
-            var jsonCards = System.IO.File.ReadAllText(allCardsPath);
-            var AllCards = JsonSerializer.Deserialize<List<Card>>(jsonCards);
-            return AllCards;
         }
         /// <summary>
         /// Revisa si el deck tiene ning�n error, lo corrige y regresa el deck.

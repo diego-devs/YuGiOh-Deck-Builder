@@ -21,5 +21,7 @@ namespace YugiohDB.Models
         public string RarityCode { get; set; }
         [JsonPropertyName("set_price")]
         public string Price { get; set; }
+        [JsonPropertyName("card_id")]
+        public int CardId { get; set; }
     }
 }

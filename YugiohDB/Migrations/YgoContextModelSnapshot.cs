@@ -52,12 +52,12 @@ namespace YugiohDB.Migrations
 
             modelBuilder.Entity("YugiohDB.Models.Card", b =>
                 {
-                    b.Property<int>("CardId")
+                    b.Property<int?>("CardId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("Relational:JsonPropertyName", "card_id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CardId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("CardId"));
 
                     b.Property<string>("Archetype")
                         .HasColumnType("nvarchar(max)")
@@ -94,15 +94,15 @@ namespace YugiohDB.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasAnnotation("Relational:JsonPropertyName", "desc");
 
-                    b.Property<int>("KonamiCardId")
+                    b.Property<int?>("KonamiCardId")
                         .HasColumnType("int")
                         .HasAnnotation("Relational:JsonPropertyName", "id");
 
-                    b.Property<int>("Level")
+                    b.Property<int?>("Level")
                         .HasColumnType("int")
                         .HasAnnotation("Relational:JsonPropertyName", "level");
 
-                    b.Property<int>("LinkVal")
+                    b.Property<int?>("LinkVal")
                         .HasColumnType("int")
                         .HasAnnotation("Relational:JsonPropertyName", "linkval");
 
@@ -114,7 +114,7 @@ namespace YugiohDB.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasAnnotation("Relational:JsonPropertyName", "race");
 
-                    b.Property<int>("Scale")
+                    b.Property<int?>("Scale")
                         .HasColumnType("int")
                         .HasAnnotation("Relational:JsonPropertyName", "scale");
 

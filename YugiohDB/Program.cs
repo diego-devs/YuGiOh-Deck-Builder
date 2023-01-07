@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
@@ -12,11 +13,14 @@ using YugiohDB.Models;
 
 namespace YugiohDB
 {
-    class Program
+    public class Program
     {
+        public YgoContext Context;
         private const string AppVersion = "v0.1";
-        static async Task Main(string[] args)
+        public static async Task Main(string[] args)
         {
+            LinkData();
+            
             // Main Console app for consulting cards. Comment code to test the YgoProDeckTools
             //await MainApplication();
 
@@ -24,13 +28,16 @@ namespace YugiohDB
             // Change this path to your local machine path. This should go to a web config ?
             var dataPath = @"C:/Users/PC Gamer/source/repos/YuGiOhTCG/YGOCardSearch/Data";
             var allCardsPath = @"C:/Users/PC Gamer/source/repos/YuGiOhTCG/YGOCardSearch/Data/allCards.json";
-            var imagesLocalPath = @"C:/Users/d_dia/source/repos/YuGiOhTCG/YGOCardSearch/Data/images";
+            var imagesLocalPath = @"C:/Users/PC Gamer/source/repos/YuGiOhTCG/YGOCardSearch/Data/images";
+
+
+            // Use this  Main Method to download images and map the correct paths. 
 
             // Download and save all cards from API
             //var allcards = await YGOProvider.GetAllCardsAsync();
 
             //YgoProDeckTools.SaveCards(allcards, allCardsPath);
-      
+
 
             // Load all cards from json file
             //List<Card> allCards = YgoProDeckTools.ReadAllCards(allCardsPath);
@@ -39,6 +46,7 @@ namespace YugiohDB
             //await YgoProDeckTools.DownloadCardImages(allCards, "small");
 
             // Map images to correct path in local machine
+            //var allCards = YgoProDeckTools.ReadAllCards(allCardsPath);
             //YgoProDeckTools.MapImages(allCards, imagesLocalPath);
 
             // Save and overwrite modified cards to local folder
@@ -48,6 +56,8 @@ namespace YugiohDB
 
             // Add all cards to database
             //await YgoProDeckTools.AddAllCards(allCardsPath);
+
+            
         }
         private static async Task MainApplication()
         {
@@ -101,6 +111,27 @@ namespace YugiohDB
         {
             Console.WriteLine("See ya!");
             Environment.Exit(0);
+        }
+        public static void LinkData()
+        {
+            using (var context = new YgoContext())
+            {
+                var AllCards = new List<Card>(context.Cards);
+                var AllImages = new List<Image>(context.Images);
+                var AllSets = new List<CardSet>(context.CardSets);
+                var AllPrices = new List<Price>(context.Prices);
+
+                foreach (var Card in AllCards)
+                {
+                    Card.CardImages = new List<Image>(AllImages.Where(c => c.CardImageId == Card.KonamiCardId)) { };
+                    Card.CardSets = new List<CardSet>(AllSets.Where(c => c.CardId == Card.CardId));
+                    Card.CardPrices = new List<Price>(AllPrices.Where(c => c.CardId == Card.CardId));
+
+                }
+                context.Cards.UpdateRange(AllCards);
+                context.SaveChanges();
+               
+            }
         }
     }
     
