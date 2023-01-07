@@ -10,7 +10,7 @@ namespace YGOCardSearch.Game.GameZones
         {
 
         }
-        public static void AddCard(Card card, List<Card> deck)
+        public static void AddCard(Card card)
         {
             Hand.Add(card);
         }
