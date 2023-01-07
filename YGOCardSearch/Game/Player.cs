@@ -3,7 +3,7 @@ using YGOCardSearch.Game.GameZones;
 
 namespace YGOCardSearch.Game
 {
-    public class Player
+    public class Player : IDuelist
     {
         public static Deck Deck { get; set; }
         public GameField GameField { get; set; }
@@ -15,7 +15,7 @@ namespace YGOCardSearch.Game
         public DeckZone DeckZone { get; set; }
         public ExtraDeckZone ExtraDeckZone { get; set; }
 
-        public static void Draw()
+        public void Draw()
         {
             var c = DeckZone.DrawCard();
             HandZone.AddCard(c);
