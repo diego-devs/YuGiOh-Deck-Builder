@@ -19,12 +19,19 @@ namespace YugiohDB
     public class YgoProDeckTools
     {
         public readonly YgoContext Context;
-        public static async Task DownloadCardImages(List<Card> cards, string largeOrSmall)
+        /// <summary>
+        /// Downloads all card images to local folder. Select the size and location for the images to be downloaded.
+        /// </summary>
+        /// <param name="cards"></param>
+        /// <param name="imgSize">Use "small", "large" or "cropped"</param>
+        /// <returns></returns>
+        public static async Task DownloadImagesAsync(List<Card> cards, string imgSize)
         {
-            if (largeOrSmall == "small")
+            
+            if (imgSize == "small")
             {
                 string localFolder = "C:/Users/PC Gamer/source/repos/YuGiOhTCG/YGOCardSearch/data/images/small"; // This should be changed in prod
-                
+
                 using (HttpClient client = new HttpClient())
                 {
                     var count = 0;
@@ -32,10 +39,10 @@ namespace YugiohDB
                     {
                         if (card.CardImages != null)
                         {
-                            
-                            
+
+
                             // Large images
-                            foreach (Image img in card.CardImages)
+                            foreach (CardImages img in card.CardImages)
                             {
                                 var imageUrl = img.ImageUrlSmall;
 
@@ -49,7 +56,7 @@ namespace YugiohDB
                                 {
                                     await contentStream.CopyToAsync(fileStream);
                                 }
-                                
+
                                 //Log
                                 Console.WriteLine($"{count++} File {imageUrl} downloaded in {localPath}");
                             }
@@ -61,8 +68,7 @@ namespace YugiohDB
                 }
                 Console.WriteLine($"Completed. {cards.Count} images downloaded to local.");
             }
-
-            else if (largeOrSmall == "large")
+            else if (imgSize == "large")
             {
                 string localFolder = "C:/Users/PC Gamer/source/repos/YuGiOhTCG/YGOCardSearch/data/images"; // This should be changed in prod
 
@@ -74,7 +80,7 @@ namespace YugiohDB
                         {
                             var count = 0;
                             // Large images
-                            foreach (Image img in card.CardImages)
+                            foreach (CardImages img in card.CardImages)
                             {
                                 var imageUrl = img.ImageUrl;
 
@@ -100,49 +106,54 @@ namespace YugiohDB
                 }
                 Console.WriteLine($"Completed. {cards.Count} images downloaded to local.");
             }
-        }
-            
-
-        // Downloads all images from cards to local (large and small images)
-        public static void _DownloadAllImages(List<Card> AllCards)
-        {
-            string path = "C:/Users/PC Gamer/source/repos/YuGiOhTCG/YGOCardSearch/data/images/"; // This should be changed in prod
-            WebClient client = new WebClient();
-            
-            foreach (Card card in AllCards)
+            else if (imgSize == "cropped")
             {
-                if (card.CardImages != null)
+                string localFolder = "C:/Users/PC Gamer/source/repos/YuGiOhTCG/YGOCardSearch/data/images/cropped"; // This should be changed in prod
+
+                using (HttpClient client = new HttpClient())
                 {
-                    var count = 0;
-                    // download all large images
-                    foreach (Image img in card.CardImages)
+                    foreach (Card card in cards)
                     {
-                        var url = img.ImageUrl;
-                        
-                        client.DownloadFile(new Uri(url), $"{path}" + $"{card.CardId}.jpg");
+                        if (card.CardImages != null)
+                        {
+                            var count = 0;
+                            // Large images
+                            foreach (CardImages img in card.CardImages)
+                            {
+                                var imageUrl = img.ImageUrlCropped;
 
-                        //Log
-                        Console.WriteLine($"{count++} File {url} downloaded in {path} {card.CardId}.jpg");
-                    }
-                    Console.WriteLine("---- All large images have been downloaded. Now to download all small images...");
-                    count = 0;
-                    // download all small images
-                    foreach (Image img in card.CardImages)
-                    {
-                        var url = img.ImageUrlSmall;
 
-                        client.DownloadFile(new Uri(url), $"{path}/small" + $"{card.CardId}.jpg");
+                                string fileName = $"{card.KonamiCardId}.jpg";
+                                string localPath = Path.Combine(localFolder, fileName);
 
-                        //Log
-                        Console.WriteLine($"{count++} File {url} downloaded in {path} {card.CardId}.jpg");
+                                using (HttpResponseMessage response = await client.GetAsync(imageUrl))
+                                using (Stream contentStream = await response.Content.ReadAsStreamAsync())
+                                using (FileStream fileStream = new FileStream(localPath, FileMode.Create))
+                                {
+                                    await contentStream.CopyToAsync(fileStream);
+                                }
+
+                                //Log
+                                Console.WriteLine($"{count++} File {imageUrl} downloaded in {localPath}");
+                            }
+                            
+
+
+                        }
                     }
                 }
+                Console.WriteLine($"Completed. {cards.Count} images downloaded to local.");
             }
-            Console.WriteLine($"Completed. {AllCards.Count} images downloaded to local.");
+            else
+            {
+                Console.WriteLine("Wrong img size parameter. Use small, large or cropped");
+            }
         }
-        
-        // Downloads only one card image
-        public static async Task DownloadImage(Card card)
+        /// <summary>
+        /// Downloads only one card image
+        /// </summary>
+        /// <param name="AllCards"></param>
+        public static async Task DownloadImageAsync(Card card)
         {
             string path = "C:/Users/d_dia/source/repos/YuGiOhTCG/YGOCardSearch/data/images/"; // This should be changed in prod
             
@@ -234,12 +245,24 @@ namespace YugiohDB
                     {
                         img.ImageLocalUrl = LocalImagesPath + $"/{img.CardImageId}.jpg";
                         img.ImageLocalUrlSmall = LocalImagesPath + $"/small/{img.CardImageId}.jpg";
+                        img.ImageLocalUrlCropped = LocalImagesPath + $"/cropped/{img.CardImageId}.jpg";
                     }
                 }
+               
                
             }
             Console.WriteLine($"All cards linked to local images at {LocalImagesPath}");
         }
-        
+        public static void MapBanlistInfo(List<Card> cards, List<BanlistInfo> banlist)
+        {
+            foreach (var bl in banlist)
+            {
+                var card = cards.FirstOrDefault(c => c.KonamiCardId == bl.CardId);
+                card.BanlistInfo = bl;
+
+            }
+                    
+            
+        }
     }
 }

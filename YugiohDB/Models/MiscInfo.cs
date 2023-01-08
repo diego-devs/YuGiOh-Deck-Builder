@@ -9,12 +9,14 @@ using System.Threading.Tasks;
 
 namespace YugiohDB.Models
 {
-    [Table("MiscInformation")]
+    [Table("CardMiscInformation")]
     public class MiscInfo
 	{
         [Key]
         [JsonPropertyName("miscinfo_id")]
         public int MiscId { get; set; }
+        [JsonPropertyName("card_id")]
+        public int CardId { get; set; }
         [JsonPropertyName("beta_name")]
         public string BetaName { get; set; }
         [JsonPropertyName("views")]
@@ -32,8 +34,7 @@ namespace YugiohDB.Models
         public string TcgDate { get; set; }
         [JsonPropertyName("ocg_date")]
         public string OcgDate { get; set; }
-        [JsonPropertyName("konami_id")]
-        public int KonamiId { get; set; }
+        
         [JsonPropertyName("has_effect")]
         public int HasEffect { get; set; }
 
