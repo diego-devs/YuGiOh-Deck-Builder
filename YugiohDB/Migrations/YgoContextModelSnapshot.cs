@@ -24,12 +24,12 @@ namespace YugiohDB.Migrations
 
             modelBuilder.Entity("YugiohDB.Models.BanlistInfo", b =>
                 {
-                    b.Property<int>("Banlist_Id")
+                    b.Property<int>("BanlistId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("Relational:JsonPropertyName", "banlistinfo_id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Banlist_Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BanlistId"));
 
                     b.Property<string>("Ban_GOAT")
                         .HasColumnType("nvarchar(max)")
@@ -43,7 +43,14 @@ namespace YugiohDB.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasAnnotation("Relational:JsonPropertyName", "ban_tcg");
 
-                    b.HasKey("Banlist_Id");
+                    b.Property<int>("CardId")
+                        .HasColumnType("int")
+                        .HasAnnotation("Relational:JsonPropertyName", "card_id");
+
+                    b.HasKey("BanlistId");
+
+                    b.HasIndex("CardId")
+                        .IsUnique();
 
                     b.ToTable("BanlistInfo");
 
@@ -52,12 +59,12 @@ namespace YugiohDB.Migrations
 
             modelBuilder.Entity("YugiohDB.Models.Card", b =>
                 {
-                    b.Property<int?>("CardId")
+                    b.Property<int>("CardId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("Relational:JsonPropertyName", "card_id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("CardId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CardId"));
 
                     b.Property<string>("Archetype")
                         .HasColumnType("nvarchar(max)")
@@ -70,9 +77,6 @@ namespace YugiohDB.Migrations
                     b.Property<string>("Attribute")
                         .HasColumnType("nvarchar(max)")
                         .HasAnnotation("Relational:JsonPropertyName", "attribute");
-
-                    b.Property<int?>("BanlistInfoBanlist_Id")
-                        .HasColumnType("int");
 
                     b.Property<int?>("CardId1")
                         .HasColumnType("int");
@@ -94,7 +98,7 @@ namespace YugiohDB.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasAnnotation("Relational:JsonPropertyName", "desc");
 
-                    b.Property<int?>("KonamiCardId")
+                    b.Property<int>("KonamiCardId")
                         .HasColumnType("int")
                         .HasAnnotation("Relational:JsonPropertyName", "id");
 
@@ -124,8 +128,6 @@ namespace YugiohDB.Migrations
 
                     b.HasKey("CardId");
 
-                    b.HasIndex("BanlistInfoBanlist_Id");
-
                     b.HasIndex("CardId1");
 
                     b.HasIndex("DeckId");
@@ -139,6 +141,97 @@ namespace YugiohDB.Migrations
                     b.HasAnnotation("Relational:JsonPropertyName", "data");
                 });
 
+            modelBuilder.Entity("YugiohDB.Models.CardImages", b =>
+                {
+                    b.Property<int>("ImageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("Relational:JsonPropertyName", "image_id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ImageId"));
+
+                    b.Property<int?>("CardId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CardImageId")
+                        .HasColumnType("int")
+                        .HasAnnotation("Relational:JsonPropertyName", "id");
+
+                    b.Property<string>("ImageLocalUrl")
+                        .HasColumnType("nvarchar(max)")
+                        .HasAnnotation("Relational:JsonPropertyName", "ImageLocalUrl");
+
+                    b.Property<string>("ImageLocalUrlCropped")
+                        .HasColumnType("nvarchar(max)")
+                        .HasAnnotation("Relational:JsonPropertyName", "ImageLocalUrlCroppped");
+
+                    b.Property<string>("ImageLocalUrlSmall")
+                        .HasColumnType("nvarchar(max)")
+                        .HasAnnotation("Relational:JsonPropertyName", "ImageLocalUrlSmall");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)")
+                        .HasAnnotation("Relational:JsonPropertyName", "image_url");
+
+                    b.Property<string>("ImageUrlCropped")
+                        .HasColumnType("nvarchar(max)")
+                        .HasAnnotation("Relational:JsonPropertyName", "image_url_croppped");
+
+                    b.Property<string>("ImageUrlSmall")
+                        .HasColumnType("nvarchar(max)")
+                        .HasAnnotation("Relational:JsonPropertyName", "image_url_small");
+
+                    b.HasKey("ImageId");
+
+                    b.HasIndex("CardId");
+
+                    b.ToTable("Images");
+
+                    b.HasAnnotation("Relational:JsonPropertyName", "card_images");
+                });
+
+            modelBuilder.Entity("YugiohDB.Models.CardPrices", b =>
+                {
+                    b.Property<int>("PriceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("Relational:JsonPropertyName", "price_id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PriceId"));
+
+                    b.Property<string>("Amazon")
+                        .HasColumnType("nvarchar(max)")
+                        .HasAnnotation("Relational:JsonPropertyName", "amazon_price");
+
+                    b.Property<int>("CardId")
+                        .HasColumnType("int")
+                        .HasAnnotation("Relational:JsonPropertyName", "card_id");
+
+                    b.Property<string>("CardMarket")
+                        .HasColumnType("nvarchar(max)")
+                        .HasAnnotation("Relational:JsonPropertyName", "cardmarket_price");
+
+                    b.Property<string>("CoolStuffInc")
+                        .HasColumnType("nvarchar(max)")
+                        .HasAnnotation("Relational:JsonPropertyName", "coolstuffinc_price");
+
+                    b.Property<string>("Ebay")
+                        .HasColumnType("nvarchar(max)")
+                        .HasAnnotation("Relational:JsonPropertyName", "ebay_price");
+
+                    b.Property<string>("TcgPlayer")
+                        .HasColumnType("nvarchar(max)")
+                        .HasAnnotation("Relational:JsonPropertyName", "tcgplayer_price");
+
+                    b.HasKey("PriceId");
+
+                    b.HasIndex("CardId");
+
+                    b.ToTable("CardPrices");
+
+                    b.HasAnnotation("Relational:JsonPropertyName", "card_prices");
+                });
+
             modelBuilder.Entity("YugiohDB.Models.CardSet", b =>
                 {
                     b.Property<int>("CardSetId")
@@ -148,8 +241,9 @@ namespace YugiohDB.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CardSetId"));
 
-                    b.Property<int?>("CardId")
-                        .HasColumnType("int");
+                    b.Property<int>("CardId")
+                        .HasColumnType("int")
+                        .HasAnnotation("Relational:JsonPropertyName", "card_id");
 
                     b.Property<string>("Code")
                         .HasColumnType("nvarchar(max)")
@@ -198,47 +292,6 @@ namespace YugiohDB.Migrations
                     b.ToTable("Decks");
                 });
 
-            modelBuilder.Entity("YugiohDB.Models.Image", b =>
-                {
-                    b.Property<int>("ImageId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("Relational:JsonPropertyName", "image_id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ImageId"));
-
-                    b.Property<int?>("CardId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CardImageId")
-                        .HasColumnType("int")
-                        .HasAnnotation("Relational:JsonPropertyName", "id");
-
-                    b.Property<string>("ImageLocalUrl")
-                        .HasColumnType("nvarchar(max)")
-                        .HasAnnotation("Relational:JsonPropertyName", "ImageLocalUrl");
-
-                    b.Property<string>("ImageLocalUrlSmall")
-                        .HasColumnType("nvarchar(max)")
-                        .HasAnnotation("Relational:JsonPropertyName", "ImageLocalUrlSmall");
-
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("nvarchar(max)")
-                        .HasAnnotation("Relational:JsonPropertyName", "image_url");
-
-                    b.Property<string>("ImageUrlSmall")
-                        .HasColumnType("nvarchar(max)")
-                        .HasAnnotation("Relational:JsonPropertyName", "image_url_small");
-
-                    b.HasKey("ImageId");
-
-                    b.HasIndex("CardId");
-
-                    b.ToTable("Images");
-
-                    b.HasAnnotation("Relational:JsonPropertyName", "card_images");
-                });
-
             modelBuilder.Entity("YugiohDB.Models.MiscInfo", b =>
                 {
                     b.Property<int>("MiscId")
@@ -252,8 +305,9 @@ namespace YugiohDB.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasAnnotation("Relational:JsonPropertyName", "beta_name");
 
-                    b.Property<int?>("CardId")
-                        .HasColumnType("int");
+                    b.Property<int>("CardId")
+                        .HasColumnType("int")
+                        .HasAnnotation("Relational:JsonPropertyName", "card_id");
 
                     b.Property<int>("DownVotes")
                         .HasColumnType("int")
@@ -262,10 +316,6 @@ namespace YugiohDB.Migrations
                     b.Property<int>("HasEffect")
                         .HasColumnType("int")
                         .HasAnnotation("Relational:JsonPropertyName", "has_effect");
-
-                    b.Property<int>("KonamiId")
-                        .HasColumnType("int")
-                        .HasAnnotation("Relational:JsonPropertyName", "konami_id");
 
                     b.Property<string>("OcgDate")
                         .HasColumnType("nvarchar(max)")
@@ -295,50 +345,9 @@ namespace YugiohDB.Migrations
 
                     b.HasIndex("CardId");
 
-                    b.ToTable("MiscInformation");
+                    b.ToTable("CardMiscInformation");
 
                     b.HasAnnotation("Relational:JsonPropertyName", "misc_info");
-                });
-
-            modelBuilder.Entity("YugiohDB.Models.Price", b =>
-                {
-                    b.Property<int>("PriceId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("Relational:JsonPropertyName", "price_id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PriceId"));
-
-                    b.Property<string>("Amazon")
-                        .HasColumnType("nvarchar(max)")
-                        .HasAnnotation("Relational:JsonPropertyName", "amazon_price");
-
-                    b.Property<int?>("CardId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CardMarket")
-                        .HasColumnType("nvarchar(max)")
-                        .HasAnnotation("Relational:JsonPropertyName", "cardmarket_price");
-
-                    b.Property<string>("CoolStuffInc")
-                        .HasColumnType("nvarchar(max)")
-                        .HasAnnotation("Relational:JsonPropertyName", "coolstuffinc_price");
-
-                    b.Property<string>("Ebay")
-                        .HasColumnType("nvarchar(max)")
-                        .HasAnnotation("Relational:JsonPropertyName", "ebay_price");
-
-                    b.Property<string>("TcgPlayer")
-                        .HasColumnType("nvarchar(max)")
-                        .HasAnnotation("Relational:JsonPropertyName", "tcgplayer_price");
-
-                    b.HasKey("PriceId");
-
-                    b.HasIndex("CardId");
-
-                    b.ToTable("Prices");
-
-                    b.HasAnnotation("Relational:JsonPropertyName", "card_prices");
                 });
 
             modelBuilder.Entity("YugiohDB.Models.SetInfo", b =>
@@ -371,12 +380,17 @@ namespace YugiohDB.Migrations
                     b.ToTable("SetInformation");
                 });
 
+            modelBuilder.Entity("YugiohDB.Models.BanlistInfo", b =>
+                {
+                    b.HasOne("YugiohDB.Models.Card", null)
+                        .WithOne("BanlistInfo")
+                        .HasForeignKey("YugiohDB.Models.BanlistInfo", "CardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("YugiohDB.Models.Card", b =>
                 {
-                    b.HasOne("YugiohDB.Models.BanlistInfo", "BanlistInfo")
-                        .WithMany()
-                        .HasForeignKey("BanlistInfoBanlist_Id");
-
                     b.HasOne("YugiohDB.Models.Card", null)
                         .WithMany("Data")
                         .HasForeignKey("CardId1");
@@ -392,40 +406,46 @@ namespace YugiohDB.Migrations
                     b.HasOne("YugiohDB.Models.Deck", null)
                         .WithMany("SideDeck")
                         .HasForeignKey("DeckId2");
-
-                    b.Navigation("BanlistInfo");
                 });
 
-            modelBuilder.Entity("YugiohDB.Models.CardSet", b =>
-                {
-                    b.HasOne("YugiohDB.Models.Card", null)
-                        .WithMany("CardSets")
-                        .HasForeignKey("CardId");
-                });
-
-            modelBuilder.Entity("YugiohDB.Models.Image", b =>
+            modelBuilder.Entity("YugiohDB.Models.CardImages", b =>
                 {
                     b.HasOne("YugiohDB.Models.Card", null)
                         .WithMany("CardImages")
                         .HasForeignKey("CardId");
                 });
 
+            modelBuilder.Entity("YugiohDB.Models.CardPrices", b =>
+                {
+                    b.HasOne("YugiohDB.Models.Card", null)
+                        .WithMany("CardPrices")
+                        .HasForeignKey("CardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("YugiohDB.Models.CardSet", b =>
+                {
+                    b.HasOne("YugiohDB.Models.Card", null)
+                        .WithMany("CardSets")
+                        .HasForeignKey("CardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("YugiohDB.Models.MiscInfo", b =>
                 {
                     b.HasOne("YugiohDB.Models.Card", null)
                         .WithMany("MiscInfo")
-                        .HasForeignKey("CardId");
-                });
-
-            modelBuilder.Entity("YugiohDB.Models.Price", b =>
-                {
-                    b.HasOne("YugiohDB.Models.Card", null)
-                        .WithMany("CardPrices")
-                        .HasForeignKey("CardId");
+                        .HasForeignKey("CardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("YugiohDB.Models.Card", b =>
                 {
+                    b.Navigation("BanlistInfo");
+
                     b.Navigation("CardImages");
 
                     b.Navigation("CardPrices");

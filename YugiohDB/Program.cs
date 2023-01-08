@@ -19,45 +19,56 @@ namespace YugiohDB
         private const string AppVersion = "v0.1";
         public static async Task Main(string[] args)
         {
-            LinkData();
-            
             // Main Console app for consulting cards. Comment code to test the YgoProDeckTools
             //await MainApplication();
 
 
             // Change this path to your local machine path. This should go to a web config ?
-            var dataPath = @"C:/Users/PC Gamer/source/repos/YuGiOhTCG/YGOCardSearch/Data";
-            var allCardsPath = @"C:/Users/PC Gamer/source/repos/YuGiOhTCG/YGOCardSearch/Data/allCards.json";
+            
+            var cardsLocalPath = @"C:/Users/PC Gamer/source/repos/YuGiOhTCG/YGOCardSearch/Data/allCards.json";
             var imagesLocalPath = @"C:/Users/PC Gamer/source/repos/YuGiOhTCG/YGOCardSearch/Data/images";
 
 
-            // Use this  Main Method to download images and map the correct paths. 
+            // Use this  Main Method to download images and map the correct paths as you need or to test functionality. 
+            // LinkData();
 
             // Download and save all cards from API
             //var allcards = await YGOProvider.GetAllCardsAsync();
-
-            //YgoProDeckTools.SaveCards(allcards, allCardsPath);
+            //YgoProDeckTools.SaveCards(allcards, cardsLocalPath);
 
 
             // Load all cards from json file
-            //List<Card> allCards = YgoProDeckTools.ReadAllCards(allCardsPath);
+            //List<Card> localCards = YgoProDeckTools.ReadAllCards(cardsLocalPath);
 
             //Download all images and images small first
+            //await YgoProDeckTools.DownloadImagesAsync(localCards, "cropped");
             //await YgoProDeckTools.DownloadCardImages(allCards, "small");
+            //await YgoProDeckTools.DownloadCardImages(allCards, ""
 
             // Map images to correct path in local machine
             //var allCards = YgoProDeckTools.ReadAllCards(allCardsPath);
-            //YgoProDeckTools.MapImages(allCards, imagesLocalPath);
+            //YgoProDeckTools.MapImages(localCards, imagesLocalPath);
+
+            //YgoProDeckTools.SaveCards(localCards, cardsLocalPath);
+
+
+
+
+
+
+            // Map banlist info
+            //var banlists = await YGOProvider.GetAllBanlistAsync();
+            //YgoProDeckTools.MapBanlistInfo(localCards, banlists);
 
             // Save and overwrite modified cards to local folder
-            //YgoProDeckTools.SaveCards(allCards, allCardsPath); 
+            //YgoProDeckTools.SaveCards(localCards, cardsLocalPath); 
             //Console.WriteLine("All cards and images have been downloaded and mapped to local. ");
 
 
             // Add all cards to database
-            //await YgoProDeckTools.AddAllCards(allCardsPath);
+            await YgoProDeckTools.AddAllCards(cardsLocalPath);
 
-            
+
         }
         private static async Task MainApplication()
         {
@@ -112,20 +123,24 @@ namespace YugiohDB
             Console.WriteLine("See ya!");
             Environment.Exit(0);
         }
+        /// <summary>
+        /// For mapping correctly the database to a EF object. Database is not all related. 
+        /// Maybe this should run only when loading the database and only once. Singleton pattern? 
+        /// </summary>
         public static void LinkData()
         {
             using (var context = new YgoContext())
             {
                 var AllCards = new List<Card>(context.Cards);
-                var AllImages = new List<Image>(context.Images);
+                var AllImages = new List<CardImages>(context.Images);
                 var AllSets = new List<CardSet>(context.CardSets);
-                var AllPrices = new List<Price>(context.Prices);
+                var AllPrices = new List<CardPrices>(context.Prices);
 
                 foreach (var Card in AllCards)
                 {
-                    Card.CardImages = new List<Image>(AllImages.Where(c => c.CardImageId == Card.KonamiCardId)) { };
+                    Card.CardImages = new List<CardImages>(AllImages.Where(c => c.CardImageId == Card.KonamiCardId)) { };
                     Card.CardSets = new List<CardSet>(AllSets.Where(c => c.CardId == Card.CardId));
-                    Card.CardPrices = new List<Price>(AllPrices.Where(c => c.CardId == Card.CardId));
+                    Card.CardPrices = new List<CardPrices>(AllPrices.Where(c => c.CardId == Card.CardId));
 
                 }
                 context.Cards.UpdateRange(AllCards);

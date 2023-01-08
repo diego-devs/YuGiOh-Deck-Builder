@@ -15,10 +15,10 @@ namespace YugiohDB.Models
         // key just for testing.Delete this as foreign key in SQL and delete this property
         [Key]
         [JsonPropertyName("card_id")]
-        public int? CardId { get; set; }
+        public int CardId { get; set; }
 
         [JsonPropertyName("id")]
-        public int? KonamiCardId { get; set; }
+        public int KonamiCardId { get; set; }
 
         [JsonPropertyName("name")]
         public string Name { get; set; }
@@ -61,10 +61,10 @@ namespace YugiohDB.Models
         public List<CardSet> CardSets { get; set; }
 
         [JsonPropertyName("card_images")]
-        public List<Image> CardImages { get; set; }
+        public List<CardImages> CardImages { get; set; }
 
         [JsonPropertyName("card_prices")]
-        public List<Price> CardPrices { get; set; }
+        public List<CardPrices> CardPrices { get; set; }
 
         [JsonPropertyName("misc_info")]
         public List<MiscInfo> MiscInfo { get; set; }
