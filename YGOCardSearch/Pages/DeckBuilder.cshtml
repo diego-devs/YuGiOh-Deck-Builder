@@ -10,71 +10,90 @@
     
 </select>
 
-@{
-    if (Model.Deck.MainDeck != null)
-    {      
+
         <h1 class="text text-black-50 text-center">
             Deck @Model.Deck.DeckName
         </h1>
 
+        
+        
         <div>
-            <h1 class="text text-black-50 text-center">Extra Deck [@Model.Deck.MainDeck.Count]</h1>
-        </div>
-        try
-        {
-            foreach (var card in Model.Deck.MainDeck)
+            <div>
+                <h1 class="text text-black-50 text-center">Main Deck [@Model.Deck.MainDeck.Count]</h1>
+            </div>
+            <div class="DeckBuilder_DeckCards_Container">
+            @foreach (var card in Model.Deck.MainDeck)
             {
+                string c = card.KonamiCardId.ToString() + ".jpg";
 
                 <span class="inner">
-                    <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
-                        @{
-                            if (card.CardImages != null)
-                            {
-                                <img class="inner" src="@card.CardImages.First().ImageLocalUrlSmall">
-                            }
-                            else
-                            {
-                                <label>no image found for card @card.KonamiCardId</label>
-                            }
-                        }
-                        
+                <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
+                <img class="inner" src="images/small/@c" alt="">
                     </a>
                 </span>
 
             }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e.Message);
-        }
+            </div>
+
+            <div class="DeckBuilder_DeckCards_Container">
+            <div>
+                <h1 class="text text-black-50 text-center">Extra Deck [@Model.Deck.ExtraDeck.Count]</h1>
+            </div>
+
+            @foreach (var card in Model.Deck.ExtraDeck)
+            {
+                string c = card.KonamiCardId.ToString() + ".jpg";
+                    <span class="inner">
+                        <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
+                <img class="inner" src="images/small/@c">
+                        </a>
+                    </span>
+            
+            }
+            </div>
+            <div class="DeckBuilder_DeckCards_Container">
+            <div>
+                <h1 class="text text-black-50 text-center">Side Deck [@Model.Deck.SideDeck.Count]</h1>
+            </div>
+            @foreach (var card in Model.Deck.SideDeck)
+            {
+                string c = card.KonamiCardId.ToString() + ".jpg";
+                    <span class="inner">
+                        <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
+                <img class="inner" src="images/small/@c">
+                        </a>
+                    </span>
+            
+            }
+            </div>
+            
+        </div>
+
+        <div class="DeckBuilder_CardSearch_Container">
+            <form>
+                <input type="text" name="search" placeholder="Search...">
+                <button type="submit">Go</button>
+            </form>
+        </div>
+
+        <div class="DeckBuilder_CardsListDetails">\
+            <table>
+                <tr>Nombre</tr>
+                <th></th>
+            </table>
+            @foreach (var card in Model.Deck.MainDeck)
+            {
+                <th>@card.Name</th>
+            }
+            @foreach (var card in Model.Deck.ExtraDeck)
+            {
+                <th>@card.Name</th>
+            }
+            @foreach (var card in Model.Deck.SideDeck)
+            {
+                <th>@card.Name</th>
+            }
+        </div>
         
-
-        <div>
-            <h1 class="text text-black-50 text-center">Extra Deck [@Model.Deck.ExtraDeck.Count]</h1>
-        </div>
-
-        foreach (var card in Model.Deck.ExtraDeck)
-        {
-            
-                <span class="inner">
-                    <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
-                        <img class ="inner" src="@card.CardImages[0].ImageUrlSmall">
-                    </a>
-                </span>
-            
-        }
-         <div>
-            <h1 class="text text-black-50 text-center">Side Deck [@Model.Deck.SideDeck.Count]</h1>
-        </div>
-        foreach (var card in Model.Deck.SideDeck)
-        {
-            
-                <span class="inner">
-                    <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
-                        <img class ="inner" src="@card.CardImages[0].ImageUrlSmall">
-                    </a>
-                </span>
-            
-        }
-    }
+    
 }

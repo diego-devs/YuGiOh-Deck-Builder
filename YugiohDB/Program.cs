@@ -66,7 +66,7 @@ namespace YugiohDB
 
 
             // Add all cards to database
-            await YgoProDeckTools.AddAllCards(cardsLocalPath);
+            //await YgoProDeckTools.AddAllCards(cardsLocalPath);
 
 
         }

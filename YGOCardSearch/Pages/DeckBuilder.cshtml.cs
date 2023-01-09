@@ -28,23 +28,47 @@ namespace YGOCardSearch.Pages
         public DeckBuilder(YgoContext db)
         {
             // Good place to initialize data
-            // Also we need to map correctly the images, sets and prices from all the cards using linq: 
+
+            // Load the Database from the Context class
             this.Context = db;
-            LoadedDecks = new List<Deck>();
+            
             this.AllCards = new List<Card>(Context.Cards);
+            
+            
+            //foreach (var card in AllCards)
+            //{
+             //   card.CardImages = new List<CardImages>(AllImages.Where(i => i.CardImageId == card.KonamiCardId));
+             //   card.CardSets = new List<CardSet>(AllSets.Where(s => s.CardId== card.CardId));
+             //   card.CardPrices = new List<CardPrices>(AllPrices.Where(p => p.CardId == card.CardId));
+            //}
+
             // LoadAllDecks();
+            LoadedDecks = new List<Deck>();
             Deck = new Deck();
-            //  Load a local deck file.
-            //  This should be automated.
             string path = @"C:\Users\PC Gamer\source\repos\YuGiOhTCG\YGOCardSearch\Data\Decks\deck1.ydk";
             LoadedDecks.Add(LoadDeck(path));
-            Deck = LoadedDecks.First();
+            Deck = LoadedDecks.First(); // make selection with dropdrown menu 
 
-            
+            // PrepareDeck
+            foreach (var card in Deck.MainDeck)
+            {
+                card.CardImages = new List<CardImages>(Context.CardImages.Where(i => i.CardImageId == card.KonamiCardId));
+                card.CardSets = new List<CardSet>(Context.CardSets.Where(s => s.CardId == card.CardId));
+                card.CardPrices = new List<CardPrices>(Context.CardPrices.Where(p => p.CardId == card.CardId));
+            }
         }
+        
+        void UpdateImagesProperty(List<Card> cardList, CardImages propValue)
+        {
+            if (cardList.Count == 0)
+                return;
 
-        
-        
+            // change the property of the current object
+            cardList[0].GetType().GetProperty("CardImages").SetValue(cardList[0], propValue);
+
+            // call the function again with the tail of the list
+            UpdateImagesProperty(cardList.Skip(1).ToList(), propValue);
+        }
         public async Task<IActionResult> OnGet()
         {
             
@@ -109,9 +133,9 @@ namespace YGOCardSearch.Pages
             var cleanedSide = CleanDeck(sideDeckResult);
             
             // Obtener todas las cartas de las listas de Ids a listas de cartas
-            var mainDeck = new List<Card>(getCards(cleanedMain));
-            var extraDeck = new List<Card>(getCards(cleanedExtra));
-            var sideDeck = new List<Card>(getCards(cleanedSide));
+            var mainDeck = new List<Card>(getCardList(cleanedMain));
+            var extraDeck = new List<Card>(getCardList(cleanedExtra));
+            var sideDeck = new List<Card>(getCardList(cleanedSide));
 
             // Finalmente crear el deck retornado
             var newDeck = new Deck();
@@ -124,11 +148,11 @@ namespace YGOCardSearch.Pages
         }
         
         /// <summary>
-        /// Regresa lista de CardModel a partir de una lista de CardId, buscando en YgoDB.
+        /// Regresa lista de CardModel a partir de una lista de CardIdKonami, buscando en YgoDB.
         /// </summary>
         /// <param name="cardList"></param>
         /// <returns></returns>
-        public List<Card> getCards(List<string> cardList) 
+        public List<Card> getCardList(List<string> cardList) 
         {
                 var cards = new List<Card>();
                 foreach (var cardId in cardList)
@@ -143,6 +167,9 @@ namespace YGOCardSearch.Pages
  
             return cards;
         }
-        
+        public Deck PrepareDeck(Deck deck)
+        {
+            return null; 
+        }
     }
 }
