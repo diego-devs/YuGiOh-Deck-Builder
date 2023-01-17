@@ -1,9 +1,6 @@
 C:\Users\PC Gamer\source\repos\YuGiOhTCG\YGOCardSearch\bin\Debug\net7.0\appsettings.Development.json
 C:\Users\PC Gamer\source\repos\YuGiOhTCG\YGOCardSearch\bin\Debug\net7.0\appsettings.json
-<<<<<<< HEAD
 C:\Users\PC Gamer\source\repos\YuGiOhTCG\YGOCardSearch\bin\Debug\net7.0\Data\allCards.json
-=======
->>>>>>> b53ab80b77eb191560761aaee0098e72a40d49af
 C:\Users\PC Gamer\source\repos\YuGiOhTCG\YGOCardSearch\bin\Debug\net7.0\YGOCardSearch.staticwebassets.runtime.json
 C:\Users\PC Gamer\source\repos\YuGiOhTCG\YGOCardSearch\bin\Debug\net7.0\YGOCardSearch.exe
 C:\Users\PC Gamer\source\repos\YuGiOhTCG\YGOCardSearch\bin\Debug\net7.0\YGOCardSearch.deps.json
