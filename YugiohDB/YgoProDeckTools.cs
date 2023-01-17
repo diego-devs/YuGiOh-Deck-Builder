@@ -149,10 +149,7 @@ namespace YugiohDB
                 Console.WriteLine("Wrong img size parameter. Use small, large or cropped");
             }
         }
-        /// <summary>
-        /// Downloads only one card image
-        /// </summary>
-        /// <param name="AllCards"></param>
+        /// Deprecated
         public static async Task DownloadImageAsync(Card card)
         {
             string path = "C:/Users/d_dia/source/repos/YuGiOhTCG/YGOCardSearch/data/images/"; // This should be changed in prod

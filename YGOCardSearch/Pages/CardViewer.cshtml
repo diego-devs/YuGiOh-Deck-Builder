@@ -2,13 +2,30 @@
 @model YGOCardSearch.Pages.CardViewerModel
 @{
     ViewData["Title"] = "CardViewer";
+    var Image = Model.Card.KonamiCardId.ToString() + ".jpg";
 }
+<style>
+    .bg-image {
+    /* The image used */
+    background-image: url("photographer.jpg");
+    /* Add the blur effect */
+    filter: blur(8px);
+    -webkit-filter: blur(8px);
+    /* Full height */
+    height: 100%;
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+</style>
 
-
+<div class="bg-image"></div>
 <div class="card mb-3" style="max-width: auto;">
     <div class="row no-gutters">
         <div class="col-md-4">  
-            <div class="inner"><img src="@Model.Card.CardImages[0].ImageUrl" class="card-img" alt="imagehere"></div>
+            @*src="~/images/cropped/@Model.Card.CardImages[0].Url -> for API calls"*@
+            <div class="inner"><img src="~/images/@Image" class="card-img" alt="imagehere"></div>
                 
         </div>
         <div class="col-md-8">
