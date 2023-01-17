@@ -1,4 +1,5 @@
 ﻿@page
+<<<<<<< HEAD
 @using YGOCardSearch.Data.Models;
 @model YGOCardSearch.Pages.DeckBuilder
 @{
@@ -8,6 +9,9 @@
         <a asp-page="/HandTesting" asp-route-deck="@Model.Deck">
             Hand Testing
         </a>
+=======
+@model YGOCardSearch.Pages.DeckBuilder
+>>>>>>> b53ab80b77eb191560761aaee0098e72a40d49af
 
 
 <select class="form-select" aria-label="deck-select">
@@ -15,9 +19,21 @@
     <option value="1">One</option>
     <option value="2">Two</option>
     <option value="3">Three</option>
+<<<<<<< HEAD
 
 </select>
 
+=======
+    
+</select>
+
+
+        <h1 class="text text-black-50 text-center">
+            Deck @Model.Deck.DeckName
+        </h1>
+
+        
+>>>>>>> b53ab80b77eb191560761aaee0098e72a40d49af
         
         <div>
             <div>
@@ -28,7 +44,11 @@
             {
                 string c = card.KonamiCardId.ToString() + ".jpg";
 
+<<<<<<< HEAD
                 <span class="inner deckView">
+=======
+                <span class="inner">
+>>>>>>> b53ab80b77eb191560761aaee0098e72a40d49af
                 <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
                 <img class="inner" src="images/small/@c" alt="">
                     </a>
@@ -45,7 +65,11 @@
             @foreach (var card in Model.Deck.ExtraDeck)
             {
                 string c = card.KonamiCardId.ToString() + ".jpg";
+<<<<<<< HEAD
                     <span class="inner deckView">
+=======
+                    <span class="inner">
+>>>>>>> b53ab80b77eb191560761aaee0098e72a40d49af
                         <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
                 <img class="inner" src="images/small/@c">
                         </a>
@@ -60,7 +84,11 @@
             @foreach (var card in Model.Deck.SideDeck)
             {
                 string c = card.KonamiCardId.ToString() + ".jpg";
+<<<<<<< HEAD
                     <span class="inner deckView">
+=======
+                    <span class="inner">
+>>>>>>> b53ab80b77eb191560761aaee0098e72a40d49af
                         <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
                 <img class="inner" src="images/small/@c">
                         </a>
