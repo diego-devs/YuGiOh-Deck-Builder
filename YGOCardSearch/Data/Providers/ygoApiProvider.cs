@@ -143,8 +143,6 @@ namespace YGOCardSearch.DataProviders
             {
                 return null;
             }
-        }
-
-        
+        }        
     }
 }
