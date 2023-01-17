@@ -121,9 +121,6 @@ namespace YGOCardSearch.DataProviders
                 throw new Exception(message: "ërror");
             }
         }
-<<<<<<< HEAD
-        
-=======
         public async Task<List<string>> GetAllCardsIdsAsync() 
         {
             string url = "https://db.ygoprodeck.com/api/v7/cardinfo.php?";
@@ -146,9 +143,6 @@ namespace YGOCardSearch.DataProviders
             {
                 return null;
             }
-        }
->>>>>>> b53ab80b77eb191560761aaee0098e72a40d49af
-
-        
+        }        
     }
 }

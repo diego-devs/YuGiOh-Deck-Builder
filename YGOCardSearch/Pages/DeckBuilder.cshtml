@@ -1,39 +1,27 @@
 ﻿@page
-<<<<<<< HEAD
 @using YGOCardSearch.Data.Models;
 @model YGOCardSearch.Pages.DeckBuilder
 @{
-    //var deck = Model.Deck;
+    var deck = Model.Deck;
 }
 
-        <a asp-page="/HandTesting" asp-route-deck="@Model.Deck">
-            Hand Testing
-        </a>
-=======
-@model YGOCardSearch.Pages.DeckBuilder
->>>>>>> b53ab80b77eb191560761aaee0098e72a40d49af
-
+<a asp-page="/HandTesting" asp-route-deck="@Model.Deck">
+    Hand Testing
+</a>
 
 <select class="form-select" aria-label="deck-select">
     <option selected>Selecciona un deck</option>
     <option value="1">One</option>
     <option value="2">Two</option>
     <option value="3">Three</option>
-<<<<<<< HEAD
 
 </select>
 
-=======
-    
-</select>
 
 
         <h1 class="text text-black-50 text-center">
             Deck @Model.Deck.DeckName
         </h1>
-
-        
->>>>>>> b53ab80b77eb191560761aaee0098e72a40d49af
         
         <div>
             <div>
@@ -43,12 +31,7 @@
             @foreach (var card in Model.Deck.MainDeck)
             {
                 string c = card.KonamiCardId.ToString() + ".jpg";
-
-<<<<<<< HEAD
                 <span class="inner deckView">
-=======
-                <span class="inner">
->>>>>>> b53ab80b77eb191560761aaee0098e72a40d49af
                 <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
                 <img class="inner" src="images/small/@c" alt="">
                     </a>
@@ -65,11 +48,8 @@
             @foreach (var card in Model.Deck.ExtraDeck)
             {
                 string c = card.KonamiCardId.ToString() + ".jpg";
-<<<<<<< HEAD
+
                     <span class="inner deckView">
-=======
-                    <span class="inner">
->>>>>>> b53ab80b77eb191560761aaee0098e72a40d49af
                         <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
                 <img class="inner" src="images/small/@c">
                         </a>
@@ -84,11 +64,7 @@
             @foreach (var card in Model.Deck.SideDeck)
             {
                 string c = card.KonamiCardId.ToString() + ".jpg";
-<<<<<<< HEAD
                     <span class="inner deckView">
-=======
-                    <span class="inner">
->>>>>>> b53ab80b77eb191560761aaee0098e72a40d49af
                         <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
                 <img class="inner" src="images/small/@c">
                         </a>
@@ -109,8 +85,8 @@
         <div class="DeckBuilder_CardsListDetails">\
             <table>
                 <tr>Nombre</tr>
-                <th></th>
-            </table>
+                
+            
             @foreach (var card in Model.Deck.MainDeck)
             {
                 <th>@card.Name</th>
@@ -123,6 +99,7 @@
             {
                 <th>@card.Name</th>
             }
+            </table>
         </div>
         
     

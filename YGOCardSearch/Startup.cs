@@ -27,17 +27,12 @@ namespace YGOCardSearch
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-<<<<<<< HEAD
+
             
             services.AddSingleton<ICardsProvider, YgoAPIProvider>();
 
             services.AddDbContext<YgoContext>(options => options.UseSqlServer(@"Server=.\SQLEXPRESS;Database=YgoDB;Trusted_Connection=True;"));
 
-=======
-            // Dependency Injection, inyección de dependencias
-            services.AddSingleton<ICardsProvider, YgoAPIProvider>();
-            services.AddDbContext<YgoContext>(options => options.UseSqlServer(@"Server=.\SQLEXPRESS;Database=YgoDB;Trusted_Connection=True;"));
->>>>>>> b53ab80b77eb191560761aaee0098e72a40d49af
             services.AddRazorPages();
            
 
