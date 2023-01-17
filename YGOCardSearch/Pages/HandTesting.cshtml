@@ -1,0 +1,14 @@
+﻿@page
+@model YGOCardSearch.Pages.HandTestingModel
+@{
+    foreach (var card in Model.Hand)
+    {
+        string c = card.KonamiCardId.ToString() + ".jpg";
+
+        <span class="inner">
+                        <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
+                        <img class="inner" src="images/small/@c" alt="">
+                            </a>
+        </span>
+    }
+}

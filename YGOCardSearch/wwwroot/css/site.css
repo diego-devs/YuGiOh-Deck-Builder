@@ -95,6 +95,6 @@ body {
     floath: left;
     width: 75%;
 }
-.DeckBuilder_CardImages {
-    
+.deckView {
+    width: 50px;
 }
