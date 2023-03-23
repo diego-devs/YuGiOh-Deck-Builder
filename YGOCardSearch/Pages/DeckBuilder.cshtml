@@ -3,6 +3,7 @@
 @model YGOCardSearch.Pages.DeckBuilder
 @{
     var deck = Model.Deck;
+    var totalCards = Model.Deck.TotalCards;
 }
 
 <a asp-page="/HandTesting" asp-route-deck="@Model.Deck">
@@ -22,22 +23,25 @@
         <h1 class="text text-black-50 text-center">
             Deck @Model.Deck.DeckName
         </h1>
+        <textarea>
+            Total cards: 
+        </textarea>
         
         <div>
             <div>
                 <h1 class="text text-black-50 text-center">Main Deck [@Model.Deck.MainDeck.Count]</h1>
             </div>
             <div class="DeckBuilder_DeckCards_Container">
-            @foreach (var card in Model.Deck.MainDeck)
-            {
-                string c = card.KonamiCardId.ToString() + ".jpg";
-                <span class="inner deckView">
-                <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
-                <img class="inner" src="images/small/@c" alt="">
-                    </a>
-                </span>
+                @foreach (var card in Model.Deck.MainDeck)
+                {
+                    string c = card.KonamiCardId.ToString() + ".jpg";
+                    <span class="inner deckView">
+                    <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
+                    <img class="inner" src="images/small/@c" alt="">
+                        </a>
+                    </span>
 
-            }
+                }
             </div>
 
             <div class="DeckBuilder_DeckCards_Container">

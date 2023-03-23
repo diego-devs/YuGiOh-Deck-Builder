@@ -16,7 +16,9 @@ namespace YGOCardSearch.Data.Models
         public ICollection<Card> MainDeck { get; set; }
         public ICollection<Card> ExtraDeck { get; set; }
         public ICollection<Card> SideDeck { get; set; }
-
+        public int TotalCards { get { return totalCards; } 
+                                set { totalCards = MainDeck.Count + ExtraDeck.Count; } }
+        private int totalCards; 
 
 
     }
