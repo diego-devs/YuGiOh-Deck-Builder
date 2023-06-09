@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Formats.Asn1;
@@ -13,31 +14,28 @@ namespace YGOCardSearch.Pages
 
     public class HandTestingModel : PageModel
     {
-        public Deck Deck { get; set; }
-        public List<Card> MainDeck { get; set; }
-        public List<Card> Hand {get;set;}
-
-
-        public async Task<IActionResult> OnGet(Deck deck)
+        private DeckUtility deckUtility { get; set; }
+        private Deck deck { get; set; }
+        public HandTestingModel(YgoContext db, IConfiguration config)
         {
-            Deck = deck;
-            MainDeck = new List<Card>(this.Deck.MainDeck);
-            Hand = DrawCards();
-            if (Hand != null)
-            {
-                return Page();
-            }
-            return RedirectToPage("DeckBuilder");
+            deckUtility = new DeckUtility(db, config);
         }
-        public List<Card> DrawCards()
+
+        public void OnGet()
         {
-            var r = new Random();
-            var cards = new List<Card>();
-            for (int i = 0; i < 5; i++)
-            {
-                cards.Add(MainDeck[r.Next(0, MainDeck.Count)]);
-            }
-            return cards;
+            // Initialize the deck with card data
+            InitializeDeck();
+        }
+
+        // Add additional methods as needed
+
+        private void InitializeDeck()
+        {
+            // Generate and return the deck of cards. This is now only using the DeckUtility class
+            deck = this.deckUtility.Deck;
+
+            // Generate cards and add them to the deck
+            // Add logic to generate cards based on your requirements
         }
     }
 }

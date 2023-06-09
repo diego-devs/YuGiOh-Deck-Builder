@@ -27,11 +27,22 @@ namespace YGOCardSearch
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Register the configuration
+            services.AddSingleton(Configuration);
 
-            
+            // Access configuration values
+            var decksFolderPath = Configuration["Paths:DecksFolderPath"];
+            var cardIdsFilePath = Configuration["Paths:CardIdsFilePath"];
+            var connectionString = Configuration["ConnectionStrings:yugiContext"];
+
+            // Use the configuration values as needed
+            Console.WriteLine($"Decks Folder Path: {decksFolderPath}");
+            Console.WriteLine($"Card IDs File Path: {cardIdsFilePath}");
+            Console.WriteLine($"Connetion String Path: {connectionString}");
+
             services.AddSingleton<ICardsProvider, YgoAPIProvider>();
 
-            services.AddDbContext<YgoContext>(options => options.UseSqlServer(@"Server=.\SQLEXPRESS;Database=YgoDB;Trusted_Connection=True;"));
+            services.AddDbContext<YgoContext>(options => options.UseSqlServer(connectionString));
 
             services.AddRazorPages();
            

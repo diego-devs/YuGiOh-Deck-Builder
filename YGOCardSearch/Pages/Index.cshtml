@@ -7,12 +7,11 @@
         int result = Convert.ToInt32(tcgCardPrice * usdPrice);
         return result;
     }
-    
 }
 
 <div class="text-center">
-    <h1 style="text-align: center">YuGiOh! Todas las cartas</h1>
-    <h1>Busca cualquier carta del universo de YuGiOh TCG</h1>
+    <h1 style="text-align: center">Todas las cartas del universo de YuGiOh TCG</h1>
+    <h1>Busca cualquier carta por nombre</h1>
 </div>
 
 <form method="GET">
@@ -48,7 +47,8 @@
                         <td>
                             <div class="inner">
                                 <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
-                                    <img src="@card.CardImages[0].ImageUrlSmall" />
+                                    <img src="@card.CardImages.FirstOrDefault().ImageUrlSmall">
+                                    <!-- <img src="@card.CardImages[0].ImageUrlSmall" /> -->
                                 </a>
                             </div>
 
@@ -74,14 +74,14 @@
                     }
 
                 }
-                    catch
-                    {
-        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            <strong>>:O!</strong> No se encontraron cartas con ese nombre. Prueba buscando de nuevo.
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
+        catch
+        {
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>>:O!</strong> No se encontraron cartas con ese nombre. Prueba buscando de nuevo.
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
     }
 }
 
