@@ -1,5 +1,8 @@
 ﻿@page
 @model YGOCardSearch.Pages.HandTestingModel
+@{
+    var test = 100;
+}
 <head>
     <title>Draggable Cards from Deck Example</title>
     <style>
@@ -31,9 +34,11 @@
         // JavaScript code
         // JavaScript code to draw cards from the deck
         var deck = document.getElementById('deck');
+        
         var isDragging = false;
         var selectedCard = null;
         var offset = { x: 0, y: 0 };
+        var t = @test
 
         deck.addEventListener('mousedown', drawCard);
         document.addEventListener('mousemove', dragCard);
@@ -48,6 +53,7 @@
                 card.style.top = e.clientY - card.offsetHeight / 2 + 'px';
                 card.addEventListener('mousedown', selectCard);
                 card.addEventListener('mouseup', deselectCard);
+                
 
                 // Append the card to the document
                 document.body.appendChild(card);
