@@ -127,7 +127,7 @@ namespace YugiohDB
         /// For mapping correctly the database to a EF object. Database is not all related. 
         /// Maybe this should run only when loading the database and only once. Singleton pattern? 
         /// </summary>
-        public static void LinkData()
+        public static void MapCardData()
         {
             using (var context = new YgoContext())
             {

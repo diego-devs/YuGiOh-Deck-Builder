@@ -15,7 +15,7 @@ namespace YGOCardSearch.Pages
     public class HandTestingModel : PageModel
     {
         private DeckUtility deckUtility { get; set; }
-        private Deck deck { get; set; }
+        public Deck deck { get; set; }
         public HandTestingModel(YgoContext db, IConfiguration config)
         {
             deckUtility = new DeckUtility(db, config);
