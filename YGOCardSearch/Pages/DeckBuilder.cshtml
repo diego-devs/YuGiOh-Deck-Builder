@@ -1,110 +1,168 @@
 ﻿@page
 @using YGOCardSearch.Data.Models;
 @model YGOCardSearch.Pages.DeckBuilder
+
 @{
-    var deck = Model.Deck;
-    var totalCards = Model.Deck.TotalCards;
+    var TotalDeckCards = Model.Deck.ExtraDeck.Count() + Model.Deck.MainDeck.Count();
+
+    int pageSize = 10;
+    int totalPages = (int)Math.Ceiling((double)Model.SearchCards.Count / pageSize);
+    int currentPage = Request.Query.ContainsKey("page") ? Convert.ToInt32(Request.Query["page"]) : 1;
+    int startIndex = (currentPage - 1) * pageSize;
+    int endIndex = Math.Min(startIndex + pageSize - 1, Model.SearchCards.Count - 1);
 }
 
-<a asp-page="/HandTesting" asp-route-deck="@Model.Deck">
-    Hand Testing
-</a>
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Include your necessary CSS and meta tags here -->
+</head>
+<body>
 
-<select class="form-select" aria-label="deck-select">
-    <option selected>Selecciona un deck</option>
-    <option value="1">One</option>
-    <option value="2">Two</option>
-    <option value="3">Three</option>
+    
 
-</select>
+    <div class="split-section">
+        <div class="deck-section">
+            <table class="table-dark">
+                <tbody>
+                    <h1>
+                        Deck @Model.Deck.DeckName
+                    </h1>
+                    <p class="text text-light">
+                        Total cards: @TotalDeckCards
+                    </p>
+                    <a class="cool-button" asp-page="/HandTesting" asp-route-deck="@Model.Deck">
+                        Hand Testing
+                    </a>
 
+                    <div>
+                        <h1>Main Deck [@Model.Deck.MainDeck.Count]</h1>
+                    </div>
+                    <div class="DeckBuilder_DeckCards_Container">
+                        @foreach (var card in Model.Deck.MainDeck)
+                        {
+                            string c = card.KonamiCardId.ToString() + ".jpg";
+                            <span class="inner deckView">
+                                <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
+                                    <img class="inner deckCardImage" src="images/small/@c" alt="">
+                                </a>
+                            </span>
+                        }
+                    </div>
 
+                    <div class="DeckBuilder_DeckCards_Container">
+                        <div>
+                            <h1 class="text text-white text-center">Extra Deck [@Model.Deck.ExtraDeck.Count]</h1>
+                        </div>
 
-        <h1 class="text text-black-50 text-center">
-            Deck @Model.Deck.DeckName
-        </h1>
-        <textarea>
-            Total cards: 
-        </textarea>
-        
-        <div>
-            <div>
-                <h1 class="text text-black-50 text-center">Main Deck [@Model.Deck.MainDeck.Count]</h1>
-            </div>
-            <div class="DeckBuilder_DeckCards_Container">
-                @foreach (var card in Model.Deck.MainDeck)
-                {
-                    string c = card.KonamiCardId.ToString() + ".jpg";
-                    <span class="inner deckView">
-                    <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
-                    <img class="inner" src="images/small/@c" alt="">
-                        </a>
-                    </span>
+                        @foreach (var card in Model.Deck.ExtraDeck)
+                        {
+                            string c = card.KonamiCardId.ToString() + ".jpg";
+                            <span class="inner deckView">
+                                <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
+                                    <img class="inner deckCardImage" src="images/small/@c">
+                                </a>
+                            </span>
+                        }
+                    </div>
 
-                }
-            </div>
-
-            <div class="DeckBuilder_DeckCards_Container">
-            <div>
-                <h1 class="text text-black-50 text-center">Extra Deck [@Model.Deck.ExtraDeck.Count]</h1>
-            </div>
-
-            @foreach (var card in Model.Deck.ExtraDeck)
-            {
-                string c = card.KonamiCardId.ToString() + ".jpg";
-
-                    <span class="inner deckView">
-                        <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
-                <img class="inner" src="images/small/@c">
-                        </a>
-                    </span>
-            
-            }
-            </div>
-            <div class="DeckBuilder_DeckCards_Container">
-            <div>
-                <h1 class="text text-black-50 text-center">Side Deck [@Model.Deck.SideDeck.Count]</h1>
-            </div>
-            @foreach (var card in Model.Deck.SideDeck)
-            {
-                string c = card.KonamiCardId.ToString() + ".jpg";
-                    <span class="inner deckView">
-                        <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
-                <img class="inner" src="images/small/@c">
-                        </a>
-                    </span>
-            
-            }
-            </div>
-            
-        </div>
-
-        <div class="DeckBuilder_CardSearch_Container">
-            <form>
-                <input type="text" name="search" placeholder="Search...">
-                <button type="submit">Go</button>
-            </form>
-        </div>
-
-        <div class="DeckBuilder_CardsListDetails">\
-            <table>
-                <tr>Nombre</tr>
-                
-            
-            @foreach (var card in Model.Deck.MainDeck)
-            {
-                <th>@card.Name</th>
-            }
-            @foreach (var card in Model.Deck.ExtraDeck)
-            {
-                <th>@card.Name</th>
-            }
-            @foreach (var card in Model.Deck.SideDeck)
-            {
-                <th>@card.Name</th>
-            }
+                    <div class="DeckBuilder_DeckCards_Container">
+                        <div>
+                            <h1>Side Deck [@Model.Deck.SideDeck.Count]</h1>
+                        </div>
+                        @foreach (var card in Model.Deck.SideDeck)
+                        {
+                            string c = card.KonamiCardId.ToString() + ".jpg";
+                            <span class="inner deckView">
+                                <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
+                                    <img class="inner deckCardImage" src="images/small/@c">
+                                </a>
+                            </span>
+                        }
+                    </div>
+                </tbody>
             </table>
         </div>
-        
-    
-}
+        <div class="cards-section">
+            <div class="DeckBuilder_CardSearch_Container">
+                <form method="GET">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="search"
+                                   class="form-control"
+                                   asp-for="Search" />
+                            <button class="btn btn-light">Buscar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="DeckBuilder_CardsListDetails">
+                <table class="table table-dark">
+                    <tbody>
+                        @if (Model.SearchCards != null)
+                        {
+                            for (int i = startIndex; i <= endIndex; i++)
+                            {
+                                var card = Model.SearchCards[i];
+                                string c = card.KonamiCardId.ToString() + ".jpg";
+                                <tr>
+                                    <td>
+                                        <span class="inner deckView">
+                                            <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
+                                                <img src="images/small/@c" alt="">
+                                            </a>
+                                        </span>
+                                    </td>
+                                   
+                                    <td>
+                                        <h3>@card.Name</h3>
+                                        <p>@card.Desc</p>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-success add-to-deck">Add to Deck</button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+                <div class="text-center">
+                    <nav aria-label="Pagination">
+                        <ul class="pagination">
+                            @for (int pageNum = 1; pageNum <= totalPages; pageNum++)
+                            {
+                                <li class="page-item @(pageNum == currentPage ? "active" : "")">
+                                    <a class="page-link" href="?page=@pageNum">@pageNum</a>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Include your necessary JavaScript files here -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const cardViews = document.querySelectorAll(".deckView");
+            const addToDeckButtons = document.querySelectorAll(".add-to-deck");
+            const deck = @Html.Raw(Json.Serialize(Model.Deck));
+
+            addToDeckButtons.forEach(button => {
+                button.addEventListener("click", function () {
+                    const cardId = this.closest(".deckView").getAttribute("data-card-id");
+                    const cardName = this.closest(".deckView").getAttribute("data-card-name");
+                    const cardToAdd = deck.MainDeck.find(card => card.KonamiCardId === parseInt(cardId));
+                    if (cardToAdd) {
+                        deck.MainDeck.push(cardToAdd);
+                        alert(`Added card "${cardName}" to the deck.`);
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

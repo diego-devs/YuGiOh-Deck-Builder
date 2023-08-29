@@ -7,81 +7,102 @@
         int result = Convert.ToInt32(tcgCardPrice * usdPrice);
         return result;
     }
+
+    int pageSize = 10;
+    int totalPages = (int)Math.Ceiling((double)Model.Cards.Count / pageSize);
+    int currentPage = Request.Query.ContainsKey("page") ? Convert.ToInt32(Request.Query["page"]) : 1;
+    int startIndex = (currentPage - 1) * pageSize;
+    int endIndex = Math.Min(startIndex + pageSize - 1, Model.Cards.Count - 1);
 }
+<div class="allCards-container">
+
 
 <div class="text-center">
     <h1 style="text-align: center">Todas las cartas del universo de YuGiOh TCG</h1>
-    <h1>Busca cualquier carta por nombre</h1>
 </div>
 
 <form method="GET">
     <div class="form-group">
         <div class="input-group">
-            <input type="search"
-                   class="form-control"
-                   asp-for="Search" />
+            <input type="search" class="form-control search-input" asp-for="Search" />
             <button class="btn btn-light">Buscar</button>
         </div>
     </div>
 </form>
 
-@{
-    try
-    {
-        if (Model.Cards != null)
-        {     
-                foreach (var card in Model.Cards)
-                {
+@if (Model.Cards != null && Model.Cards.Any())
+{
+    <table class="table table-dark justify-content-between">
+        <thead>
+            <tr>
+                <th>Carta</th>
+                <th>Nombre</th>
+                <th>Atributo</th>
+                <th>Tipo</th>
+                <th>Descripci&oacute;n</th>
+                <th>Precios</th>
+                <th>Detalles</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = startIndex; i <= endIndex; i++)
+            {
+                var card = Model.Cards[i];
 
-                <table class="table table-dark justify-content-between">
-                    <tr>
-                        <th>Carta</th>
-                        <th>Nombre</th>
-                        <th>Atributo</th>
-                        <th>Tipo</th>
-                        <th>Descripci&oacute;n</th>
-                        <th>Precios</th>
-
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="inner">
-                                <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
-                                    <img src="@card.CardImages.FirstOrDefault().ImageUrlSmall">
-                                    <!-- <img src="@card.CardImages[0].ImageUrlSmall" /> -->
-                                </a>
-                            </div>
-
-                        </td>
-
-                        <td>@card.Name</td>
-                        <td>@card.Attribute</td>
-                        <td>@card.Type</td>
-                        <td>@card.Desc</td>
-
-                        <td>here goes the average price</td>
-                        <td>
-                            <a class="btn btn-link"
-                               asp-page="CardViewer"
-                               asp-route-id="@card.KonamiCardId">
-                                Ver detalles...
+                <tr>
+                    <td>
+                        <div class="inner">
+                            <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
+                                <img src="@card.CardImages.FirstOrDefault().ImageUrlSmall">
                             </a>
-                        <td>
-                    </tr>
-                </table>
-
+                        </div>
+                    </td>
+                    <td>@card.Name</td>
+                    <td>@card.Attribute</td>
+                    <td>@card.Type</td>
+                    <td>@card.Desc</td>
+                    <td>
+                        @{
+                            try
+                            {
+                                <p>@card.CardPrices.FirstOrDefault().Amazon.ToString()</p>
+                            }
+                            catch (Exception e)
+                            {
+                                <p>the price should go here</p>
+                            }
                         }
-                    }
+                    </td>
+                    <td>
+                        <a class="btn btn-link" asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
+                            Ver detalles
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 
+    <div class="text-center">
+        <nav aria-label="Pagination">
+            <ul class="pagination">
+                @for (int pageNum = 1; pageNum <= totalPages; pageNum++)
+                {
+                    <li class="page-item @(pageNum == currentPage ? "active" : "")">
+                        <a class="page-link" href="?page=@pageNum">@pageNum</a>
+                    </li>
                 }
-        catch
-        {
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                <strong>>:O!</strong> No se encontraron cartas con ese nombre. Prueba buscando de nuevo.
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-    }
+            </ul>
+        </nav>
+    </div>
 }
-
+else
+{
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <strong>>:O!</strong> No se encontraron cartas con ese nombre. Prueba buscando de nuevo.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
+</div>

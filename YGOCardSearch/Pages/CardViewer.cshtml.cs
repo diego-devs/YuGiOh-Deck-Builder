@@ -37,17 +37,7 @@ namespace YGOCardSearch.Pages
             }
             return RedirectToPage("Index");
         }
-        // (obsolete)
-        public int GenerateRandomId()
-        {
-            var idsFilePath = _configuration["Paths:CardIdsFilePath"];
-            var cardIdList = JsonSerializer.Deserialize<List<int>>(System.IO.File.ReadAllText(idsFilePath));
-
-            Random random = new Random();
-            int randomId = cardIdList[random.Next(0, cardIdList.Count)];
-
-            return randomId;
-        }
+        
 
     }
 }

@@ -1,103 +1,201 @@
-﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-for details on configuring this project to bundle and minify static web assets. */
-
+﻿/* Background */
 body {
-    background-color: #808080;
+    background-image: url('/images/background-image-1-small.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+.table {
+    background-color: #0b102b;
+}
+h1 {
+    font-size: 36px; /* Adjust font size as needed */
+    font-weight: bold;
+    color: #fff; /* Choose a color that matches your design */
+    margin: 20px 0; /* Adjust margin spacing as needed */
 }
 
+/* Navbar Brand */
 a.navbar-brand {
-   
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
+    white-space: normal;
+    text-align: center;
+    word-break: break-all;
 }
 
-/* Provide sufficient contrast against white background */
+/* Links */
 a {
-    color: #0366d6;
+    color: #0366d6; /* Provide sufficient contrast against white background */
 }
+
+/* Buttons */
+/* Cool Button Style */
+.cool-button {
+    display: inline-block;
+    padding: 10px 20px;
+    border: 2px solid #3498db; /* Border color */
+    background-color: #ecf0f1; /* Background color */
+    color: #3498db; /* Text color */
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+    .cool-button:hover {
+        background-color: #3498db; /* Background color on hover */
+        color: #fff; /* Text color on hover */
+    }
 
 .btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
 }
 
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+/* Navigation Pills */
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
+    color: #fff;
+    background-color: #0b102b;
+    border-color: #1861ac;
 }
 
-
-
-
-/*-------------------------------------------------- */
+/* Typography and Responsive Font Size */
 html {
     font-size: 14px;
 }
+
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
+
+/* Inner Image Animation */
 .inner {
     overflow: visible;
 }
-.inner img {
-    transition: all 0.5s ease;
-}
-.inner:hover img {
-    transform: scale(1.1);
-}
+
+    .inner img {
+        transition: all 0.5s ease;
+    }
+
+    .inner:hover img {
+        transform: scale(1.1);
+    }
+
+/* Borders */
 .border-top {
-  border-top: 1px solid #e5e5e5;
+    border-top: 1px solid #e5e5e5;
 }
+
 .border-bottom {
-  border-bottom: 1px solid #e5e5e5;
+    border-bottom: 1px solid #e5e5e5;
 }
 
+/* Box Shadow */
 .box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
 }
 
+/* Accept Policy Button */
 button.accept-policy {
-  font-size: 1rem;
-  line-height: inherit;
+    font-size: 1rem;
+    line-height: inherit;
 }
 
-/* Sticky footer styles
--------------------------------------------------- */
+/* Sticky Footer */
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  /* Margin bottom by footer height */
-  margin-bottom: 60px;
+    margin-bottom: 60px; /* Margin bottom by footer height */
 }
+
 .footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
-  line-height: 60px; /* Vertically center the text there */
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px; /* Vertically center the text there */
 }
 
-/*Deck Builder site*/
+/* Pagination */
+.pagination {
+    justify-content: center;
+}
 
+.page-item {
+    margin: 0 5px;
+}
+
+    .page-item.active .page-link {
+        background-color: #343a40; /* Dark background color */
+        border-color: #343a40; /* Dark border color */
+    }
+
+.page-link {
+    color: #343a40; /* Dark text color */
+    background-color: #ffffff; /* Light background color for non-active links */
+    border-color: #ffffff; /* Light border color for non-active links */
+}
+
+/* Deck Builder Site */
 .DeckBuilder_CardSearch_Container {
     float: right;
-    width: 25%;
+    width: 50%;
 }
+
 .DeckBuilder_DeckCards_Container {
-    floath: left;
-    width: 75%;
+    float: left;
+    width: 50%;
 }
+
 .deckView {
     width: 50px;
 }
 
-/* Card Viewer Site */
+.deckCardImage {
+    width: 25%;
+}
 
+
+
+/* Card Viewer Site */
+/* Add your Card Viewer styles here */
+
+/*Split section Deckbuilder*/
+.split-section {
+    display: flex;
+    /*align-items: flex-start;*/
+    width: 100%; /* Use the full width of the page */
+}
+
+.cards-section {
+    flex: 1;
+    width: 50%;
+    padding: 20px; /* Adjust padding as needed */
+}
+
+.deck-section {
+    flex: 1;
+    width: 50%;
+    padding: 20px; /* Adjust padding as needed */
+    background-color: #0b102b
+}
+.container {
+    max-width: 80%;
+    position: relative;
+}
+/* site.css */
+.search-input {
+    max-width: 50%;
+    margin-right: 1%;
+    margin-left: 20%;
+}
+.allCards-container {
+    position: relative;
+    width: 90%;
+}

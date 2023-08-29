@@ -23,6 +23,9 @@ namespace YGOCardSearch.Pages
         public Deck Deck { get; set; }
         // Database
         public readonly YgoContext Context;
+        [BindProperty(SupportsGet = true)]
+        public string Search { get; set; } = "blue-eyes white dragon";
+        public List<Card> SearchCards { get; set; }
 
         // Dependency injection 
         public DeckBuilder(YgoContext db, IConfiguration configuration)
@@ -41,7 +44,7 @@ namespace YGOCardSearch.Pages
             LoadedDecks.Add(LoadDeck(decksPath));
             Deck = LoadedDecks.First(); // make selection with dropdrown menu 
 
-            // PrepareDeck
+            // Prepare card infos
             foreach (var card in Deck.MainDeck)
             {
                 card.CardImages = new List<CardImages>(Context.CardImages.Where(i => i.CardImageId == card.KonamiCardId));
@@ -49,8 +52,39 @@ namespace YGOCardSearch.Pages
                 card.CardPrices = new List<CardPrices>(Context.CardPrices.Where(p => p.CardId == card.CardId));
             }
         }
-        public async Task<IActionResult> OnGet()
+        public IActionResult OnGet()
         {
+            if (!string.IsNullOrWhiteSpace(Search))
+            {
+                var results = Context.GetSearch(Search);
+                if (results != null)
+                {
+                    // Prepare card infos
+                    foreach (var card in results)
+                    {
+                        card.CardImages = new List<CardImages>(Context.CardImages.Where(i => i.CardImageId == card.KonamiCardId));
+                        card.CardSets = new List<CardSet>(Context.CardSets.Where(s => s.CardId == card.CardId));
+                        card.CardPrices = new List<CardPrices>(Context.CardPrices.Where(p => p.CardId == card.CardId));
+                    }
+                    SearchCards = new List<Card>(results);
+                    
+                }
+            }
+            else
+            {
+                var results = Context.GetSearch("dragon");
+                if (results != null)
+                {
+                    // Prepare card infos
+                    foreach (var card in results)
+                    {
+                        card.CardImages = new List<CardImages>(Context.CardImages.Where(i => i.CardImageId == card.KonamiCardId));
+                        card.CardSets = new List<CardSet>(Context.CardSets.Where(s => s.CardId == card.CardId));
+                        card.CardPrices = new List<CardPrices>(Context.CardPrices.Where(p => p.CardId == card.CardId));
+                    }
+                    SearchCards = new List<Card>(results);
+                };
+            }
             return Page();
         }
         /// <summary>
@@ -168,7 +202,12 @@ namespace YGOCardSearch.Pages
             return result;
         }
 
-        // What is this?
+        
+        /// <summary>
+        /// Recursively updates the "CardImages" property of a list of Card objects.
+        /// </summary>
+        /// <param name="cardList">The list of Card objects to update.</param>
+        /// <param name="propValue">The new value for the "CardImages" property.</param>
         void UpdateImagesProperty(List<Card> cardList, CardImages propValue)
         {
             if (cardList.Count == 0)
