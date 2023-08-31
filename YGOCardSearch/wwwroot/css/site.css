@@ -14,6 +14,9 @@ h1 {
     color: #fff; /* Choose a color that matches your design */
     margin: 20px 0; /* Adjust margin spacing as needed */
 }
+h2 {
+    color:azure;
+}
 
 /* Navbar Brand */
 a.navbar-brand {
@@ -150,12 +153,14 @@ body {
 /* Deck Builder Site */
 .DeckBuilder_CardSearch_Container {
     float: right;
-    width: 50%;
+    width: 100%;
+    max-width: 100%;
 }
 
 .DeckBuilder_DeckCards_Container {
     float: left;
-    width: 99%;
+    width: 100%;
+    max-width: 100%;
 }
 
 .deckView {
@@ -164,6 +169,13 @@ body {
 
 .deckCardImage {
     width: 20%;
+}
+
+.DeckBuilder_Container_MainDeck
+.DeckBuilder_Container_ExtraDeck
+.DeckBuilder_Container_SideDeck {
+    max-width: 100%;
+    width: 100%;
 }
 
 

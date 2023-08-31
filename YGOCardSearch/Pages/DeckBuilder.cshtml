@@ -36,36 +36,19 @@
                     <a class="cool-button" asp-page="/HandTesting" asp-route-deck="@Model.Deck">
                         Hand Testing
                     </a>
-
-                    <div>
-                        <h1>Main Deck [@Model.Deck.MainDeck.Count]</h1>
+                    <div class="DeckBuilder_DeckInfo">
+                        <!--Add all the info from this deck. Effect monsters, normal, spells, traps, etc. Maybe a graph would be cool-->
                     </div>
+
                     <!-- Content will be added dynamically using JavaScript -->
                     <div class="DeckBuilder_DeckCards_Container">
-                        <div class="DeckBuilder_Container_MainDeck">
-
-                        </div>
-                        <div class="DeckBuilder_Container_ExtraDeck">
-
-                        </div>
-                        <div class="DeckBuilder_Container_SideDeck">
-
-                        </div>
-                        
-                        
+                        <h2>Main Deck [@Model.Deck.MainDeck.Count]</h2>
+                        <div class="DeckBuilder_Container_MainDeck"></div>
+                        <h2>Extra deck: [@Model.Deck.ExtraDeck.Count]</h2>
+                        <div class="DeckBuilder_Container_ExtraDeck"></div>
+                        <h2>Side deck: [@Model.Deck.SideDeck.Count] </h2>
+                        <div class="DeckBuilder_Container_SideDeck"></div>
                     </div>
-
-                    
-                        <!-- Content will be added dynamically using JavaScript -->
-                        @* @foreach (var card in Model.Deck.SideDeck)
-                        {
-                            string c = card.KonamiCardId.ToString() + ".jpg";
-                            <span class="inner deckView">
-                                <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
-                                    <img class="inner deckCardImage" src="images/small/@c">
-                                </a>
-                            </span>
-                        } *@
                     
                 </tbody>
             </table>

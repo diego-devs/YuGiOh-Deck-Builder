@@ -1,5 +1,32 @@
-# Created by https://www.toptal.com/developers/gitignore/api/images
-# Edit at https://www.toptal.com/developers/gitignore?templates=images
+# Visual Studio Code
+.vscode/
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.sln.docstates
+
+# Debug and build artifacts
+/bin/
+/obj/
+Debug/
+Release/
+*.dbmdl
+*.jfm
+*.pdb
+*.ipch/
+*.pch
+*.sdf
+*.opensdf
+*.VC.db
+*.VC.VC.opendb
+*.VC.VC.opendb.lock
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
 
 ### Images ###
 # JPEG
