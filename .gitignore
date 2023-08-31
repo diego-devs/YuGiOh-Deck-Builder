@@ -1,8 +1,8 @@
 # Visual Studio Code
-/.vscode/
+.vscode/
 
 # Visual Studio
-/.vs/
+.vs/
 *.suo
 *.user
 *.sln.docstates
