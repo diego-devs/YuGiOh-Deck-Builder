@@ -20,6 +20,7 @@ a.navbar-brand {
     white-space: normal;
     text-align: center;
     word-break: break-all;
+    
 }
 
 /* Links */
@@ -58,6 +59,10 @@ a {
     color: #fff;
     background-color: #0b102b;
     border-color: #1861ac;
+}
+.navbar-color {
+    background-color: #0b102b;
+    color: #0b102b;
 }
 
 /* Typography and Responsive Font Size */
@@ -150,7 +155,7 @@ body {
 
 .DeckBuilder_DeckCards_Container {
     float: left;
-    width: 50%;
+    width: 99%;
 }
 
 .deckView {
@@ -158,7 +163,7 @@ body {
 }
 
 .deckCardImage {
-    width: 25%;
+    width: 20%;
 }
 
 

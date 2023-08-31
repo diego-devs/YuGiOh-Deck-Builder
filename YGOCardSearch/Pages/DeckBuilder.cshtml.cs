@@ -42,10 +42,22 @@ namespace YGOCardSearch.Pages
             Deck = new Deck();
             
             LoadedDecks.Add(LoadDeck(decksPath));
-            Deck = LoadedDecks.First(); // make selection with dropdrown menu 
+            Deck = LoadedDecks.First(); // developer todo: make selection with dropdrown menu 
 
-            // Prepare card infos
+            // Prepare card images, sets and prices from all decks:
             foreach (var card in Deck.MainDeck)
+            {
+                card.CardImages = new List<CardImages>(Context.CardImages.Where(i => i.CardImageId == card.KonamiCardId));
+                card.CardSets = new List<CardSet>(Context.CardSets.Where(s => s.CardId == card.CardId));
+                card.CardPrices = new List<CardPrices>(Context.CardPrices.Where(p => p.CardId == card.CardId));
+            }
+            foreach (var card in Deck.ExtraDeck)
+            {
+                card.CardImages = new List<CardImages>(Context.CardImages.Where(i => i.CardImageId == card.KonamiCardId));
+                card.CardSets = new List<CardSet>(Context.CardSets.Where(s => s.CardId == card.CardId));
+                card.CardPrices = new List<CardPrices>(Context.CardPrices.Where(p => p.CardId == card.CardId));
+            }
+            foreach (var card in Deck.SideDeck)
             {
                 card.CardImages = new List<CardImages>(Context.CardImages.Where(i => i.CardImageId == card.KonamiCardId));
                 card.CardSets = new List<CardSet>(Context.CardSets.Where(s => s.CardId == card.CardId));
@@ -87,6 +99,7 @@ namespace YGOCardSearch.Pages
             }
             return Page();
         }
+
         /// <summary>
         /// Loads a Deck from a .ydk file, extracting the main deck, extra deck, and side deck card lists.
         /// </summary>
