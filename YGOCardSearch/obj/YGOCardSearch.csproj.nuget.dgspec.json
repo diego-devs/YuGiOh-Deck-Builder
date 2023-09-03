@@ -1,32 +1,38 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\d_dia\\source\\repos\\YuGiOhTCG\\YGOCardSearch\\YGOCardSearch.csproj": {}
+    "C:\\Users\\PC Gamer\\source\\repos\\YuGiOhTCG\\YGOCardSearch\\YGOCardSearch.csproj": {}
   },
   "projects": {
-    "C:\\Users\\d_dia\\source\\repos\\YuGiOhTCG\\YGOCardSearch\\YGOCardSearch.csproj": {
+    "C:\\Users\\PC Gamer\\source\\repos\\YuGiOhTCG\\YGOCardSearch\\YGOCardSearch.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\d_dia\\source\\repos\\YuGiOhTCG\\YGOCardSearch\\YGOCardSearch.csproj",
+        "projectUniqueName": "C:\\Users\\PC Gamer\\source\\repos\\YuGiOhTCG\\YGOCardSearch\\YGOCardSearch.csproj",
         "projectName": "YGOCardSearch",
-        "projectPath": "C:\\Users\\d_dia\\source\\repos\\YuGiOhTCG\\YGOCardSearch\\YGOCardSearch.csproj",
-        "packagesPath": "C:\\Users\\d_dia\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\d_dia\\source\\repos\\YuGiOhTCG\\YGOCardSearch\\obj\\",
+        "projectPath": "C:\\Users\\PC Gamer\\source\\repos\\YuGiOhTCG\\YGOCardSearch\\YGOCardSearch.csproj",
+        "packagesPath": "C:\\Users\\PC Gamer\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\PC Gamer\\source\\repos\\YuGiOhTCG\\YGOCardSearch\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\d_dia\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\PC Gamer\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
-          "net6.0"
+          "net7.0"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "C:\\Program Files\\dotnet\\sdk\\7.0.306\\Sdks\\Microsoft.NET.Sdk.Web\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net6.0": {
-            "targetAlias": "net6.0",
+          "net7.0": {
+            "targetAlias": "net7.0",
             "projectReferences": {}
           }
         },
@@ -37,42 +43,24 @@
         }
       },
       "frameworks": {
-        "net6.0": {
-          "targetAlias": "net6.0",
+        "net7.0": {
+          "targetAlias": "net7.0",
           "dependencies": {
-            "EntityFramework": {
-              "target": "Package",
-              "version": "[6.4.4, )"
-            },
             "Microsoft.AspNetCore.JsonPatch": {
               "target": "Package",
-              "version": "[6.0.2, )"
+              "version": "[7.0.1, )"
             },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[6.0.3, )"
+              "version": "[7.0.1, )"
             },
             "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",
-              "version": "[6.0.3, )"
-            },
-            "Microsoft.EntityFrameworkCore.Tools": {
-              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
-              "suppressParent": "All",
-              "target": "Package",
-              "version": "[6.0.2, )"
-            },
-            "Microsoft.EntityFrameworkCore.Tools.DotNet": {
-              "target": "Package",
-              "version": "[2.0.3, )"
-            },
-            "Microsoft.Extensions.Caching.Abstractions": {
-              "target": "Package",
-              "version": "[6.0.0, )"
+              "version": "[7.0.1, )"
             },
             "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
               "target": "Package",
-              "version": "[6.0.2, )"
+              "version": "[7.0.1, )"
             }
           },
           "imports": [
@@ -94,7 +82,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.306\\RuntimeIdentifierGraph.json"
         }
       }
     }

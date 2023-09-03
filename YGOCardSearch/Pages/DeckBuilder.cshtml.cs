@@ -10,148 +10,228 @@ using System.Threading.Tasks;
 using System.Text.Json;
 using YGOCardSearch.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace YGOCardSearch.Pages
 {
     public class DeckBuilder : PageModel
     {
+        private readonly IConfiguration _configuration;
         // Esto tambien debera cambiar por db:
         public List<Deck> LoadedDecks;
         // Deck a visualizar
         public Deck Deck { get; set; }
-        // Repo de todas las cartas (migrar a db) - sera obsoleto 
-        public List<Card> AllCards { get; set; } 
         // Database
         public readonly YgoContext Context;
+        [BindProperty(SupportsGet = true)]
+        public string Search { get; set; } = "blue-eyes white dragon";
+        public List<Card> SearchCards { get; set; }
 
         // Dependency injection 
-        public DeckBuilder(YgoContext db)
+        public DeckBuilder(YgoContext db, IConfiguration configuration)
         {
+
             // Good place to initialize data
+            // Load the Database from the Context class
             this.Context = db;
+            this._configuration = configuration;
+
+            string decksPath = _configuration["Paths:DecksFolderPath"];
+
             LoadedDecks = new List<Deck>();
-            this.AllCards = new List<Card>(Context.Cards);
-            // LoadAllDecks();
             Deck = new Deck();
-            //  Load a local deck file.
-            //  This should be automated.
-            string path = @"C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\Data\Decks\deck1.ydk";
-            LoadedDecks.Add(LoadDeck(path));
-            Deck = LoadedDecks.First();
-
             
-        }
+            LoadedDecks.Add(LoadDeck(decksPath));
+            Deck = LoadedDecks.First(); // developer todo: make selection with dropdrown menu 
 
-        
-        
-        public async Task<IActionResult> OnGet()
-        {
-            
-            return Page();
-
-        }
-        public List<Card> LoadAllCardsFromJSON() 
-        {
-           
-            // Carga todas las cartas de un json
-            // Esto eventualmente tendria que estar en un archivo de configuracion
-            var allCardsPath = @"C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\Data\allCards.txt";
-            var jsonCards = System.IO.File.ReadAllText(allCardsPath);
-            var AllCards = JsonSerializer.Deserialize<List<Card>>(jsonCards);
-            return AllCards;
-        }
-        /// <summary>
-        /// Revisa si el deck tiene ning�n error, lo corrige y regresa el deck.
-        /// </summary>
-        /// <param name="deckList"></param>
-        public static List<string> CleanDeck(List<string> deckList) 
-        {
-            var returnedDeckList = new List<string>(deckList);
-
-            foreach (var cardId in deckList)
+            // Prepare card images, sets and prices from all decks:
+            foreach (var card in Deck.MainDeck)
             {
-                var cardChars = cardId.ToCharArray();
-                bool allClean = cardChars.All(c => char.IsDigit(c));
-                if (allClean) 
-                {
-                    continue;
-                }
-                else 
-                {
-                    var onlyDigitsIds = cardChars.Where(c => char.IsDigit(c));
-                    var stringId = new string(onlyDigitsIds.ToArray());
-                    
-                    returnedDeckList.Add(stringId);
-                    returnedDeckList.Remove(cardId);
-                    continue;
-                }
-               
+                card.CardImages = new List<CardImages>(Context.CardImages.Where(i => i.CardImageId == card.KonamiCardId));
+                card.CardSets = new List<CardSet>(Context.CardSets.Where(s => s.CardId == card.CardId));
+                card.CardPrices = new List<CardPrices>(Context.CardPrices.Where(p => p.CardId == card.CardId));
             }
-            
-            return returnedDeckList;
-        } 
-        ///<summary>
-        ///<para>Regresa un DeckModel tomando un archivo .ydk como par�metro</para>
-        ///<para>archivos .ydk</para>
-        ///</summary>
+            foreach (var card in Deck.ExtraDeck)
+            {
+                card.CardImages = new List<CardImages>(Context.CardImages.Where(i => i.CardImageId == card.KonamiCardId));
+                card.CardSets = new List<CardSet>(Context.CardSets.Where(s => s.CardId == card.CardId));
+                card.CardPrices = new List<CardPrices>(Context.CardPrices.Where(p => p.CardId == card.CardId));
+            }
+            foreach (var card in Deck.SideDeck)
+            {
+                card.CardImages = new List<CardImages>(Context.CardImages.Where(i => i.CardImageId == card.KonamiCardId));
+                card.CardSets = new List<CardSet>(Context.CardSets.Where(s => s.CardId == card.CardId));
+                card.CardPrices = new List<CardPrices>(Context.CardPrices.Where(p => p.CardId == card.CardId));
+            }
+        }
+        public IActionResult OnGet()
+        {
+            if (!string.IsNullOrWhiteSpace(Search))
+            {
+                var results = Context.GetSearch(Search);
+                if (results != null)
+                {
+                    // Prepare card infos
+                    foreach (var card in results)
+                    {
+                        card.CardImages = new List<CardImages>(Context.CardImages.Where(i => i.CardImageId == card.KonamiCardId));
+                        card.CardSets = new List<CardSet>(Context.CardSets.Where(s => s.CardId == card.CardId));
+                        card.CardPrices = new List<CardPrices>(Context.CardPrices.Where(p => p.CardId == card.CardId));
+                    }
+                    SearchCards = new List<Card>(results);
+                    
+                }
+            }
+            else
+            {
+                var results = Context.GetSearch("dragon");
+                if (results != null)
+                {
+                    // Prepare card infos
+                    foreach (var card in results)
+                    {
+                        card.CardImages = new List<CardImages>(Context.CardImages.Where(i => i.CardImageId == card.KonamiCardId));
+                        card.CardSets = new List<CardSet>(Context.CardSets.Where(s => s.CardId == card.CardId));
+                        card.CardPrices = new List<CardPrices>(Context.CardPrices.Where(p => p.CardId == card.CardId));
+                    }
+                    SearchCards = new List<Card>(results);
+                };
+            }
+            return Page();
+        }
+
+        /// <summary>
+        /// Loads a Deck from a .ydk file, extracting the main deck, extra deck, and side deck card lists.
+        /// </summary>
+        /// <param name="path">The file path of the .ydk file to load the Deck from.</param>
+        /// <returns>The loaded Deck containing the main deck, extra deck, and side deck card lists.</returns>
         public Deck LoadDeck(string path)
         {
-            foreach (string file in Directory.EnumerateFiles(@"C:\Users\d_dia\source\repos\YuGiOhTCG\YGOCardSearch\Data\Decks", " *.ydk"))
+            // Get all .ydk files from the specified directory
+            string[] deckFiles = Directory.GetFiles(path, "*.ydk");
+
+            // Choose the first .ydk file in the directory
+            string deckFilePath = deckFiles.FirstOrDefault();
+
+            // Check if a deck file exists
+            if (string.IsNullOrEmpty(deckFilePath))
             {
-                string contents = System.IO.File.ReadAllText(file);
+                throw new FileNotFoundException("No deck (.ydk) files found in the specified directory.");
             }
-            // Asegurarnos que la extensi�n sea .ydk (?)...
-            string[] ydkDeck = System.IO.File.ReadAllLines(path); // De donde sea se encuentren los decks? 
-            var deckIds = new List<string>(ydkDeck);
 
-            int mainIndex = deckIds.FindIndex(c => c.Contains("#main"));
-            int extraIndex = deckIds.FindIndex(r => r.Contains("#extra"));
-            int sideIndex = deckIds.FindIndex(c => c.Contains("!side"));
-            
-            var mainDeckResult = deckIds.Skip(mainIndex + 1).Take(extraIndex - (mainIndex + 1)).ToList();
-            var extraDeckResult = deckIds.Skip(extraIndex + 1).Take(sideIndex - (extraIndex + 1)).ToList();
-            var sideDeckResult = deckIds.Skip(sideIndex + 1).Take(sideIndex - (extraIndex + 1)).ToList();
+            // Read all lines from the deck file
+            string[] deckLines = System.IO.File.ReadAllLines(deckFilePath);
 
-            // Limpiar las listas de IDS, algunos decks podr�an tener errores como: "112345f" 
-            var cleanedMain = CleanDeck(mainDeckResult);
-            var cleanedExtra = CleanDeck(extraDeckResult);
-            var cleanedSide = CleanDeck(sideDeckResult);
-            
-            // Obtener todas las cartas de las listas de Ids a listas de cartas
-            var mainDeck = new List<Card>(getCards(cleanedMain));
-            var extraDeck = new List<Card>(getCards(cleanedExtra));
-            var sideDeck = new List<Card>(getCards(cleanedSide));
+            // Find the indices of different sections in the deck file
+            int mainIndex = Array.IndexOf(deckLines, "#main");
+            int extraIndex = Array.IndexOf(deckLines, "#extra");
+            int sideIndex = Array.IndexOf(deckLines, "!side");
 
-            // Finalmente crear el deck retornado
-            var newDeck = new Deck();
+            // Extract card IDs for each section
+            List<string> mainDeckIds = deckLines.Skip(mainIndex + 1).Take(extraIndex - (mainIndex + 1)).ToList();
+            List<string> extraDeckIds = deckLines.Skip(extraIndex + 1).Take(sideIndex - (extraIndex + 1)).ToList();
+            List<string> sideDeckIds = deckLines.Skip(sideIndex + 1).ToList();
+
+            // Clean the card IDs
+            List<string> cleanedMainDeckIds = CleanDeck(mainDeckIds);
+            List<string> cleanedExtraDeckIds = CleanDeck(extraDeckIds);
+            List<string> cleanedSideDeckIds = CleanDeck(sideDeckIds);
+
+            // Convert card IDs to card objects
+            List<Card> mainDeck = GetCardList(cleanedMainDeckIds);
+            List<Card> extraDeck = GetCardList(cleanedExtraDeckIds);
+            List<Card> sideDeck = GetCardList(cleanedSideDeckIds);
+
+            // Validate that at least one card is present in the main deck
+            if (mainDeck.Count == 0)
+            {
+                throw new InvalidOperationException("The main deck must contain at least one card.");
+            }
+
+            // Create and populate the deck object
+            Deck newDeck = new Deck();
             newDeck.MainDeck = mainDeck;
             newDeck.ExtraDeck = extraDeck;
             newDeck.SideDeck = sideDeck;
-            newDeck.DeckName = newDeck.MainDeck.First().Name.ToString().ToLower(); 
-            return newDeck;
+            newDeck.DeckName = newDeck.MainDeck.First().Name.ToString().ToLower();
 
+            return newDeck;
         }
+        /// <summary>
+        /// Cleans a list of card identifiers by removing non-digit characters and returns a new list containing only the digit values.
+        /// </summary>
+        /// <param name="deckList">The list of card identifiers to be cleaned.</param>
+        /// <returns>A new list containing only the digit values from the card identifiers.</returns>
+        public static List<string> CleanDeck(List<string> deckList)
+        {
+            var cleanedDeckList = new List<string>();
+
+            foreach (var cardId in deckList)
+            {
+                var onlyDigits = new string(cardId.Where(char.IsDigit).ToArray());
+                if (!string.IsNullOrEmpty(onlyDigits))
+                {
+                    cleanedDeckList.Add(onlyDigits);
+                }
+            }
+
+            return cleanedDeckList;
+        }
+
+        /// <summary>
+        /// Returns a list of CardModel objects based on a list of CardIdKonami by searching in YgoDB.
+        /// </summary>
+        /// <param name="cardList">The list of CardIdKonami to search for.</param>
+        /// <returns>A list of CardModel objects.</returns>
+        //public List<Card> GetCardList(List<string> cardList) 
+        //{
+        //        var cards = new List<Card>();
+        //        foreach (var cardId in cardList)
+        //        {
+        //            if (Context.Cards.Exists(c => c.KonamiCardId == Convert.ToInt32(cardId)))
+        //            {
+        //                Card card = AllCards.Single(c => c.KonamiCardId == Convert.ToInt32(cardId));
+        //                cards.Add(card);
+        //            }
+        //        }
+        //    return cards;
+        //}
+        public List<Card> GetCardList(List<string> cardList)
+        {
+            var result = new List<Card>();
+
+            foreach (var cardId in cardList)
+            {
+                if (int.TryParse(cardId, out int konamiCardId))
+                {
+                    var card = Context.Cards.FirstOrDefault(c => c.KonamiCardId == konamiCardId);
+                    if (card != null)
+                    {
+                        result.Add(card);
+                    }
+                }
+            }
+
+            return result;
+        }
+
         
         /// <summary>
-        /// Regresa lista de CardModel a partir de una lista de CardId, buscando en YgoDB.
+        /// Recursively updates the "CardImages" property of a list of Card objects.
         /// </summary>
-        /// <param name="cardList"></param>
-        /// <returns></returns>
-        public List<Card> getCards(List<string> cardList) 
+        /// <param name="cardList">The list of Card objects to update.</param>
+        /// <param name="propValue">The new value for the "CardImages" property.</param>
+        void UpdateImagesProperty(List<Card> cardList, CardImages propValue)
         {
-                var cards = new List<Card>();
-                foreach (var cardId in cardList)
-                {
-                    if (AllCards.Exists(c => c.KonamiCardId == Convert.ToInt32(cardId)))
-                    {
-                        Card card = AllCards.Single(c => c.KonamiCardId == Convert.ToInt32(cardId));
-                        cards.Add(card);
-                    }
+            if (cardList.Count == 0)
+                return;
 
-                }
- 
-            return cards;
+            // change the property of the current object
+            cardList[0].GetType().GetProperty("CardImages").SetValue(cardList[0], propValue);
+
+            // call the function again with the tail of the list
+            UpdateImagesProperty(cardList.Skip(1).ToList(), propValue);
         }
-        
+
     }
 }

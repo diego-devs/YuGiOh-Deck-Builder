@@ -2,66 +2,70 @@
 @model YGOCardSearch.Pages.CardViewerModel
 @{
     ViewData["Title"] = "CardViewer";
+    var Image = Model.Card.KonamiCardId.ToString() + ".jpg";
 }
+<style>
+    .bg-image {
+    /* The image used */
+    background-image: url("photographer.jpg");
+    /* Add the blur effect */
+    filter: blur(8px);
+    -webkit-filter: blur(8px);
+    /* Full height */
+    height: 100%;
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+</style>
 
-
+<div class="bg-image"></div>
 <div class="card mb-3" style="max-width: auto;">
     <div class="row no-gutters">
-        <div class="col-md-4">  
-            <div class="inner"><img src="@Model.Card.CardImages[0].ImageUrl" class="card-img" alt="imagehere"></div>
-                
+        <div class="col-md-4">
+            <div class="inner">
+                @*<img src="~/images/@Image" class="card-img" alt="imagehere"/>*@
+                <img src="@Model.Card.CardImages.FirstOrDefault().ImageUrl" class="card-img" alt="imagehere" />
+            </div>
         </div>
         <div class="col-md-8">
-            <div class="card-body"> 
-                <table class="table table-dark table">
-                    <tr>
-                        <td>
-                            <p class="card-text">@Model.Card.Type</p>
-                        </td>
-                        <td>
-                            <p class="card-text">@Model.Card.Attribute</p>
-                        </td>
-                        <td>
-                            <p class="text-white">@Model.Card.Race</p>
-                        </td>
-
-                    </tr>
-                </table>
+            <div class="card-body">
                 <h5 class="card-title text-center">@Model.Card.Name</h5>
-                
                 <p class="card-text">@Model.Card.Desc</p>
-                <p class="card-text"><small class="text-muted">$ @Model.Card.CardPrices[0].TcgPlayer.ToString() USD</small></p>
+                <p class="card-text"><small class="text-muted">Precio promedio: $@Model.Card.CardPrices[0].TcgPlayer.ToString() USD</small></p>
+
                 <div class="card">
-                    <table class="table table-dark table">
-                               <th>Nombre del set</th>
-                               <th>Código</th>
-                               <th>Rareza</th>
-                               <th>Código rareza</th>
-                               <th>Precio</th>
-                    
-                    </table>
-                    
-                    @{
-                        foreach (var set in Model.Card.CardSets)
-                        {
-                            
-                            <table class="table table-dark table">
-                                <tr>@set.Name</tr>
-                                <tr>@set.Code</tr>
-                                <tr>@set.Rarity</tr>
-                                <tr>@set.RarityCode</tr>
-                                <tr>@set.Price</tr>
-                            </table>
-                           
-                        }
-
-                    }
+                    <div class="table-responsive">
+                        <table class="table table-dark table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Set name</th>
+                                    <th>Code</th>
+                                    <th>Rarity</th>
+                                    <th>Rarity code</th>
+                                    <th>Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var set in Model.Card.CardSets)
+                                {
+                                    <tr>
+                                        <td>@set.Name</td>
+                                        <td>@set.Code</td>
+                                        <td>@set.Rarity</td>
+                                        <td>@set.RarityCode</td>
+                                        <td>$@set.Price</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                <div class="card card-footer">Card Id: @Model.Card.KonamiCardId</div>
-               
-                
 
+                <div class="card card-footer">Card Id: @Model.Card.KonamiCardId</div>
             </div>
         </div>
     </div>
 </div>
+

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -36,7 +37,8 @@ namespace YGOCardSearch.Data.Models
         public int? Def { get; set; }
 
         [JsonPropertyName("level")]
-        public int Level { get; set; }
+        [MaybeNull]
+        public int? Level { get; set; }
 
         [JsonPropertyName("race")]
         public string Race { get; set; }
@@ -45,12 +47,13 @@ namespace YGOCardSearch.Data.Models
         public string Attribute { get; set; }
 
         [JsonPropertyName("archetype")]
-        public string Archetype { get; set; }
+        [MaybeNull]
+        public string? Archetype { get; set; }
 
         [JsonPropertyName("scale")]
-        public int Scale { get; set; }
+        public int? Scale { get; set; }
         [JsonPropertyName("linkval")]
-        public int LinkVal { get; set; }
+        public int? LinkVal { get; set; }
 
         [JsonPropertyName("banlist_info")]
         public BanlistInfo BanlistInfo { get; set; }
@@ -59,15 +62,16 @@ namespace YGOCardSearch.Data.Models
         public List<CardSet> CardSets { get; set; }
 
         [JsonPropertyName("card_images")]
-        public List<Image> CardImages { get; set; }
+        public List<CardImages> CardImages { get; set; }
 
         [JsonPropertyName("card_prices")]
-        public List<Price> CardPrices { get; set; }
+        public List<CardPrices> CardPrices { get; set; }
 
         [JsonPropertyName("misc_info")]
         public List<MiscInfo> MiscInfo { get; set; }
 
         [JsonPropertyName("data")]
+        [MaybeNull]
         public List<Card> Data { get; set; }
     }
 

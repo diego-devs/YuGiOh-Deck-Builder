@@ -10,6 +10,8 @@ namespace YGOCardSearch.Data.Models
         [Key]
         [JsonPropertyName("cardset_id")]
         public int CardSetId { get; set; }
+        [JsonPropertyName("card_id")]
+        public int CardId { get; set; }
 
         [JsonPropertyName("set_name")]
         public string Name { get; set; }

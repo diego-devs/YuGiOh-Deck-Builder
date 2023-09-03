@@ -10,7 +10,9 @@ namespace YugiohDB.Models
         [Key]
         [JsonPropertyName("cardset_id")]
         public int CardSetId { get; set; }
-        
+        [JsonPropertyName("card_id")]
+        public int CardId { get; set; }
+
         [JsonPropertyName("set_name")]
         public string Name { get; set; }
         [JsonPropertyName("set_code")]
@@ -21,5 +23,6 @@ namespace YugiohDB.Models
         public string RarityCode { get; set; }
         [JsonPropertyName("set_price")]
         public string Price { get; set; }
+        
     }
 }

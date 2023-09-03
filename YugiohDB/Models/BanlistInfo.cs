@@ -13,7 +13,10 @@ namespace YugiohDB.Models
     {
         [Key]
         [JsonPropertyName("banlistinfo_id")]
-        public int Banlist_Id { get; set; } // Internal care only
+        public int BanlistId { get; set; } // Internal care only
+
+        [JsonPropertyName("card_id")]
+        public int CardId { get; set; }
 
         [JsonPropertyName("ban_tcg")]
         public string Ban_TCG { get; set; }
