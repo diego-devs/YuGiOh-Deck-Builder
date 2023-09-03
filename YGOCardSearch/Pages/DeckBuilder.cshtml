@@ -21,12 +21,30 @@
     <script type="module" src="/js/rendering.js"></script>
     <script type="module" src="/js/interaction.js"></script>
     <script type="module" src="/js/deckBuilder.js"></script>
+    <script type="module" src="/js/doughnut.js"></script>
+    <!-- Razor Page HTML -->
+    <script>
+        var mainDeckData = @Html.Raw(Json.Serialize(Model.Deck.MainDeck)); // Serialize the data as JSON
+        var extraDeckData = @Html.Raw(Json.Serialize(Model.Deck.ExtraDeck)); // Serialize the data as JSON
+    </script>
 </head>
 <body>
-    <div class="split-section">
+    <div class="load-deck-section">
+        <form id="loadDeckForm">
+            <label for="deckDropdown">Select a Deck:</label>
+            <select id="deckDropdown">
+                <option value="deck1">Deck 1</option>
+                <option value="deck2">Deck 2</option>
+                <!-- Add more options for available decks as needed -->
+            </select>
+            <button type="button" id="loadDeckButton">Load Deck</button>
+        </form>
+
+    </div>
+    @*deck-section and cards-section*@
+    <div class="split-section"> 
         <div class="deck-section">
-            <table class="table-dark">
-                <tbody>
+            
                     <h1>
                         Deck @Model.Deck.DeckName
                     </h1>
@@ -37,6 +55,13 @@
                         Hand Testing
                     </a>
                     <div class="DeckBuilder_DeckInfo">
+                        <div class="chartImage">
+                            <div id="doughnutChart" class="chart"></div>
+                        </div>
+                        
+
+
+
                         <!--Add all the info from this deck. Effect monsters, normal, spells, traps, etc. Maybe a graph would be cool-->
                     </div>
 
@@ -50,8 +75,7 @@
                         <div class="DeckBuilder_Container_SideDeck"></div>
                     </div>
                     
-                </tbody>
-            </table>
+               
         </div>
         <div class="cards-section">
             <div class="DeckBuilder_CardSearch_Container">
@@ -112,6 +136,8 @@
             
         </div>
     </div>
+    
+
 
     <!-- Include necessary JavaScript files here -->
 
@@ -120,6 +146,14 @@
         <script>
             const deckData = @Html.Raw(Json.Serialize(Model.Deck));
         </script>
+        <script>
+            // Expose the deck data as JavaScript variables
+            var mainDeckData = @Html.Raw(Json.Serialize(Model.Deck.MainDeck));
+            var extraDeckData = @Html.Raw(Json.Serialize(Model.Deck.ExtraDeck));
+        </script>
+
+
+
 }
 </body>
 
