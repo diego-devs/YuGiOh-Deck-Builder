@@ -16,13 +16,16 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: 6.0.x
     - name: Restore dependencies
       run: dotnet restore
+      working-directory: ./YGOCardSearch  # Relative path to the solution file
     - name: Build
       run: dotnet build --no-restore
+      working-directory: ./YGOCardSearch  # Relative path to the solution file
     - name: Test
       run: dotnet test --no-build --verbosity normal
+      working-directory: ./YGOCardSearch  # Relative path to the solution file
