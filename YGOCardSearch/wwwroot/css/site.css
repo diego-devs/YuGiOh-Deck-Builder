@@ -168,7 +168,18 @@ body {
 }
 
 .deckCardImage {
-    width: 20%;
+    width: 5%;
+}
+.searchCardImage {
+    width: 100px;
+    padding: 0px;
+}
+.searchTable th,
+.searchTable td {
+    width: 40%; /* Adjust the width as needed */
+    vertical-align: top; /* Align content to the top of cells */
+    align-content: center;
+    align-items: center;
 }
 
 .DeckBuilder_Container_MainDeck
@@ -177,12 +188,11 @@ body {
     max-width: 100%;
     width: 100%;
 }
-
-
-
+.DecksContainer {
+    margin-top: 20px;
+}
 /* Card Viewer Site */
 /* Add your Card Viewer styles here */
-
 /*Split section Deckbuilder*/
 .split-section {
     display: flex;
@@ -192,19 +202,23 @@ body {
 
 .cards-section {
     flex: 1;
-    width: 50%;
+    width: 30%;
     padding: 20px; /* Adjust padding as needed */
+    max-height: 700px; /* Set a maximum height as needed */
+    overflow-y: auto;
+    border: 1px solid #ccc; /* Optional border for visual separation */
 }
 
 .deck-section {
-    flex: 1;
-    width: 50%;
+    flex: 3;
+    width: 70%;
     padding: 20px; /* Adjust padding as needed */
-    background-color: #0b102b
+    background-color: #0b102b;
+    
 }
 .container {
-    max-width: 80%;
-    position: relative;
+    max-width: 100%;
+    position: absolute;
 }
 /* site.css */
 .search-input {
@@ -218,26 +232,48 @@ body {
 }
 
 /*Pie chart from DeckBuilder*/
+.DeckBuilder_DeckInfo {
+    display: flex;
+    height: 250px;
+    
+}
 @import url(//fonts.googleapis.com/css?family=Oswald:400);
 
-body {
-    background: #222428;
-    font-family: "Oswald", sans-serif;
+
+.chartContainer {
+    position: relative;
+    flex: 1;
+    width: 100%;
+    padding: 20px;
+    overflow: hidden;
+}
+.infoContainer {
+    position: relative;
+    flex: 3;
+    width: 100%;
+    padding: 20px;
+    overflow: hidden;
+    height: 100%;
 }
 
+.chartImage {
+    position: absolute;
 
+}
 .chart {
     position: relative;
-    width: 450px;
+    width: 250px;
     height: 450px;
-    top: 20%;
-    left: 50%;
-    margin: -100px 0 0 -225px;
+    top: -90px;
+    left: 80%;
+    margin-bottom: 100px;
+    margin: -10% 0 0 -60%;
 
 }
 
 svg {
     width: 100%;
+   
 }
 
 .doughnutTip {
@@ -283,7 +319,7 @@ svg {
 
 .doughnutSummaryTitle {
     position: absolute;
-    top: 50%;
+    top: 30%;
     width: 100%;
     margin-top: -27%;
     font-size: 22px;
@@ -292,12 +328,12 @@ svg {
 
 .doughnutSummaryNumber {
     position: absolute;
-    top: 50%;
+    top: 80%;
     width: 100%;
     margin-top: -15%;
-    font-size: 55px;
+    font-size: 30px;
 }
 
 .chart path:hover {
-    opacity: 0.65;
+    opacity: 0.6;
 }

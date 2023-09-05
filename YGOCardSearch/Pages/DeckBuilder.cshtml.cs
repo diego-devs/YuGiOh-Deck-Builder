@@ -18,13 +18,13 @@ namespace YGOCardSearch.Pages
     {
         private readonly IConfiguration _configuration;
         // Esto tambien debera cambiar por db:
-        public List<Deck> LoadedDecks;
+        public List<Deck> LoadedDecks; // no need of this since DecksManager will be a thing
         // Deck a visualizar
         public Deck Deck { get; set; }
         // Database
         public readonly YgoContext Context;
         [BindProperty(SupportsGet = true)]
-        public string Search { get; set; } = "blue-eyes white dragon";
+        public string searchQuery { get; set; } = "blue-eyes white dragon";
         public List<Card> SearchCards { get; set; }
 
         // Dependency injection 
@@ -42,7 +42,7 @@ namespace YGOCardSearch.Pages
             Deck = new Deck();
             
             LoadedDecks.Add(LoadDeck(decksPath));
-            Deck = LoadedDecks.First(); // developer todo: make selection with dropdrown menu 
+            Deck = LoadedDecks.FirstOrDefault(); // developer todo: make selection with dropdrown menu 
 
             // Prepare card images, sets and prices from all decks:
             foreach (var card in Deck.MainDeck)
@@ -66,9 +66,9 @@ namespace YGOCardSearch.Pages
         }
         public IActionResult OnGet()
         {
-            if (!string.IsNullOrWhiteSpace(Search))
+            if (!string.IsNullOrWhiteSpace(searchQuery))
             {
-                var results = Context.GetSearch(Search);
+                var results = Context.GetSearch(searchQuery);
                 if (results != null)
                 {
                     // Prepare card infos
@@ -99,6 +99,25 @@ namespace YGOCardSearch.Pages
             }
             return Page();
         }
+        public void SearchForCards()
+        {
+            var results = Context.GetSearch(searchQuery);
+            if (results != null)
+            {
+                // Prepare card infos
+                foreach (var card in results)
+                {
+                    card.CardImages = new List<CardImages>(Context.CardImages.Where(i => i.CardImageId == card.KonamiCardId));
+                    card.CardSets = new List<CardSet>(Context.CardSets.Where(s => s.CardId == card.CardId));
+                    card.CardPrices = new List<CardPrices>(Context.CardPrices.Where(p => p.CardId == card.CardId));
+                }
+                SearchCards = new List<Card>(results);
+
+            }
+        }
+       
+
+
 
         /// <summary>
         /// Loads a Deck from a .ydk file, extracting the main deck, extra deck, and side deck card lists.

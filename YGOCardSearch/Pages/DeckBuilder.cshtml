@@ -4,6 +4,8 @@
 
 @{
     var TotalDeckCards = Model.Deck.ExtraDeck.Count() + Model.Deck.MainDeck.Count();
+    var topAtkCard = Model.Deck.MainDeck.OrderByDescending(c => c.Atk ?? 0).FirstOrDefault();
+                            
 
     int pageSize = 10;
     int totalPages = (int)Math.Ceiling((double)Model.SearchCards.Count / pageSize);
@@ -29,54 +31,70 @@
     </script>
 </head>
 <body>
-    <div class="load-deck-section">
-        <form id="loadDeckForm">
-            <label for="deckDropdown">Select a Deck:</label>
-            <select id="deckDropdown">
-                <option value="deck1">Deck 1</option>
-                <option value="deck2">Deck 2</option>
-                <!-- Add more options for available decks as needed -->
-            </select>
-            <button type="button" id="loadDeckButton">Load Deck</button>
-        </form>
-
+    <div class="DeckBuilder_Deck_Options">
+        <button class="btn btn-primary" id="saveDeckButton">Save</button>
+        <button class="btn btn-danger" id="clearDeckButton">Clear</button>
+        <button class="btn btn-secondary" id="shuffleDeckButton">Shuffle</button>
     </div>
+    
     @*deck-section and cards-section*@
     <div class="split-section"> 
         <div class="deck-section">
-            
-                    <h1>
-                        Deck @Model.Deck.DeckName
-                    </h1>
-                    <p class="text text-light">
-                        Total cards: @TotalDeckCards
-                    </p>
-                    <a class="cool-button" asp-page="/HandTesting" asp-route-deck="@Model.Deck">
-                        Hand Testing
-                    </a>
-                    <div class="DeckBuilder_DeckInfo">
-                        <div class="chartImage">
-                            <div id="doughnutChart" class="chart"></div>
-                        </div>
-                        
-
-
-
-                        <!--Add all the info from this deck. Effect monsters, normal, spells, traps, etc. Maybe a graph would be cool-->
+            <div class="DeckBuilder_DeckInfo">
+                <div class="chartContainer">
+                    <div class="chartImage">
+                        <div id="doughnutChart" class="chart"></div>
                     </div>
-
-                    <!-- Content will be added dynamically using JavaScript -->
-                    <div class="DeckBuilder_DeckCards_Container">
-                        <h2>Main Deck [@Model.Deck.MainDeck.Count]</h2>
-                        <div class="DeckBuilder_Container_MainDeck"></div>
-                        <h2>Extra deck: [@Model.Deck.ExtraDeck.Count]</h2>
-                        <div class="DeckBuilder_Container_ExtraDeck"></div>
-                        <h2>Side deck: [@Model.Deck.SideDeck.Count] </h2>
-                        <div class="DeckBuilder_Container_SideDeck"></div>
-                    </div>
-                    
-               
+                </div>
+                <div class="infoContainer">
+                    <h1>Deck Name: @Model.Deck.DeckName</h1>
+                    <span>
+                        <a class="cool-button" asp-page="/HandTesting" asp-route-deck="@Model.Deck">
+                            Hand Testing
+                        </a>
+                    </span>
+                           
+                    <h2>Highest attk card:</h2>
+                    <table class="table table-dark">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Attack</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (topAtkCard != null)
+                            {
+                                <tr>
+                                    <td>@topAtkCard.Name</td>
+                                    <td>@topAtkCard.Type</td>
+                                    <td>@topAtkCard.Atk</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="3">No cards found.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div
+            </div>
+            <!-- Deck content will be added dynamically using JavaScript -->
+            <div class="DecksContainer">
+                <div class="DeckBuilder_DeckCards_Container">
+                    <h2>Main Deck [@Model.Deck.MainDeck.Count]</h2>
+                    <div class="DeckBuilder_Container_MainDeck"></div>
+                    <h2>Extra deck: [@Model.Deck.ExtraDeck.Count]</h2>
+                    <div class="DeckBuilder_Container_ExtraDeck"></div>
+                    <h2>Side deck: [@Model.Deck.SideDeck.Count] </h2>
+                    <div class="DeckBuilder_Container_SideDeck"></div>
+                </div>
+            </div>
         </div>
+
         <div class="cards-section">
             <div class="DeckBuilder_CardSearch_Container">
                 <form method="GET">
@@ -84,14 +102,14 @@
                         <div class="input-group">
                             <input type="search"
                                    class="form-control"
-                                   asp-for="Search" />
+                                   asp-for="searchQuery" />
                             <button class="btn btn-light">Buscar</button>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="DeckBuilder_CardsListDetails">
-                <table class="table table-dark">
+                @*<table class="table table-dark">
                     <tbody>
                         @if (Model.SearchCards != null)
                         {
@@ -101,7 +119,7 @@
                                 string c = card.KonamiCardId.ToString() + ".jpg";
                                 <tr>
                                     <td>
-                                        <span class="inner deckView">
+                                        <span class="inner deckView searchCard">
                                             <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
                                                 <img src="images/small/@c" alt="">
                                             </a>
@@ -119,21 +137,24 @@
                             }
                         }
                     </tbody>
-                </table>
-                <div class="text-center">
-                    <nav aria-label="Pagination">
-                        <ul class="pagination">
-                            @for (int pageNum = 1; pageNum <= totalPages; pageNum++)
-                            {
-                                <li class="page-item @(pageNum == currentPage ? "active" : "")">
-                                    <a class="page-link" href="?page=@pageNum">@pageNum</a>
-                                </li>
-                            }
-                        </ul>
-                    </nav>
-                </div>
+                </table>   *@
             </div>
-            
+            <div class="DeckBuilder_CardSearch_JS">
+
+            </div>
+            @*<div class="text-center">
+                <nav aria-label="Pagination">
+                    <ul class="pagination">
+                        @for (int pageNum = 1; pageNum <= totalPages; pageNum++)
+                        {
+                            <li class="page-item @(pageNum == currentPage ? "active" : "")">
+                                <a class="page-link" href="?page=@pageNum">@pageNum</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>*@
+
         </div>
     </div>
     
@@ -151,8 +172,14 @@
             var mainDeckData = @Html.Raw(Json.Serialize(Model.Deck.MainDeck));
             var extraDeckData = @Html.Raw(Json.Serialize(Model.Deck.ExtraDeck));
         </script>
+        <!-- Your existing JavaScript code -->
+        <script>
+            // ...
 
+            // Example usage
+            var searchedCards = @Html.Raw(Json.Serialize(Model.SearchCards));
 
+        </script>
 
 }
 </body>
