@@ -42,7 +42,7 @@ namespace YGOCardSearch.Pages
             Deck = new Deck();
             
             LoadedDecks.Add(LoadDeck(decksPath));
-            Deck = LoadedDecks.First(); // developer todo: make selection with dropdrown menu 
+            Deck = LoadedDecks.FirstOrDefault(); // developer todo: make selection with dropdrown menu 
 
             // Prepare card images, sets and prices from all decks:
             foreach (var card in Deck.MainDeck)
