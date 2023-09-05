@@ -45,10 +45,10 @@ a {
     transition: background-color 0.3s, color 0.3s;
 }
 
-    .cool-button:hover {
-        background-color: #3498db; /* Background color on hover */
-        color: #fff; /* Text color on hover */
-    }
+.cool-button:hover {
+    background-color: #3498db; /* Background color on hover */
+    color: #fff; /* Text color on hover */
+}
 
 .btn-primary {
     color: #fff;
@@ -190,6 +190,7 @@ body {
 }
 .DecksContainer {
     margin-top: 20px;
+
 }
 /* Card Viewer Site */
 /* Add your Card Viewer styles here */
@@ -210,7 +211,7 @@ body {
 }
 
 .deck-section {
-    flex: 3;
+    flex: 2;
     width: 70%;
     padding: 20px; /* Adjust padding as needed */
     background-color: #0b102b;
@@ -249,7 +250,7 @@ body {
 }
 .infoContainer {
     position: relative;
-    flex: 3;
+    flex: 2;
     width: 100%;
     padding: 20px;
     overflow: hidden;
