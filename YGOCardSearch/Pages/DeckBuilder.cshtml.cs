@@ -99,6 +99,23 @@ namespace YGOCardSearch.Pages
             }
             return Page();
         }
+        public void SearchForCards()
+        {
+            var results = Context.GetSearch(Search);
+            if (results != null)
+            {
+                // Prepare card infos
+                foreach (var card in results)
+                {
+                    card.CardImages = new List<CardImages>(Context.CardImages.Where(i => i.CardImageId == card.KonamiCardId));
+                    card.CardSets = new List<CardSet>(Context.CardSets.Where(s => s.CardId == card.CardId));
+                    card.CardPrices = new List<CardPrices>(Context.CardPrices.Where(p => p.CardId == card.CardId));
+                }
+                SearchCards = new List<Card>(results);
+
+            }
+        }
+        
 
         /// <summary>
         /// Loads a Deck from a .ydk file, extracting the main deck, extra deck, and side deck card lists.

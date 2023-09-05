@@ -19,7 +19,7 @@ namespace YGOCardSearch
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            Configuration = configuration; // appsettings.json
         }
 
         public IConfiguration Configuration { get; }

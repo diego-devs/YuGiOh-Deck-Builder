@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using YGOCardSearch.Data.Models;
 using System.Linq;
 using System.Collections.Generic;
+using Microsoft.IdentityModel.Tokens;
+using System;
 
 namespace YGOCardSearch.Data
 {
@@ -37,6 +39,8 @@ namespace YGOCardSearch.Data
         public List<Card> GetSearch(string searchQuery)
         {
             string normalizedQuery = searchQuery.ToLower();
+            normalizedQuery.Normalize();
+            // developer todo: normalize better the query
 
             // Use LINQ to filter cards that match the search query
             var matchingCards = Cards
@@ -44,6 +48,11 @@ namespace YGOCardSearch.Data
                     card.Name.ToLower().Contains(normalizedQuery) ||
                     card.Desc.ToLower().Contains(normalizedQuery))
                 .ToList();
+            if (matchingCards.IsNullOrEmpty())
+            {
+                Console.WriteLine("Not a single card found.");
+                
+            }
 
             return matchingCards;
         }
