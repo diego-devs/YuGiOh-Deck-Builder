@@ -84,7 +84,7 @@
                         <div class="input-group">
                             <input type="search"
                                    class="form-control"
-                                   asp-for="Search" />
+                                   asp-for="searchQuery" />
                             <button class="btn btn-light">Buscar</button>
                         </div>
                     </div>
@@ -101,7 +101,7 @@
                                 string c = card.KonamiCardId.ToString() + ".jpg";
                                 <tr>
                                     <td>
-                                        <span class="inner deckView">
+                                        <span class="inner deckView searchCard">
                                             <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
                                                 <img src="images/small/@c" alt="">
                                             </a>
@@ -119,21 +119,20 @@
                             }
                         }
                     </tbody>
-                </table>
-                <div class="text-center">
-                    <nav aria-label="Pagination">
-                        <ul class="pagination">
-                            @for (int pageNum = 1; pageNum <= totalPages; pageNum++)
-                            {
-                                <li class="page-item @(pageNum == currentPage ? "active" : "")">
-                                    <a class="page-link" href="?page=@pageNum">@pageNum</a>
-                                </li>
-                            }
-                        </ul>
-                    </nav>
-                </div>
+                </table>   
             </div>
-            
+            <div class="text-center">
+                <nav aria-label="Pagination">
+                    <ul class="pagination">
+                        @for (int pageNum = 1; pageNum <= totalPages; pageNum++)
+                        {
+                            <li class="page-item @(pageNum == currentPage ? "active" : "")">
+                                <a class="page-link" href="?page=@pageNum">@pageNum</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
         </div>
     </div>
     
@@ -150,6 +149,33 @@
             // Expose the deck data as JavaScript variables
             var mainDeckData = @Html.Raw(Json.Serialize(Model.Deck.MainDeck));
             var extraDeckData = @Html.Raw(Json.Serialize(Model.Deck.ExtraDeck));
+        </script>
+        <script>
+            //search cards
+            $(document).ready(function () {
+                $("#searchForm").on("submit", function (e) {
+                    e.preventDefault();
+
+                    // Get the search query from the input field
+                    var searchQuery = $("#searchInput").val();
+
+                    // Send an AJAX request to perform the search
+                    $.ajax({
+                        url: "/DeckBuilder?handler=SearchForCards", // Point to the Razor Page handler
+                        type: "POST",
+                        data: { searchQuery: searchQuery },
+                        dataType: "html", // Expect HTML response
+                        success: function (html) {
+                            // Replace the search results section with the updated HTML
+                            $("#searchResults").html(html);
+                        },
+                        error: function () {
+                            alert("An error occurred during the search.");
+                        }
+                    });
+                });
+            });
+
         </script>
 
 
