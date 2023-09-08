@@ -187,10 +187,32 @@ body {
 .DeckBuilder_Container_SideDeck {
     max-width: 100%;
     width: 100%;
+    min-height: 100px;
+    min-width: 100px;
+    border: 2px dashed #888;
+    padding: 10px;
+    margin: 10px;
 }
+
+/* Add a glowing effect when a card is dragged over the containers */
+.DeckBuilder_Container_MainDeck.dragover,
+.DeckBuilder_Container_ExtraDeck.dragover,
+.DeckBuilder_Container_SideDeck.dragover {
+    animation: glow 0.5s infinite alternate; /* Use the 'glow' animation */
+}
+/* Define the 'glow' animation */
+@keyframes glow {
+    0% {
+        box-shadow: 0 0 5px rgba(255, 223, 0, 0.8); /* Initial shadow */
+    }
+
+    100% {
+        box-shadow: 0 0 20px rgba(255, 223, 0, 1); /* Glowing shadow */
+    }
+}
+
 .DecksContainer {
     margin-top: 20px;
-
 }
 /* Card Viewer Site */
 /* Add your Card Viewer styles here */
@@ -205,7 +227,7 @@ body {
     flex: 1;
     width: 30%;
     padding: 20px; /* Adjust padding as needed */
-    max-height: 700px; /* Set a maximum height as needed */
+    max-height: 800px; /* Set a maximum height as needed */
     overflow-y: auto;
     border: 1px solid #ccc; /* Optional border for visual separation */
 }

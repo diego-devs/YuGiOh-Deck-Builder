@@ -69,6 +69,29 @@ function updateDisplayedDecks() {
     renderDeckCards(decks.sideDeck, '.DeckBuilder_Container_SideDeck');
 }
 // Example usage
+// Function to handle the drag over event
+function dragOver(event) {
+    event.preventDefault();
+
+    // Add the 'dragover' class to the container when dragging over it
+    event.currentTarget.classList.add('dragover');
+}
+
+// Function to handle the drag leave event
+function dragLeave(event) {
+    // Remove the 'dragover' class from the container when leaving
+    event.currentTarget.classList.remove('dragover');
+}
+
+// Add dragover and dragleave event listeners to each drop target container
+const mainDeckContainer = document.querySelector('.DeckBuilder_Container_MainDeck');
+mainDeckContainer.addEventListener('dragleave', dragLeave);
+
+const extraDeckContainer = document.querySelector('.DeckBuilder_Container_ExtraDeck');
+extraDeckContainer.addEventListener('dragleave', dragLeave);
+
+const sideDeckContainer = document.querySelector('.DeckBuilder_Container_SideDeck');
+sideDeckContainer.addEventListener('dragleave', dragLeave);
 
 
 
