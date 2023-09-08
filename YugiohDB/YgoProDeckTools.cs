@@ -27,7 +27,6 @@ namespace YugiohDB
         /// <returns></returns>
         public static async Task DownloadImagesAsync(List<Card> cards, string imgSize)
         {
-
             if (imgSize == "small")
             {
                 string localFolder = "C:/Users/PC Gamer/source/repos/YuGiOhTCG/YGOCardSearch/data/images/small"; // This should be changed in prod

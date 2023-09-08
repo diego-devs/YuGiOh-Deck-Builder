@@ -24,17 +24,15 @@
     <script type="module" src="/js/interaction.js"></script>
     <script type="module" src="/js/deckBuilder.js"></script>
     <script type="module" src="/js/doughnut.js"></script>
+    
     <!-- Razor Page HTML -->
-    <script>
-        var mainDeckData = @Html.Raw(Json.Serialize(Model.Deck.MainDeck)); // Serialize the data as JSON
-        var extraDeckData = @Html.Raw(Json.Serialize(Model.Deck.ExtraDeck)); // Serialize the data as JSON
-    </script>
 </head>
 <body>
     <div class="DeckBuilder_Deck_Options">
         <button class="btn btn-primary" id="saveDeckButton">Save</button>
         <button class="btn btn-danger" id="clearDeckButton">Clear</button>
         <button class="btn btn-secondary" id="shuffleDeckButton">Shuffle</button>
+        <button class="btn btn-outline-warning" id="addCardButton">Add card (testing)</button>
     </div>
     
     @*deck-section and cards-section*@
@@ -53,40 +51,42 @@
                             Hand Testing
                         </a>
                     </span>
-                           
-                    <h2>Highest atk card:</h2>
-                    <table class="table table-dark">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Type</th>
-                                <th>Attack</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (topAtkCard != null)
-                            {
+                    <div class="highest-card">
+                        <h2>Highest atk card:</h2>
+                        <table class="table table-dark">
+                            <thead>
                                 <tr>
-                                    <td>@topAtkCard.Name</td>
-                                    <td>@topAtkCard.Type</td>
-                                    <td>@topAtkCard.Atk</td>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Attack</th>
                                 </tr>
-                            }
-                            else
-                            {
-                                <tr>
-                                    <td colspan="3">No cards found.</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+                            <tbody>
+                                @if (topAtkCard != null)
+                                {
+                                    <tr>
+                                        <td>@topAtkCard.Name</td>
+                                        <td>@topAtkCard.Type</td>
+                                        <td>@topAtkCard.Atk</td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="3">No cards found.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>       
+                    
+                </div> 
             </div>
             <!-- Deck content will be added dynamically using JavaScript -->
             <div class="DecksContainer">
                 <div class="DeckBuilder_DeckCards_Container">
                     <h2>Main Deck [@Model.Deck.MainDeck.Count]</h2>
-                    <div class="DeckBuilder_Container_MainDeck"></div>
+                    <div class="DeckBuilder_Container_MainDeck" id="main-deck" ondrop="drop(event)" ondragover="dragOver(event)"></div>
                     <h2>Extra deck: [@Model.Deck.ExtraDeck.Count]</h2>
                     <div class="DeckBuilder_Container_ExtraDeck"></div>
                     <h2>Side deck: [@Model.Deck.SideDeck.Count] </h2>
@@ -108,7 +108,10 @@
                     </div>
                 </form>
             </div>
+
+            @*deprecated*@
             <div class="DeckBuilder_CardsListDetails">
+                
                 @*<table class="table table-dark">
                     <tbody>
                         @if (Model.SearchCards != null)
@@ -139,47 +142,26 @@
                     </tbody>
                 </table>   *@
             </div>
+            @*Where the searched cards will display*@
             <div class="DeckBuilder_CardSearch_JS">
-
-            </div>
-            @*<div class="text-center">
-                <nav aria-label="Pagination">
-                    <ul class="pagination">
-                        @for (int pageNum = 1; pageNum <= totalPages; pageNum++)
-                        {
-                            <li class="page-item @(pageNum == currentPage ? "active" : "")">
-                                <a class="page-link" href="?page=@pageNum">@pageNum</a>
-                            </li>
-                        }
-                    </ul>
-                </nav>
-            </div>*@
-
         </div>
     </div>
     
-
-
     <!-- Include necessary JavaScript files here -->
-
-
 @section Scripts {
-        <script>
-            const deckData = @Html.Raw(Json.Serialize(Model.Deck));
-        </script>
+
+
         <script>
             // Expose the deck data as JavaScript variables
+            var deckData = @Html.Raw(Json.Serialize(Model.Deck));
             var mainDeckData = @Html.Raw(Json.Serialize(Model.Deck.MainDeck));
             var extraDeckData = @Html.Raw(Json.Serialize(Model.Deck.ExtraDeck));
-        </script>
-        <!-- Your existing JavaScript code -->
-        <script>
-            // ...
-
-            // Example usage
             var searchedCards = @Html.Raw(Json.Serialize(Model.SearchCards));
-
+            var testCard = @Html.Raw(Json.Serialize(Model.testCard));
         </script>
+            <!-- Include your JavaScript file -->
+            <script src="./js/drag-and-drop.js"></script>
+
 
 }
 </body>

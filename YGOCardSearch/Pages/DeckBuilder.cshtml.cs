@@ -16,6 +16,7 @@ namespace YGOCardSearch.Pages
 {
     public class DeckBuilder : PageModel
     {
+        public Card testCard { get; set; }
         private readonly IConfiguration _configuration;
         // Esto tambien debera cambiar por db:
         public List<Deck> LoadedDecks; // no need of this since DecksManager will be a thing
@@ -63,6 +64,7 @@ namespace YGOCardSearch.Pages
                 card.CardSets = new List<CardSet>(Context.CardSets.Where(s => s.CardId == card.CardId));
                 card.CardPrices = new List<CardPrices>(Context.CardPrices.Where(p => p.CardId == card.CardId));
             }
+            this.testCard = Context.Cards.Single(c => c.KonamiCardId == 12694768);
         }
         public IActionResult OnGet()
         {
@@ -115,7 +117,22 @@ namespace YGOCardSearch.Pages
 
             }
         }
-       
+
+        public IActionResult OnPostAddCard(int cardId, string deckDestination) // Developer todo: MAGIC STRING
+        {
+            // developer todo: Is to deck, to extra or to side deck? 
+            
+            // Logic to add the card with 'cardId' to your deck
+            Card card = Context.Cards.Single(c => c.KonamiCardId == cardId);
+            if (card == null)
+            {
+                Console.WriteLine($"Added {card.Name} card to main deck");
+                this.Deck.MainDeck.Add(card);
+            }
+            // You need to implement this logic, e.g., updating your deck model
+
+            return new JsonResult(new { success = true });
+        }
 
 
 

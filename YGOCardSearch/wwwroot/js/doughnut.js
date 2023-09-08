@@ -64,6 +64,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Access the deck data from the exposed JavaScript variables
     var mainDeckData = window.mainDeckData;
     var extraDeckData = window.extraDeckData;
+    
 
     // Continue with your code to count and draw the doughnut chart
     var deckCounts = allDeckTypes.map(function (type) {

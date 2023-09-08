@@ -11,28 +11,39 @@ import {
     getSideDeck
 } from './deck.js'; // Import the deck methods
 
+
 // Function to handle adding a card to a deck
-function handleAddToDeck(deckType, cardId) {
-    const card = getCardById(cardId); // Replace with your card retrieval logic
-    if (card) {
-        switch (deckType) {
-            case 'MainDeck':
-                addCardToMainDeck(card);
-                break;
-            case 'ExtraDeck':
-                addCardToExtraDeck(card);
-                break;
-            case 'SideDeck':
-                addCardToSideDeck(card);
-                break;
-            default:
-            // Handle unsupported deck type
-        }
-        renderDeckCards(getDeck(deckType), `.DeckBuilder_Container_${deckType}`);
-        console.log(`Added card "${card.Name}" to the ${deckType}.`);
+function handleAddToDeck(deckType, deck, card) {
+    switch (deckType) {
+        case 'MainDeck':
+            addCardToMainDeck(deck, card);
+            break;
+        case 'ExtraDeck':
+            addCardToExtraDeck(deck, card);
+            break;
+        case 'SideDeck':
+            addCardToSideDeck(deck, card);
+            break;
+        default:
+        // Handle unsupported deck type
+    }
+    renderDeckCards(getDeck(deck, deckType), `.DeckBuilder_Container_${deckType}`);
+    console.log(`Added "${card.name} id: ${card.id}" to the ${deckType}.`);
+}
+function getDeck(deck, deckType) {
+    switch (deckType) {
+        case 'MainDeck':
+            return deck.mainDeck;
+            break;
+        case 'ExtraDeck':
+            return deck.extraDeck;
+            break;
+        case 'SideDeck':
+            return deck.sideDeck;
+            break;
+        default:
     }
 }
-
 // Function to handle removing a card from a deck
 function handleRemoveFromDeck(deckType, cardId) {
     switch (deckType) {
@@ -57,6 +68,9 @@ function updateDisplayedDecks() {
     renderDeckCards(decks.extraDeck, '.DeckBuilder_Container_ExtraDeck');
     renderDeckCards(decks.sideDeck, '.DeckBuilder_Container_SideDeck');
 }
+// Example usage
+
+
 
 
 export { handleAddToDeck, handleRemoveFromDeck, updateDisplayedDecks };
