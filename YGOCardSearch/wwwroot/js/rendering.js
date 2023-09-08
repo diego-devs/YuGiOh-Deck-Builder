@@ -22,6 +22,7 @@ function renderDeckCards(deck, deckPart) {
         cardImage.className = 'inner deckCardImage'; // Apply the class inner deckCardImage to the image
         cardImage.alt = '' + card.name;
         cardImage.id = card.id;
+        cardImage.innerHTML = card.type;
 
         cardLink.appendChild(cardImage);
         cardView.appendChild(cardLink);

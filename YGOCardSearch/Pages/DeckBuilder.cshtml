@@ -86,11 +86,11 @@
             <div class="DecksContainer">
                 <div class="DeckBuilder_DeckCards_Container">
                     <h2>Main Deck [@Model.Deck.MainDeck.Count]</h2>
-                    <div class="DeckBuilder_Container_MainDeck" id="main-deck" ondrop="drop(event)" ondragover="dragOver(event)"></div>
+                    <div class="DeckBuilder_Container_MainDeck" id="main-deck" data-deck-type="MainDeck" ondrop="drop(event)" ondragover="dragOver(event)"></div>
                     <h2>Extra deck: [@Model.Deck.ExtraDeck.Count]</h2>
-                    <div class="DeckBuilder_Container_ExtraDeck"></div>
+                    <div class="DeckBuilder_Container_ExtraDeck" id="extra-deck" data-deck-type="ExtraDeck" ondrop="drop(event)" ondragover="dragOver(event)"></div>
                     <h2>Side deck: [@Model.Deck.SideDeck.Count] </h2>
-                    <div class="DeckBuilder_Container_SideDeck"></div>
+                    <div class="DeckBuilder_Container_SideDeck" id="side-deck" data-deck-type="SideDeck" ondrop="drop(event)" ondragover="dragOver(event)"></div>
                 </div>
             </div>
         </div>
@@ -146,6 +146,7 @@
             <div class="DeckBuilder_CardSearch_JS">
         </div>
     </div>
+
     
     <!-- Include necessary JavaScript files here -->
 @section Scripts {
