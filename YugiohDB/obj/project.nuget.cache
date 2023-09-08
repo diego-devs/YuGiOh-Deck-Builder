@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "jrC3jodoi7svHzwjBdQ83nHqGv0p814yjxl9fDm0xRBAqGnU+jmOYnyVKz8o9IIveUi8tegQHKqS1EDTUNfbDA==",
+  "dgSpecHash": "r/+BNhF1WrLcsNhiYn3cHiTzK3AGrtP/S1wUf7AhFza4nllkiP6mNAXtkISMyZWKzWhHkuR8CiiEN/6kkQZ3mg==",
   "success": true,
   "projectFilePath": "C:\\Users\\PC Gamer\\source\\repos\\YuGiOhTCG\\YugiohDB\\YugiohDB.csproj",
   "expectedPackageFiles": [
@@ -21,6 +21,7 @@
     "C:\\Users\\PC Gamer\\.nuget\\packages\\microsoft.entityframeworkcore.tools.dotnet\\2.0.3\\microsoft.entityframeworkcore.tools.dotnet.2.0.3.nupkg.sha512",
     "C:\\Users\\PC Gamer\\.nuget\\packages\\microsoft.extensions.caching.abstractions\\7.0.0\\microsoft.extensions.caching.abstractions.7.0.0.nupkg.sha512",
     "C:\\Users\\PC Gamer\\.nuget\\packages\\microsoft.extensions.caching.memory\\7.0.0\\microsoft.extensions.caching.memory.7.0.0.nupkg.sha512",
+    "C:\\Users\\PC Gamer\\.nuget\\packages\\microsoft.extensions.configuration\\7.0.0\\microsoft.extensions.configuration.7.0.0.nupkg.sha512",
     "C:\\Users\\PC Gamer\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\7.0.0\\microsoft.extensions.configuration.abstractions.7.0.0.nupkg.sha512",
     "C:\\Users\\PC Gamer\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\7.0.0\\microsoft.extensions.dependencyinjection.7.0.0.nupkg.sha512",
     "C:\\Users\\PC Gamer\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\7.0.0\\microsoft.extensions.dependencyinjection.abstractions.7.0.0.nupkg.sha512",

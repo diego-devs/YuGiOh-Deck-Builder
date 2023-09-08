@@ -10,16 +10,20 @@ function renderDeckCards(deck, deckPart) {
 
         var cardLink = document.createElement('a');
         cardLink.href = '/CardViewer?id=' + card.id;
+        /*cardlink.id = card.id;*/
+
+        var cardView = document.createElement('span');
+        cardView.className = 'inner deckView'; // Preserve the class inner deckView
+        cardView.draggable = true;
+        cardView.id = card.id;
 
         var cardImage = document.createElement('img');
         cardImage.src = cardImageSrc;
-        cardImage.className = 'inner deckCardImage';
-        cardImage.alt = '' + card.Name;
+        cardImage.className = 'inner deckCardImage'; // Apply the class inner deckCardImage to the image
+        cardImage.alt = '' + card.name;
+        cardImage.id = card.id;
 
         cardLink.appendChild(cardImage);
-
-        var cardView = document.createElement('span');
-        cardView.className = 'inner deckView';
         cardView.appendChild(cardLink);
 
         deckContainer.appendChild(cardView);
@@ -75,6 +79,7 @@ function renderSearchedCards(cards, containerSelector) {
             cardImage.src = cardImageSrc;
             cardImage.className = 'inner searchCardImage';
             cardImage.alt = '' + card.name;
+            cardImage.id = card.id;
 
             cardLink.appendChild(cardImage);
             cardImageCell.appendChild(cardLink);
@@ -100,6 +105,7 @@ function renderSearchedCards(cards, containerSelector) {
 
             var cardView = document.createElement('span');
             cardView.className = 'inner deckView';
+            cardView.id = card.id;
             cardView.appendChild(cardRow);
 
             tableBody.appendChild(cardView);
@@ -118,44 +124,3 @@ function renderSearchedCards(cards, containerSelector) {
 
 export { renderSearchedCards };
 
-
-
-
-//function renderSearchedCards(cards, containerSelector) {
-//    var container = document.querySelector(containerSelector);
-//    container.innerHTML = ''; // Clear the container
-
-//    if (cards && cards.length > 0) {
-//        var cardTable = document.createElement('table');
-//        cardTable.className = 'table table-dark'; // Add your table classes here if needed
-
-//        cards.forEach(function (card) {
-//            var cardImageSrc = 'images/small/' + card.id + '.jpg';
-//            var cardLink = document.createElement('a');
-//            cardLink.href = '/CardViewer?id=' + card.id;
-
-//            var cardImage = document.createElement('img');
-//            cardImage.src = cardImageSrc;
-//            cardImage.className = 'inner deckCardImage';
-//            cardImage.alt = '' + card.Name;
-
-//            cardLink.appendChild(cardImage);
-
-//            var cardView = document.createElement('span');
-//            cardView.className = 'inner deckView';
-//            cardView.appendChild(cardLink);
-
-//            container.appendChild(cardView);
-
-//        });
-
-//        // Append the table to the container
-//        container.appendChild(cardTable);
-//    } else {
-//        var noCardsMessage = document.createElement('p');
-//        noCardsMessage.textContent = 'No cards found.';
-//        container.appendChild(noCardsMessage);
-//    }
-//}
-
-//export { renderSearchedCards };
