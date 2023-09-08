@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,9 +21,8 @@ namespace YugiohDB
         public static async Task Main(string[] args)
         {
             // change the paths from appsettings.json
-            IConfiguration configuration = LoadConfiguration();
-            string cardsLocalPath = configuration.GetSection("CardData")["CardsLocalPath"];
-            string imagesLocalPath = configuration.GetSection("CardData")["ImagesLocalPath"];
+            var cardsLocalPath = @"C:/Users/PC Gamer/source/repos/YuGiOhTCG/YGOCardSearch/Data/allCards.json";
+            var imagesLocalPath = @"C:/Users/PC Gamer/source/repos/YuGiOhTCG/YGOCardSearch/Data/images";
             Console.WriteLine($"Cards Local Path: {cardsLocalPath}");
             Console.WriteLine($"Images Local Path: {imagesLocalPath}");            
             
@@ -60,14 +60,7 @@ namespace YugiohDB
 
             await MainApplication(); // Search cards and displays them into console
 
-            static IConfiguration LoadConfiguration()
-            {
-                return new ConfigurationBuilder()
-                    .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                    .AddJsonFile("appsettings.json", optional: true)
-                    .Build();
-            }
-
+            
         }
         private static async Task MainApplication()
         {

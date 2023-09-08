@@ -33,6 +33,8 @@ document.addEventListener('DOMContentLoaded', function () {
         handleAddToDeck('MainDeck', deck, testC);
     });
 
+    ////// Handle drag and drop functionality events: 
+
     // Function to handle the drag over event
     function dragOver(event) {
         event.preventDefault();
@@ -48,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function () {
         let droppedCard = searchedCards.find(c => c.id === cardIdInt);
 
         if (droppedCard) {
-            // Add your logic here for what to do when a card is dropped
+            // Add logic here for what to do when a card is dropped
             // Now you have access to the entire droppedCard object
             handleAddToDeck('MainDeck', deck, droppedCard);
         } else {
@@ -58,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 
-    // Add drag-and-drop listeners to your card elements
+    // Add drag-and-drop listeners to card elements
     const cardElements = document.querySelectorAll('.inner.deckView');
     cardElements.forEach(function (cardElement) {
         cardElement.draggable = true;

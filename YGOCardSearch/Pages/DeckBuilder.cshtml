@@ -157,10 +157,10 @@
             var mainDeckData = @Html.Raw(Json.Serialize(Model.Deck.MainDeck));
             var extraDeckData = @Html.Raw(Json.Serialize(Model.Deck.ExtraDeck));
             var searchedCards = @Html.Raw(Json.Serialize(Model.SearchCards));
+            // For testing purposes only. todo: delete this
             var testCard = @Html.Raw(Json.Serialize(Model.testCard));
         </script>
-            <!-- Include your JavaScript file -->
-            <script src="./js/drag-and-drop.js"></script>
+
 
 
 }
