@@ -45,22 +45,22 @@ function getDeck(deck, deckType) {
     }
 }
 // Function to handle removing a card from a deck
-function handleRemoveFromDeck(deckType, cardId) {
+function handleRemoveFromDeck(deckType, deck, card) {
     switch (deckType) {
         case 'MainDeck':
-            removeCardFromMainDeck(cardId);
+            removeCardFromMainDeck(deck, card);
             break;
         case 'ExtraDeck':
-            removeCardFromExtraDeck(cardId);
+            removeCardFromExtraDeck(deck, card);
             break;
         case 'SideDeck':
-            removeCardFromSideDeck(cardId);
+            removeCardFromSideDeck(deck, card);
             break;
         default:
         // Handle unsupported deck type
     }
     renderDeckCards(getDeck(deckType), `.DeckBuilder_Container_${deckType}`);
-    console.log(`Removed card with ID ${cardId} from the ${deckType}.`);
+    console.log(`Removed ${card.name} id: ${card.id} from the ${deckType}.`);
 }
 // Function to update the displayed decks
 function updateDisplayedDecks() {
