@@ -1,7 +1,7 @@
 import { Deck } from './deck.js';
 import { renderDeckCards } from './rendering.js';
 import { renderSearchedCards } from './rendering.js';
-import { handleAddToDeck } from './interaction.js';
+import { handleAddToDeck, handleRemoveFromDeck } from './interaction.js';
 
 document.addEventListener('DOMContentLoaded', function () {
     // Declare deck within the event listener scope
@@ -38,12 +38,21 @@ document.addEventListener('DOMContentLoaded', function () {
     // Function to handle the drop event
     function drop(event) {
         event.preventDefault();
-        const cardId = event.dataTransfer.getData('text/plain');
+        let selectedCard = event.srcElement.dataset.cardType;
+        const cardId = event.dataTransfer.getData('cardId'); // this is returning the url
+        const cardType = event.dataTransfer.getData('cardType');
+        const fromDeckType = event.dataTransfer.getData('fromDeckType');
         const cardIdInt = parseInt(cardId, 10);
+        const cardElement = document.getElementById(cardId);
 
+        // determine card type
+        
         // Determine the deck type based on the drop target's class and ID
         const dropTarget = event.currentTarget;
         let deckType = '';
+        
+        // Find the card object from searchedCards based on cardId
+       
 
         if (dropTarget.classList.contains('DeckBuilder_Container_MainDeck') && dropTarget.id === 'main-deck') {
             deckType = 'MainDeck';
@@ -51,21 +60,62 @@ document.addEventListener('DOMContentLoaded', function () {
             deckType = 'ExtraDeck';
         } else if (dropTarget.classList.contains('DeckBuilder_Container_SideDeck') && dropTarget.id === 'side-deck') {
             deckType = 'SideDeck';
-        }
-
-        const cardType = event.dataTransfer.getData('cardType');
-
-        // Find the card object from searchedCards based on cardId
-        let droppedCard = searchedCards.find(c => c.id === cardIdInt);
-
-        if (droppedCard) {
-            // Add logic here for what to do when a card is dropped
-            // Now you have access to the entire droppedCard object and dynamic deckType
-            handleAddToDeck(deckType, deck, droppedCard);
         } else {
-            // Handle the case where the card was not found
-            console.log(`Card with ID ${cardId} not found.`);
+            deckType = 'outsideDeck';
         }
+
+        let droppedCard;
+////////////////
+        // Handle the case where the card is dropped outside of a deck area
+        if (deckType === 'outsideDeck') {
+            // Remove the card from its respective deck based on 'fromDeckType'
+            switch (fromDeckType) {
+                case 'MainDeck':
+                    handleRemoveFromDeck('MainDeck', deck, cardIdInt);
+                    break;
+                case 'ExtraDeck':
+                    handleRemoveFromDeck('ExtraDeck', deck, cardIdInt);
+                    break;
+                case 'SideDeck':
+                    handleRemoveFromDeck('SideDeck', deck, cardIdInt);
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            // Handle the case where the card is dropped into a valid deck area
+            // Add the card to the deck based on 'deckType'
+            // You need to implement your logic to add the card to the deck
+            switch (fromDeckType) {
+                case '.DeckBuilder_Container_MainDeck':
+                    droppedCard = deck.getMainDeck().find(c=>c.id === cardIdInt);
+                    break;
+                case '.DeckBuilder_Container_ExtraDeck':
+                    droppedCard = deck.getExtraDeck().find(c=>c.id === cardIdInt);
+                    break;
+                case '.DeckBuilder_Container_SideDeck':
+                    droppedCard = deck.getSideDeck().find(c=>c.id === cardIdInt);
+                    break;
+                case '.DeckBuilder_CardSearch_JS':
+                    droppedCard = searchedCards.find(c=>c.id === cardIdInt);
+                    break;
+                default:
+                    break;
+            }
+    
+            if (droppedCard) {
+                // Add logic here for what to do when a card is dropped
+                // Now you have access to the entire droppedCard object and dynamic deckType
+                handleAddToDeck(deckType, deck, droppedCard);
+            } else if (dropTarget.classList.contains('.container')) {
+                handleRemoveFromDeck(deckType, deck, card);
+            } else {
+                // Handle the case where the card was not found
+                // console.log(`Card with ID ${card.id} not found.`);
+            }
+        }
+        //////
+        
     }
 
 
@@ -83,6 +133,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Add a drop listener to the drop target
     dropTarget.addEventListener('drop', drop);
+
+    
 
     // Find and select the drop target divs
     const mainDeckContainer = document.querySelector('.DeckBuilder_Container_MainDeck');
@@ -105,19 +157,85 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Function to handle the drag start event
     function dragStart(event) {
+        console.log()
         const cardId = event.target.id; // Get the card ID from the dragged element's ID
         const cardIntId = parseInt(cardId, 10);
+        let fromDeckType = event.target.dataset.fromDeckType;
+        let draggedCard;
+        
+        switch (fromDeckType) {
+            case '.DeckBuilder_Container_MainDeck':
+                draggedCard = deck.getMainDeck().find(c=>c.id === cardIntId);
+                event.target.dataset.id = draggedCard.id;
+                ////srcElement.dataset.cardType
+                if (draggedCard) { 
+                    const cardType = draggedCard.type; // Get the card type from the card object
+                    event.dataTransfer.setData('text/plain', cardId);
+                    event.dataTransfer.setData('cardType', cardType); // Set the card type in 'cardType'
+                    event.dataTransfer.setData('text/plain', cardId);
+                    event.dataTransfer.setData('cardId', cardId); // Set the card type in 'cardType'
+                    event.dataTransfer.setData('text/plain', cardId);
+                    event.dataTransfer.setData('fromDeckType', fromDeckType); // Set the card type in 'cardType'
+                } else {
+                    console.log(`Card with ID ${cardId} not found in Main Deck.`);
+                }
+                break;
+            case '.DeckBuilder_Container_ExtraDeck':
+                draggedCard = deck.getExtraDeck().find(c=>c.id === cardIntId);
+                event.target.dataset.id = draggedCard.id;
+                if (draggedCard) {
+                    const cardType = draggedCard.type;
+                    event.dataTransfer.setData('text/plain', cardId);
+                    event.dataTransfer.setData('cardType', cardType); // Set the card type in 'cardType'
+                    event.dataTransfer.setData('text/plain', cardId);
+                    event.dataTransfer.setData('cardId', cardId); // Set the card type in 'cardType'
+                    event.dataTransfer.setData('text/plain', cardId);
+                    event.dataTransfer.setData('fromDeckType', fromDeckType); 
+                }
+                else {
+                    console.log(`Card with ID ${cardId} not found in Extra Deck.`);
+                }
+                break;
+            case '.DeckBuilder_Container_SideDeck':
+                draggedCard = deck.getSideDeck().find(c=>c.id === cardIntId);
+                event.target.dataset.id = draggedCard.id;
+                if (draggedCard) {
+                    const cardType = draggedCard.type;
+                    event.dataTransfer.setData('text/plain', cardId);
+                    event.dataTransfer.setData('cardType', cardType); // Set the card type in 'cardType'
+                    event.dataTransfer.setData('text/plain', cardId);
+                    event.dataTransfer.setData('cardId', cardId); // Set the card type in 'cardType'
+                    event.dataTransfer.setData('text/plain', cardId);
+                    event.dataTransfer.setData('fromDeckType', fromDeckType); 
+                }
+                else {
+                    console.log(`Card with ID ${cardId} not found in Side Deck.`);
+                }
+                break;
+            case '.DeckBuilder_CardSearch_JS':
+                // Find the card object from searchedCards based on cardId
+                draggedCard = searchedCards.find(c => c.id === cardIntId);
+                event.target.dataset.card = draggedCard;
+        
+                if (draggedCard) { 
+                    const cardType = draggedCard.type; // Get the card type from the card object
+                    event.dataTransfer.setData('text/plain', cardId);
+                    event.dataTransfer.setData('cardType', cardType); // Set the card type in 'cardType'
+                    event.dataTransfer.setData('text/plain', cardId);
+                    event.dataTransfer.setData('cardId', cardId); // Set the card type in 'cardType'
+                    event.dataTransfer.setData('text/plain', cardId);
+                    event.dataTransfer.setData('fromDeckType', fromDeckType); 
+                } else {
+                    console.log(`Card with ID ${cardId} not found in searchedCards.`);
+                }
+                break;
 
-        // Find the card object from searchedCards based on cardId
-        const draggedCard = searchedCards.find(c => c.id === cardIntId);
-
-        if (draggedCard) {
-            const cardType = draggedCard.type; // Get the card type from the card object
-            event.dataTransfer.setData('text/plain', cardId);
-            event.dataTransfer.setData('cardType', cardType); // Set the card type in 'cardType'
-        } else {
-            console.log(`Card with ID ${cardId} not found in searchedCards.`);
+            default:
+                console.log('Card not found');
+                break;
         }
+        
+        
 
 
         //// Get the card type from the card element's data attribute

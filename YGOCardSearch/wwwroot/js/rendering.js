@@ -22,7 +22,8 @@ function renderDeckCards(deck, deckPart) {
         cardImage.className = 'inner deckCardImage'; // Apply the class inner deckCardImage to the image
         cardImage.alt = '' + card.name;
         cardImage.id = card.id;
-        cardImage.innerHTML = card.type;
+        cardImage.dataset.cardType = card.type;
+        cardImage.dataset.fromDeckType = deckPart;
 
         cardLink.appendChild(cardImage);
         cardView.appendChild(cardLink);
@@ -38,6 +39,8 @@ export { renderDeckCards };
 function renderSearchedCards(cards, containerSelector) {
     var container = document.querySelector(containerSelector);
     container.innerHTML = ''; // Clear the container
+   
+
 
     if (cards && cards.length > 0) {
         var cardTable = document.createElement('table');
@@ -81,6 +84,8 @@ function renderSearchedCards(cards, containerSelector) {
             cardImage.className = 'inner searchCardImage';
             cardImage.alt = '' + card.name;
             cardImage.id = card.id;
+            cardImage.dataset.cardType = card.type;
+            cardImage.dataset.fromDeckType = containerSelector;
 
             cardLink.appendChild(cardImage);
             cardImageCell.appendChild(cardLink);

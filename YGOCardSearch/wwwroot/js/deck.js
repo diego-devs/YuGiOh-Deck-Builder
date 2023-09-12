@@ -48,9 +48,9 @@ class Deck {
 const addCardToMainDeck = (deck, card) => deck.addCardToMainDeck(card);
 const addCardToExtraDeck = (deck, card) => deck.addCardToExtraDeck(card);
 const addCardToSideDeck = (deck, card) => deck.addCardToSideDeck(card);
-const removeCardFromMainDeck = (deck, cardId) => deck.removeCardFromMainDeck(cardId);
-const removeCardFromExtraDeck = (deck, cardId) => deck.removeCardFromExtraDeck(cardId);
-const removeCardFromSideDeck = (deck, cardId) => deck.removeCardFromSideDeck(cardId);
+const removeCardFromMainDeck = (deck, card) => deck.removeCardFromMainDeck(card);
+const removeCardFromExtraDeck = (deck, card) => deck.removeCardFromExtraDeck(card);
+const removeCardFromSideDeck = (deck, card) => deck.removeCardFromSideDeck(card);
 const getMainDeck = deck => deck.getMainDeck();
 const getExtraDeck = deck => deck.getExtraDeck();
 const getSideDeck = deck => deck.getSideDeck();
