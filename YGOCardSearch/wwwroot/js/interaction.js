@@ -1,4 +1,4 @@
-import { renderDeckCards } from './rendering.js'; // Import the rendering function
+import { renderDeckCards} from './rendering.js'; // Import the rendering function
 import {
     addCardToMainDeck,
     addCardToExtraDeck,
@@ -13,7 +13,7 @@ import {
 
 
 // Function to handle adding a card to a deck
-function handleAddToDeck(deckType, deck, card) {
+function handleAddToDeck(deckType, deck, card, onComplete) {
     switch (deckType) {
         case 'MainDeck':
             addCardToMainDeck(deck, card);
@@ -29,6 +29,10 @@ function handleAddToDeck(deckType, deck, card) {
     }
     renderDeckCards(getDeck(deck, deckType), `.DeckBuilder_Container_${deckType}`);
     console.log(`Added "${card.name} id: ${card.id}" to the ${deckType}.`);
+    // Call the onComplete function if provided
+    if (typeof onComplete === 'function') {
+        onComplete();
+    }
 }
 function getDeck(deck, deckType) {
     switch (deckType) {
@@ -45,7 +49,7 @@ function getDeck(deck, deckType) {
     }
 }
 // Function to handle removing a card from a deck
-function handleRemoveFromDeck(deckType, deck, card) {
+function handleRemoveFromDeck(deckType, deck, card, onComplete) {
     switch (deckType) {
         case 'MainDeck':
             removeCardFromMainDeck(deck, card);
@@ -61,6 +65,10 @@ function handleRemoveFromDeck(deckType, deck, card) {
     }
     renderDeckCards(getDeck(deck, deckType), `.DeckBuilder_Container_${deckType}`);
     console.log(`Removed card id: ${card} from the ${deckType}.`);
+    // Call the onComplete function if provided
+    if (typeof onComplete === 'function') {
+        onComplete();
+    }
 }
 // Function to update the displayed decks
 function updateDisplayedDecks() {
