@@ -22,16 +22,26 @@ class Deck {
     }
 
     removeCardFromMainDeck(cardId) {
-        this.mainDeck = this.mainDeck.filter(card => card.id !== cardId);
+        const index = this.mainDeck.findIndex(card => card.id === cardId);
+        if (index !== -1) {
+            this.mainDeck.splice(index, 1);
+        }
     }
 
     removeCardFromExtraDeck(cardId) {
-        this.extraDeck = this.extraDeck.filter(card => card.id !== cardId);
+        const index = this.extraDeck.findIndex(card => card.id === cardId);
+        if (index !== -1) {
+            this.extraDeck.splice(index, 1);
+        }
     }
 
     removeCardFromSideDeck(cardId) {
-        this.sideDeck = this.sideDeck.filter(card => card.id !== cardId);
+        const index = this.sideDeck.findIndex(card => card.id === cardId);
+        if (index !== -1) {
+            this.sideDeck.splice(index, 1);
+        }
     }
+
 
     getMainDeck() {
         return this.mainDeck;

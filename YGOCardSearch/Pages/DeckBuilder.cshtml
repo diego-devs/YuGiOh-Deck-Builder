@@ -85,12 +85,12 @@
             <!-- Deck content will be added dynamically using JavaScript -->
             <div class="DecksContainer">
                 <div class="DeckBuilder_DeckCards_Container">
-                    <h2>Main Deck [@Model.Deck.MainDeck.Count]</h2>
-                    <div class="DeckBuilder_Container_MainDeck" id="main-deck" data-deck-type="MainDeck" ondrop="drop(event)" ondragover="dragOver(event)"></div>
+                    <h2>Main Deck</h2>
+                    <div class="DeckBuilder_Container_MainDeck" id="main-deck" data-deck-type="MainDeck" ondrop="drop(event)" ondragover="dragOver(event)" ondragstart="dragStart(event)"></div>
                     <div class="RemoveFromDeckArea" id="remove-from-main-deck" ondrop="drop(event)" ondragover="dragOver(event)"></div>
-                    <h2>Extra deck: [@Model.Deck.ExtraDeck.Count]</h2>
+                    <h2>Extra deck:</h2>
                     <div class="DeckBuilder_Container_ExtraDeck" id="extra-deck" data-deck-type="ExtraDeck" ondrop="drop(event)" ondragover="dragOver(event)"></div>
-                    <h2>Side deck: [@Model.Deck.SideDeck.Count] </h2>
+                    <h2>Side deck:</h2>
                     <div class="DeckBuilder_Container_SideDeck" id="side-deck" data-deck-type="SideDeck" ondrop="drop(event)" ondragover="dragOver(event)"></div>
                 </div>
             </div>
@@ -109,16 +109,13 @@
                     </div>
                 </form>
             </div>
-            
-
             @*Where the searched cards will display*@
             <div class="DeckBuilder_CardSearch_JS">
             </div>
-        
         </div>
     </div>
     <div class="remove-area" > <!-- ondrag="dragStart(event)" ondragover="dragOver(event)" ondrop="drop(event)"-->
-                <img id="remove-area" class="remove-area" src="/images/trash-bin.png" ondrag="dragStart(event)" ondragover="dragOver(event)" ondrop="drop(event)"/>
+        <img id="remove-area" class="remove-area" src="/images/trash-bin.png" ondrag="dragStart(event)" ondragover="dragOver(event)" ondrop="drop(event)"/>
     </div>
 
     
