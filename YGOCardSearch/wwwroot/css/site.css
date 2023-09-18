@@ -119,7 +119,7 @@ html {
 }
 
 body {
-    margin-bottom: 60px; /* Margin bottom by footer height */
+    margin-bottom: 30px; /* Margin bottom by footer height */
 }
 
 .footer {
@@ -259,6 +259,12 @@ body {
     display: flex;
     height: 250px;
     
+}
+
+.remove-area {
+    max-width: 200px;
+    position: relative;
+    margin: 30px;
 }
 @import url(//fonts.googleapis.com/css?family=Oswald:400);
 

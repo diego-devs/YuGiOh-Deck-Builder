@@ -45,38 +45,37 @@ document.addEventListener('DOMContentLoaded', function () {
         const cardIdInt = parseInt(cardId, 10);
         const cardElement = document.getElementById(cardId);
 
-        // determine card type
-        
+       
         // Determine the deck type based on the drop target's class and ID
         const dropTarget = event.currentTarget;
-        let deckType = '';
+        let dropDeckType = '';
         
         // Find the card object from searchedCards based on cardId
        
 
         if (dropTarget.classList.contains('DeckBuilder_Container_MainDeck') && dropTarget.id === 'main-deck') {
-            deckType = 'MainDeck';
+            dropDeckType = 'MainDeck';
         } else if (dropTarget.classList.contains('DeckBuilder_Container_ExtraDeck') && dropTarget.id === 'extra-deck') {
-            deckType = 'ExtraDeck';
+            dropDeckType = 'ExtraDeck';
         } else if (dropTarget.classList.contains('DeckBuilder_Container_SideDeck') && dropTarget.id === 'side-deck') {
-            deckType = 'SideDeck';
-        } else {
-            deckType = 'outsideDeck';
+            dropDeckType = 'SideDeck';
+        } else if (dropTarget.classList.contains('remove-area')) {
+            dropDeckType = 'RemoveArea';
         }
 
         let droppedCard;
 ////////////////
         // Handle the case where the card is dropped outside of a deck area
-        if (deckType === 'outsideDeck') {
+        if (dropDeckType === 'RemoveArea') {
             // Remove the card from its respective deck based on 'fromDeckType'
             switch (fromDeckType) {
-                case 'MainDeck':
+                case '.DeckBuilder_Container_MainDeck':
                     handleRemoveFromDeck('MainDeck', deck, cardIdInt);
                     break;
-                case 'ExtraDeck':
+                case '.DeckBuilder_Container_ExtraDeck':
                     handleRemoveFromDeck('ExtraDeck', deck, cardIdInt);
                     break;
-                case 'SideDeck':
+                case '.DeckBuilder_Container_SideDeck':
                     handleRemoveFromDeck('SideDeck', deck, cardIdInt);
                     break;
                 default:
@@ -106,9 +105,9 @@ document.addEventListener('DOMContentLoaded', function () {
             if (droppedCard) {
                 // Add logic here for what to do when a card is dropped
                 // Now you have access to the entire droppedCard object and dynamic deckType
-                handleAddToDeck(deckType, deck, droppedCard);
+                handleAddToDeck(dropDeckType, deck, droppedCard);
             } else if (dropTarget.classList.contains('.container')) {
-                handleRemoveFromDeck(deckType, deck, card);
+                handleRemoveFromDeck(dropDeckType, deck, card);
             } else {
                 // Handle the case where the card was not found
                 // console.log(`Card with ID ${card.id} not found.`);
@@ -118,8 +117,6 @@ document.addEventListener('DOMContentLoaded', function () {
         
     }
 
-
-
     // Add drag-and-drop listeners to card elements
     const cardElements = document.querySelectorAll('.inner.deckView');
     cardElements.forEach(function (cardElement) {
@@ -127,12 +124,11 @@ document.addEventListener('DOMContentLoaded', function () {
         cardElement.addEventListener('dragstart', dragStart);
     });
 
-    // Add a dragover listener to the drop target (e.g., the deck)
-    const dropTarget = document.querySelector('.DeckBuilder_Container_MainDeck, .DeckBuilder_Container_ExtraDeck, .DeckBuilder_Container_SideDeck');
-    dropTarget.addEventListener('dragover', dragOver);
-
-    // Add a drop listener to the drop target
-    dropTarget.addEventListener('drop', drop);
+    // // Add a dragover listener to the drop target (e.g., the deck)
+    // const dropTarget = document.querySelector('.DeckBuilder_Container_MainDeck, .DeckBuilder_Container_ExtraDeck, .DeckBuilder_Container_SideDeck, remove-area');
+    // dropTarget.addEventListener('dragover', dragOver);
+    // // Add a drop listener to the drop target
+    // dropTarget.addEventListener('drop', drop);
 
     
 
@@ -140,33 +136,43 @@ document.addEventListener('DOMContentLoaded', function () {
     const mainDeckContainer = document.querySelector('.DeckBuilder_Container_MainDeck');
     const extraDeckContainer = document.querySelector('.DeckBuilder_Container_ExtraDeck');
     const sideDeckContainer = document.querySelector('.DeckBuilder_Container_SideDeck');
+    const removeAreaContainer = document.querySelector('.remove-area');
 
     // Add dragover event listeners to each drop target
     mainDeckContainer.addEventListener('dragover', dragOver);
     extraDeckContainer.addEventListener('dragover', dragOver);
     sideDeckContainer.addEventListener('dragover', dragOver);
+    removeAreaContainer.addEventListener('dragover', dragOver);
 
     mainDeckContainer.addEventListener('dragleave', dragLeave);
     extraDeckContainer.addEventListener('dragleave', dragLeave);
     sideDeckContainer.addEventListener('dragleave', dragLeave);
+    removeAreaContainer.addEventListener('dragleave', dragLeave);
 
     // Add drop event listeners to each drop target
     mainDeckContainer.addEventListener('drop', drop);
     extraDeckContainer.addEventListener('drop', drop);
     sideDeckContainer.addEventListener('drop', drop);
+    removeAreaContainer.addEventListener('drop', drop);
+
+    // Set listeners to all elements in the page? 
+
 
     // Function to handle the drag start event
     function dragStart(event) {
         console.log()
+        let MainDeckCard = false;
+        let ExtraDeckCard = false;
         const cardId = event.target.id; // Get the card ID from the dragged element's ID
         const cardIntId = parseInt(cardId, 10);
-        let fromDeckType = event.target.dataset.fromDeckType;
+        let fromDeckType = event.target.dataset.fromDeckType; // Where this comes frome
         let draggedCard;
         
         switch (fromDeckType) {
             case '.DeckBuilder_Container_MainDeck':
                 draggedCard = deck.getMainDeck().find(c=>c.id === cardIntId);
                 event.target.dataset.id = draggedCard.id;
+                event.target.dataset.card = draggedCard;
                 ////srcElement.dataset.cardType
                 if (draggedCard) { 
                     const cardType = draggedCard.type; // Get the card type from the card object
@@ -183,6 +189,7 @@ document.addEventListener('DOMContentLoaded', function () {
             case '.DeckBuilder_Container_ExtraDeck':
                 draggedCard = deck.getExtraDeck().find(c=>c.id === cardIntId);
                 event.target.dataset.id = draggedCard.id;
+                event.target.dataset.card = draggedCard;
                 if (draggedCard) {
                     const cardType = draggedCard.type;
                     event.dataTransfer.setData('text/plain', cardId);
@@ -246,9 +253,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     function dragOver(event) {
         event.preventDefault();
-
-        // Add the 'dragover' class to the container when dragging over it
-        event.currentTarget.classList.add('dragover');
+        console.log("card:" + event.currentTarget.name);
+        console.log("draggin over: "+ event.target.id);
+        // // Add the 'dragover' class to the container when dragging over it
+        // event.currentTarget.classList.add('dragover');
     }
 
     // Function to handle the drag leave event
@@ -256,5 +264,6 @@ document.addEventListener('DOMContentLoaded', function () {
         // Remove the 'dragover' class from the container when leaving
         event.currentTarget.classList.remove('dragover');
     }
+
 
 });

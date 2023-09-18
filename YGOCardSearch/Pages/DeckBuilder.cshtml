@@ -87,6 +87,7 @@
                 <div class="DeckBuilder_DeckCards_Container">
                     <h2>Main Deck [@Model.Deck.MainDeck.Count]</h2>
                     <div class="DeckBuilder_Container_MainDeck" id="main-deck" data-deck-type="MainDeck" ondrop="drop(event)" ondragover="dragOver(event)"></div>
+                    <div class="RemoveFromDeckArea" id="remove-from-main-deck" ondrop="drop(event)" ondragover="dragOver(event)"></div>
                     <h2>Extra deck: [@Model.Deck.ExtraDeck.Count]</h2>
                     <div class="DeckBuilder_Container_ExtraDeck" id="extra-deck" data-deck-type="ExtraDeck" ondrop="drop(event)" ondragover="dragOver(event)"></div>
                     <h2>Side deck: [@Model.Deck.SideDeck.Count] </h2>
@@ -95,7 +96,7 @@
             </div>
         </div>
 
-        <div class="cards-section">
+        <div class="cards-section" ondrop="drop(event)" ondragover="dragOver(event)">
             <div class="DeckBuilder_CardSearch_Container">
                 <form method="GET">
                     <div class="form-group">
@@ -108,43 +109,16 @@
                     </div>
                 </form>
             </div>
+            
 
-            @*deprecated*@
-            <div class="DeckBuilder_CardsListDetails">
-                
-                @*<table class="table table-dark">
-                    <tbody>
-                        @if (Model.SearchCards != null)
-                        {
-                            for (int i = startIndex; i <= endIndex; i++)
-                            {
-                                var card = Model.SearchCards[i];
-                                string c = card.KonamiCardId.ToString() + ".jpg";
-                                <tr>
-                                    <td>
-                                        <span class="inner deckView searchCard">
-                                            <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
-                                                <img src="images/small/@c" alt="">
-                                            </a>
-                                        </span>
-                                    </td>
-                                   
-                                    <td>
-                                        <h3>@card.Name</h3>
-                                        <p>@card.Desc</p>
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-success add-to-deck">Add to Deck</button>
-                                    </td>
-                                </tr>
-                            }
-                        }
-                    </tbody>
-                </table>   *@
-            </div>
             @*Where the searched cards will display*@
             <div class="DeckBuilder_CardSearch_JS">
+            </div>
+        
         </div>
+    </div>
+    <div class="remove-area" > <!-- ondrag="dragStart(event)" ondragover="dragOver(event)" ondrop="drop(event)"-->
+                <img id="remove-area" class="remove-area" src="/images/trash-bin.png" ondrag="dragStart(event)" ondragover="dragOver(event)" ondrop="drop(event)"/>
     </div>
 
     

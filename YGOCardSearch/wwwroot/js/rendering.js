@@ -46,7 +46,6 @@ function renderSearchedCards(cards, containerSelector) {
         var cardTable = document.createElement('table');
         cardTable.className = 'searchTable table table-dark'; // Add your table classes here if needed
 
-
         var tableHeader = document.createElement('thead');
         var headerRow = document.createElement('tr');
 
