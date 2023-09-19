@@ -4,33 +4,39 @@
 
 function renderDeckCards(deck, deckPart) {
     var deckContainer = document.querySelector(deckPart);
-    deckContainer.innerHTML = '';
+    
+    if (deck.length > 0) {
+        deckContainer.innerHTML = '';
+        deck.forEach(function (card) {
+            var cardImageSrc = 'images/small/' + card.id + '.jpg';
 
-    deck.forEach(function (card) {
-        var cardImageSrc = 'images/small/' + card.id + '.jpg';
+            var cardLink = document.createElement('a');
+            cardLink.href = '/CardViewer?id=' + card.id;
+            /*cardlink.id = card.id;*/
 
-        var cardLink = document.createElement('a');
-        cardLink.href = '/CardViewer?id=' + card.id;
-        /*cardlink.id = card.id;*/
+            var cardView = document.createElement('span');
+            cardView.className = 'inner deckView'; // Preserve the class inner deckView
+            cardView.draggable = true;
+            cardView.id = card.id;
 
-        var cardView = document.createElement('span');
-        cardView.className = 'inner deckView'; // Preserve the class inner deckView
-        cardView.draggable = true;
-        cardView.id = card.id;
+            var cardImage = document.createElement('img');
+            cardImage.src = cardImageSrc;
+            cardImage.className = 'inner deckCardImage'; // Apply the class inner deckCardImage to the image
+            cardImage.alt = '' + card.name;
+            cardImage.id = card.id;
+            cardImage.dataset.cardType = card.type;
+            cardImage.dataset.fromDeckType = deckPart;
 
-        var cardImage = document.createElement('img');
-        cardImage.src = cardImageSrc;
-        cardImage.className = 'inner deckCardImage'; // Apply the class inner deckCardImage to the image
-        cardImage.alt = '' + card.name;
-        cardImage.id = card.id;
-        cardImage.dataset.cardType = card.type;
-        cardImage.dataset.fromDeckType = deckPart;
+            cardLink.appendChild(cardImage);
+            cardView.appendChild(cardLink);
 
-        cardLink.appendChild(cardImage);
-        cardView.appendChild(cardLink);
-
-        deckContainer.appendChild(cardView);
-    });
+            deckContainer.appendChild(cardView);
+        });
+    } else if (deck.length === 0) {
+        var message = 'Add cards to this deck.'
+        deckContainer.textContent = message;
+    }
+    
 }
 
 
@@ -40,8 +46,6 @@ function renderSearchedCards(cards, containerSelector) {
     var container = document.querySelector(containerSelector);
     container.innerHTML = ''; // Clear the container
    
-
-
     if (cards && cards.length > 0) {
         var cardTable = document.createElement('table');
         cardTable.className = 'searchTable table table-dark'; // Add your table classes here if needed
