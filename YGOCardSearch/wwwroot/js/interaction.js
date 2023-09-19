@@ -16,6 +16,9 @@ import {
 function handleAddToDeck(deckType, deck, card, onComplete) {
     const maxAllowedCopies = 3; // Maximum allowed copies of the same card // developer todo: add banlist support
     const cardCountInDeck = deck.mainDeck.filter((c) => c.id === card.id).length;
+    const maxMainCards = 60;
+    const maxExtraCards = 15; 
+    const maxSideCards = 15;
 
     if (cardCountInDeck >= maxAllowedCopies) {
         window.alert(`Invalid drop: You can't add more than ${maxAllowedCopies} copies of "${card.name}" to the ${deckType}.`);
@@ -24,12 +27,24 @@ function handleAddToDeck(deckType, deck, card, onComplete) {
 
     switch (deckType) {
         case 'MainDeck':
+            if (deck.mainDeck.length >= maxMainCards) {
+                window.alert(`Invalid drop: Maximum Main Deck cards allowed.`);
+                return;
+            }
             addCardToMainDeck(deck, card);
             break;
         case 'ExtraDeck':
+            if (deck.extraDeck.length >= maxExtraCards) {
+                window.alert(`Invalid drop: Maximum Extra Deck cards allowed.`);
+                return;
+            }
             addCardToExtraDeck(deck, card);
             break;
         case 'SideDeck':
+            if (deck.sideDeck.length >= maxSideCards) {
+                window.alert(`Invalid drop: Maximum Side Deck cards allowed.`);
+                return;
+            }
             addCardToSideDeck(deck, card);
             break;
         default:
@@ -95,9 +110,9 @@ function updateDeckCount(deck) {
     const mainDeckCount = deck.mainDeck.length;
     const extraDeckCount = deck.extraDeck.length;
     const sideDeckCount = deck.sideDeck.length;
-    mainDeckCardCountElement.textContent = `Cards: ${mainDeckCount}`;
-    extraDeckCardCountElement.textContent = `Cards: ${extraDeckCount}`;
-    sideDeckCardCountElement.textContent = `Cards: ${sideDeckCount}`
+    mainDeckCardCountElement.textContent = `#: ${mainDeckCount}`;
+    extraDeckCardCountElement.textContent = `#: ${extraDeckCount}`;
+    sideDeckCardCountElement.textContent = `#: ${sideDeckCount}`
 }
 
 
