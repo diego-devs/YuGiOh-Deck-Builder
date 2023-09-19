@@ -68,6 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const fromDeckType = event.dataTransfer.getData('fromDeckType');
         const cardIdInt = parseInt(cardId, 10);
         const cardElement = document.getElementById(cardId);
+        const isValidForMainDeck = event.dataTransfer.getData('isValidForMainDeck');// Convert to boolean
 
        
         // Determine the deck type based on the drop target's class and ID
@@ -86,6 +87,7 @@ document.addEventListener('DOMContentLoaded', function () {
         } else if (dropTarget.classList.contains('remove-area')) {
             dropDeckType = 'RemoveArea';
         }
+        
 
         let droppedCard;
 ////////////////
@@ -131,21 +133,114 @@ document.addEventListener('DOMContentLoaded', function () {
                 default:
                     break;
             }
-    
+
             if (droppedCard) {
-                // Add logic here for what to do when a card is dropped
-                // Now you have access to the entire droppedCard object and dynamic deckType
-                handleAddToDeck(dropDeckType, deck, droppedCard, function () {
-                    addDragStartListenerToCards();
-                });
+
+                switch (dropDeckType) {
+                    case 'MainDeck':
+                        if (isValidForMainDeck === "true") {
+                            handleAddToDeck(dropDeckType, deck, droppedCard, function () {
+                                addDragStartListenerToCards();
+                            });
+                        } else {
+                            // Display an error message or prevent the card from being added to Main Deck
+                            window.alert('Invalid drop: Card Type: ' + cardType + ' cannot be added to Main Deck.');
+                        }
+                        break;
+                    case 'ExtraDeck':
+                        if (isValidForMainDeck === "false") {
+                            handleAddToDeck(dropDeckType, deck, droppedCard, function () {
+                                addDragStartListenerToCards();
+                            });
+                        } else {
+                            // Display an error message or prevent the card from being added to Extra Deck
+                            window.alert('Invalid drop: Card Type: ' + cardType + ' cannot be added to Extra Deck.');
+                        }
+                        break;
+                    case 'SideDeck':
+                        if (isValidForMainDeck === "true") {
+                            handleAddToDeck(dropDeckType, deck, droppedCard, function () {
+                                addDragStartListenerToCards();
+                            });
+                        } 
+                        else {
+                            // Display an error message or prevent the card from being added to Side Deck
+                            window.alert('Invalid drop: Card Type: ' + cardType + ' cannot be added to Side Deck.');
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                // Check if the card is valid for the target deck type
+                //if ((dropDeckType === 'MainDeck' && isValidForMainDeck === true) || (dropDeckType === 'ExtraDeck' && isValidForMainDeck === false)) {
+                //    // Allow the card to be added to the deck
+                //    handleAddToDeck(dropDeckType, deck, droppedCard, function () {
+                //        addDragStartListenerToCards();
+                //    });
+                //} else if (dropDeckType === 'MainDeck' && isValidForMainDeck === false) {
+                //    // Display an error message or prevent the card from being added to Main Deck
+                //    window.alert('Invalid drop: Card cannot be added to Main Deck.');
+                //} else if (dropDeckType === 'ExtraDeck' && isValidForMainDeck === true) {
+                //    // Display an error message or prevent the card from being added to Extra Deck
+                //    window.alert('Invalid drop: Card cannot be added to Extra Deck.');
+                //}
+                //else {
+                //    window.alert('Invalid drop: Card type cannot be added to Extra Deck: ' + cardType);
+                //}
+
+                
             } else {
                 // Handle the case where the card was not found
-                // console.log(`Card with ID ${card.id} not found.`);
+                console.log(`Card with ID ${cardId} not found.`);
             }
         }
         //////
         
     }
+    function isCardValidForMainDeck(cardType) {
+        // Define card types that are valid for the Main Deck
+        const validMainDeckTypes = [
+            "Effect Monster",
+            "Flip Effect Monster",
+            "Flip Tuner Effect Monster",
+            "Gemini Monster",
+            "Normal Monster",
+            "Normal Tuner Monster",
+            "Pendulum Effect Monster",
+            "Pendulum Effect Ritual Monster",
+            "Pendulum Flip Effect Monster",
+            "Pendulum Normal Monster",
+            "Pendulum Tuner Effect Monster",
+            "Ritual Effect Monster",
+            "Ritual Monster",
+            "Spell Card",
+            "Spirit Monster",
+            "Toon Monster",
+            "Trap Card",
+            "Tuner Monster",
+            "Union Effect Monster"
+        ];
+
+        const validExtraDeckTypes = [
+            "Fusion Monster",
+            "Link Monster",
+            "Pendulum Effect Fusion Monster",
+            "Synchro Monster",
+            "Synchro Pendulum Effect Monster",
+            "Synchro Tuner Monster",
+            "XYZ Monster",
+            "XYZ Pendulum Effect Monster"
+        ];
+        if (validMainDeckTypes.includes(cardType)) {
+            return true;
+        } else if (validExtraDeckTypes.includes(cardType)) {
+            return false;
+        }
+
+        // Check if the card type is in the list of valid Main Deck types
+        //return validMainDeckTypes.includes(cardType);
+    }
+
 
     // // Add a dragover listener to the drop target (e.g., the deck)
     // const dropTarget = document.querySelector('.DeckBuilder_Container_MainDeck, .DeckBuilder_Container_ExtraDeck, .DeckBuilder_Container_SideDeck, remove-area');
@@ -155,29 +250,29 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Function to handle the drag start event
     function dragStart(event) {
-        console.log()
-        let MainDeckCard = false;
-        let ExtraDeckCard = false;
         const cardId = event.target.id; // Get the card ID from the dragged element's ID
         const cardIntId = parseInt(cardId, 10);
         let fromDeckType = event.target.dataset.fromDeckType; // Where this comes frome
         let draggedCard;
-        const isValidForMainDeck = false;
 
         switch (fromDeckType) {
             case '.DeckBuilder_Container_MainDeck':
                 draggedCard = deck.getMainDeck().find(c=>c.id === cardIntId);
                 event.target.dataset.id = draggedCard.id;
                 event.target.dataset.card = draggedCard;
+
                 ////srcElement.dataset.cardType
                 if (draggedCard) { 
                     const cardType = draggedCard.type; // Get the card type from the card object
+                    const isValidForMainDeck = isCardValidForMainDeck(cardType); // Determine whether the card is valid for Main Deck
                     event.dataTransfer.setData('text/plain', cardId);
                     event.dataTransfer.setData('cardType', cardType); // Set the card type in 'cardType'
                     event.dataTransfer.setData('text/plain', cardId);
                     event.dataTransfer.setData('cardId', cardId); // Set the card type in 'cardType'
                     event.dataTransfer.setData('text/plain', cardId);
                     event.dataTransfer.setData('fromDeckType', fromDeckType); // Set the card type in 'cardType'
+                    event.dataTransfer.setData('isValidForMainDeck', isValidForMainDeck);
+
                 } else {
                     console.log(`Card with ID ${cardId} not found in Main Deck.`);
                 }
@@ -188,12 +283,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 event.target.dataset.card = draggedCard;
                 if (draggedCard) {
                     const cardType = draggedCard.type;
+                    const isValidForMainDeck = isCardValidForMainDeck(cardType);
                     event.dataTransfer.setData('text/plain', cardId);
                     event.dataTransfer.setData('cardType', cardType); // Set the card type in 'cardType'
                     event.dataTransfer.setData('text/plain', cardId);
                     event.dataTransfer.setData('cardId', cardId); // Set the card type in 'cardType'
                     event.dataTransfer.setData('text/plain', cardId);
                     event.dataTransfer.setData('fromDeckType', fromDeckType); 
+                    event.dataTransfer.setData('isValidForMainDeck', isValidForMainDeck);
                 }
                 else {
                     console.log(`Card with ID ${cardId} not found in Extra Deck.`);
@@ -204,12 +301,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 event.target.dataset.id = draggedCard.id;
                 if (draggedCard) {
                     const cardType = draggedCard.type;
+                    const isValidForMainDeck = isCardValidForMainDeck(cardType);
                     event.dataTransfer.setData('text/plain', cardId);
                     event.dataTransfer.setData('cardType', cardType); // Set the card type in 'cardType'
                     event.dataTransfer.setData('text/plain', cardId);
                     event.dataTransfer.setData('cardId', cardId); // Set the card type in 'cardType'
                     event.dataTransfer.setData('text/plain', cardId);
                     event.dataTransfer.setData('fromDeckType', fromDeckType); 
+                    event.dataTransfer.setData('isValidForMainDeck', isValidForMainDeck);
                 }
                 else {
                     console.log(`Card with ID ${cardId} not found in Side Deck.`);
@@ -222,12 +321,14 @@ document.addEventListener('DOMContentLoaded', function () {
         
                 if (draggedCard) { 
                     const cardType = draggedCard.type; // Get the card type from the card object
+                    const isValidForMainDeck = isCardValidForMainDeck(cardType);
                     event.dataTransfer.setData('text/plain', cardId);
                     event.dataTransfer.setData('cardType', cardType); // Set the card type in 'cardType'
                     event.dataTransfer.setData('text/plain', cardId);
                     event.dataTransfer.setData('cardId', cardId); // Set the card type in 'cardType'
                     event.dataTransfer.setData('text/plain', cardId);
                     event.dataTransfer.setData('fromDeckType', fromDeckType); 
+                    event.dataTransfer.setData('isValidForMainDeck', isValidForMainDeck);
                 } else {
                     console.log(`Card with ID ${cardId} not found in searchedCards.`);
                 }
