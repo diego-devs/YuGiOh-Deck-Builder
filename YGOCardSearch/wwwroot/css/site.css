@@ -266,6 +266,16 @@ body {
     position: relative;
     margin: 30px;
 }
+
+.main-deck-card-count,
+.extra-deck-card-count,
+.side-deck-card-count {
+    position: relative;
+    color: aliceblue;
+    font-size: 25px;
+    font-display: block;
+}
+
 @import url(//fonts.googleapis.com/css?family=Oswald:400);
 
 
