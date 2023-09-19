@@ -86,12 +86,14 @@
             <div class="DecksContainer">
                 <div class="DeckBuilder_DeckCards_Container">
                     <h2>Main Deck</h2>
-                    <div class="deckCount"></div>
+                    <span class="main-deck-card-count" id="mainDeckCardCount"></span>
                     <div class="DeckBuilder_Container_MainDeck" id="main-deck" data-deck-type="MainDeck" ondrop="drop(event)" ondragover="dragOver(event)" ondragstart="dragStart(event)"></div>
                     <div class="RemoveFromDeckArea" id="remove-from-main-deck" ondrop="drop(event)" ondragover="dragOver(event)"></div>
-                    <h2>Extra deck:</h2>
+                    <h2>Extra deck</h2>
+                    <div class="extra-deck-card-count" id="extraDeckCardCount"></div>
                     <div class="DeckBuilder_Container_ExtraDeck" id="extra-deck" data-deck-type="ExtraDeck" ondrop="drop(event)" ondragover="dragOver(event)"></div>
-                    <h2>Side deck:</h2>
+                    <h2>Side deck</h2>
+                    <div class="side-deck-card-count" id="sideDeckCardCount"></div>
                     <div class="DeckBuilder_Container_SideDeck" id="side-deck" data-deck-type="SideDeck" ondrop="drop(event)" ondragover="dragOver(event)"></div>
                 </div>
             </div>

@@ -14,6 +14,14 @@ import {
 
 // Function to handle adding a card to a deck
 function handleAddToDeck(deckType, deck, card, onComplete) {
+    const maxAllowedCopies = 3; // Maximum allowed copies of the same card // developer todo: add banlist support
+    const cardCountInDeck = deck.mainDeck.filter((c) => c.id === card.id).length;
+
+    if (cardCountInDeck >= maxAllowedCopies) {
+        window.alert(`Invalid drop: You can't add more than ${maxAllowedCopies} copies of "${card.name}" to the ${deckType}.`);
+        return;
+    }
+
     switch (deckType) {
         case 'MainDeck':
             addCardToMainDeck(deck, card);
@@ -28,6 +36,7 @@ function handleAddToDeck(deckType, deck, card, onComplete) {
         // Handle unsupported deck type
     }
     renderDeckCards(getDeck(deck, deckType), `.DeckBuilder_Container_${deckType}`);
+    updateDeckCount(deck);
     console.log(`Added "${card.name} id: ${card.id}" to the ${deckType}.`);
     // Call the onComplete function if provided
     if (typeof onComplete === 'function') {
@@ -64,6 +73,7 @@ function handleRemoveFromDeck(deckType, deck, card, onComplete) {
         // Handle unsupported deck type
     }
     renderDeckCards(getDeck(deck, deckType), `.DeckBuilder_Container_${deckType}`);
+    updateDeckCount(deck);
     console.log(`Removed card id: ${card} from the ${deckType}.`);
     // Call the onComplete function if provided
     if (typeof onComplete === 'function') {
@@ -77,7 +87,19 @@ function updateDisplayedDecks() {
     renderDeckCards(decks.sideDeck, '.DeckBuilder_Container_SideDeck');
 }
 
+// Function to update the main deck card count
+function updateDeckCount(deck) {
+    const mainDeckCardCountElement = document.getElementById('mainDeckCardCount');
+    const extraDeckCardCountElement = document.getElementById('extraDeckCardCount');
+    const sideDeckCardCountElement = document.getElementById('sideDeckCardCount');
+    const mainDeckCount = deck.mainDeck.length;
+    const extraDeckCount = deck.extraDeck.length;
+    const sideDeckCount = deck.sideDeck.length;
+    mainDeckCardCountElement.textContent = `Cards: ${mainDeckCount}`;
+    extraDeckCardCountElement.textContent = `Cards: ${extraDeckCount}`;
+    sideDeckCardCountElement.textContent = `Cards: ${sideDeckCount}`
+}
 
 
 
-export { handleAddToDeck, handleRemoveFromDeck, updateDisplayedDecks };
+export { handleAddToDeck, handleRemoveFromDeck, updateDisplayedDecks, updateDeckCount };

@@ -1,7 +1,7 @@
 import { Deck } from './deck.js';
 import { renderDeckCards } from './rendering.js';
 import { renderSearchedCards } from './rendering.js';
-import { handleAddToDeck, handleRemoveFromDeck } from './interaction.js';
+import { handleAddToDeck, handleRemoveFromDeck, updateDeckCount } from './interaction.js';
 
 document.addEventListener('DOMContentLoaded', function () {
     // Declare deck within the event listener scope
@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log(deck.deck_name);
     console.log(deck.mainDeck.length); // Corrected the typo in 'length'
     renderCards(deck, searchedCards);
+    updateDeckCount(deck);
 
 
     // Function to add the dragstart listener to card elements
