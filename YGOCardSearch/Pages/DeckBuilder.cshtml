@@ -29,7 +29,7 @@
 </head>
 <body>
     <div class="DeckBuilder_Deck_Options">
-        <button class="btn btn-primary" id="saveDeckButton">Save</button>
+        <button type="button" id="saveButton" onclick="saveDeck()">SAVE</button>
         <button class="btn btn-danger" id="clearDeckButton">Clear</button>
         <button class="btn btn-secondary" id="shuffleDeckButton">Shuffle</button>
         <button class="btn btn-outline-warning" id="addCardButton">Add card (testing)</button>
@@ -131,10 +131,13 @@
             var deckData = @Html.Raw(Json.Serialize(Model.Deck));
             var mainDeckData = @Html.Raw(Json.Serialize(Model.Deck.MainDeck));
             var extraDeckData = @Html.Raw(Json.Serialize(Model.Deck.ExtraDeck));
+            var sideDeckData = @Html.Raw(Json.Serialize(Model.Deck.SideDeck));
             var searchedCards = @Html.Raw(Json.Serialize(Model.SearchCards));
             // For testing purposes only. todo: delete this
             var testCard = @Html.Raw(Json.Serialize(Model.testCard));
         </script>
+        
+
 
 
 
