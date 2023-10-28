@@ -11,6 +11,8 @@ using System.Text.Json;
 using YGOCardSearch.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.Security.Principal;
+using Newtonsoft.Json;
 
 namespace YGOCardSearch.Pages
 {
@@ -19,7 +21,7 @@ namespace YGOCardSearch.Pages
         public Card testCard { get; set; }
         private readonly IConfiguration _configuration;
         // Esto tambien debera cambiar por db:
-        public List<Deck> LoadedDecks; // no need of this since DecksManager will be a thing
+        public List<Deck> LoadedDecks; // no need of this since DecksManager page will be a thing
         // Deck a visualizar
         public Deck Deck { get; set; }
         // Database
@@ -27,6 +29,7 @@ namespace YGOCardSearch.Pages
         [BindProperty(SupportsGet = true)]
         public string searchQuery { get; set; } = "blue-eyes white dragon";
         public List<Card> SearchCards { get; set; }
+        public string decksPath { get; set; } 
 
         // Dependency injection 
         public DeckBuilder(YgoContext db, IConfiguration configuration)
@@ -37,12 +40,15 @@ namespace YGOCardSearch.Pages
             this.Context = db;
             this._configuration = configuration;
 
-            string decksPath = _configuration["Paths:DecksFolderPath"];
+            decksPath = _configuration["Paths:DecksFolderPath"];
 
             LoadedDecks = new List<Deck>();
             Deck = new Deck();
-            
+
+            // Load all decks as a list of decks
             LoadedDecks.Add(LoadDeck(decksPath));
+
+            // Get the selected Deck as focus deck
             Deck = LoadedDecks.FirstOrDefault(); // developer todo: make selection with dropdrown menu 
 
             // Prepare card images, sets and prices from all decks:
@@ -86,7 +92,7 @@ namespace YGOCardSearch.Pages
             }
             else
             {
-                var results = Context.GetSearch("dragon");
+                var results = Context.GetSearch("dark ruler");
                 if (results != null)
                 {
                     // Prepare card infos
@@ -97,7 +103,11 @@ namespace YGOCardSearch.Pages
                         card.CardPrices = new List<CardPrices>(Context.CardPrices.Where(p => p.CardId == card.CardId));
                     }
                     SearchCards = new List<Card>(results);
-                };
+                }
+                else if (results == null)
+                {
+                    Console.WriteLine("No cards matching the search");
+                }; 
             }
             return Page();
         }
@@ -117,7 +127,6 @@ namespace YGOCardSearch.Pages
 
             }
         }
-
         public IActionResult OnPostAddCard(int cardId, string deckDestination) // Developer todo: MAGIC STRING
         {
             // developer todo: Is to deck, to extra or to side deck? 
@@ -132,6 +141,38 @@ namespace YGOCardSearch.Pages
             // You need to implement this logic, e.g., updating your deck model
 
             return new JsonResult(new { success = true });
+        }
+        
+        public IActionResult OnPostSaveDeck([FromBody] Deck deckData)
+        {
+            if (deckData != null)
+            {
+                try
+                {
+                    // verify the deck is correct 
+                    
+                    // Serialize the deck object to JSON
+                    string deckJson = JsonConvert.SerializeObject(deckData);
+
+                    // Create the file path
+                    string fileName = $"{deckData.MainDeck.FirstOrDefault().Name}.json";
+                    string filePath = Path.Combine(decksPath, fileName);
+
+                    // Write the JSON data to the file
+                    System.IO.File.WriteAllText(filePath, deckJson);
+
+                    // Optionally, you can return a success message or redirect to another page
+                    // For example, you can return a view with a success message:
+                    return Page(); // Create a Success.cshtml view for displaying success message
+                }
+                catch (Exception ex)
+                {
+                    // Handle any exceptions that may occur during file creation
+                    // You can log the exception or return an error message
+                    return Page(); // Create an Error.cshtml view for displaying error message
+                }
+            }
+            return null;
         }
 
 

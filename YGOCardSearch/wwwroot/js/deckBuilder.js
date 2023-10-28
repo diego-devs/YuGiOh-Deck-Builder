@@ -381,6 +381,42 @@ document.addEventListener('DOMContentLoaded', function () {
         removeAreaContainer.addEventListener('drop', drop);
     }
 
+    function saveDeck() {
+        // Get the current deck data
+        const mainDeckData = JSON.stringify(deck.getMainDeck());
+        const extraDeckData = JSON.stringify(deck.getExtraDeck());
+        const sideDeckData = JSON.stringify(deck.getSideDeck());
+
+        // Create an object to hold the deck data
+        const deckData = {
+            mainDeck: mainDeckData,
+            extraDeck: extraDeckData,
+            sideDeck: sideDeckData
+        };
+
+        // Send the deck data to the server
+        fetch('/DeckBuilder?handler=SaveDeck', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(deckData),
+        })
+            .then(response => {
+                if (response.ok) {
+                    // Handle success (e.g., show a success message)
+                    console.log('Deck saved successfully');
+                } else {
+                    // Handle errors (e.g., show an error message)
+                    console.error('Failed to save the deck');
+                }
+            })
+            .catch(error => {
+                // Handle network errors
+                console.error('Network error:', error);
+            });
+    }
+
     // Call this function to add event listeners to the drop target divs
     addDropEventListenersToTargets();
     addDragStartListenerToCards();
