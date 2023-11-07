@@ -410,6 +410,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (response.ok) {
                     // Handle success (e.g., show a success message)
                     console.log('Deck saved successfully');
+                    // Reload the page
+                    location.reload();
                 } else {
                     // Handle errors (e.g., show an error message)
                     console.error('Failed to save the deck');

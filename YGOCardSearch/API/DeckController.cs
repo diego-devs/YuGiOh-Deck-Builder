@@ -43,7 +43,7 @@ namespace YGOCardSearch.API
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-                throw;
+                return new BadRequestResult();
             }
             return new OkResult(); // Return a success response
         }
