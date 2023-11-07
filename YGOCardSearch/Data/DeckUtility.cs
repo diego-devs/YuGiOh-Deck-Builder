@@ -140,46 +140,8 @@ namespace YGOCardSearch.Data
 
             return result;
         }
-        public void SaveDeck()
-        {
-            // Save the deck to the database
-            Context.Decks.Add(Deck);
-            Context.SaveChanges();
-            ExportDeck();
-        }
 
-        // get current deck as it is rendered in the javascript code
-
-
-
-        // get current deck from the JS code and save it as a .ydk file 
-        public void ExportDeck()
-        {
-            // Save the deck to a .ydk file
-            string deckName = "deck";
-            string deckFilePath = Path.Combine(_configuration["Paths:DecksFolderPath"], deckName + ".ydk");
-            using (StreamWriter writer = new StreamWriter(deckFilePath))
-            {
-                // Write the main deck
-                writer.WriteLine("#main");
-                foreach (var card in Deck.MainDeck)
-                {
-                    writer.WriteLine(card.KonamiCardId);
-                }
-                // Write the extra deck
-                writer.WriteLine("#extra");
-                foreach (var card in Deck.ExtraDeck)
-                {
-                    writer.WriteLine(card.KonamiCardId);
-                }
-                // Write the side deck
-                writer.WriteLine("!side");
-                foreach (var card in Deck.SideDeck)
-                {
-                    writer.WriteLine(card.KonamiCardId);
-                }
-            }
-        }
+       
 
 
 

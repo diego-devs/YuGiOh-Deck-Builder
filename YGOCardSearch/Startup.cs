@@ -29,6 +29,7 @@ namespace YGOCardSearch
         {
             // Register the configuration
             services.AddSingleton(Configuration);
+            services.AddControllers();
 
             // Access configuration values
             var decksFolderPath = Configuration["Paths:DecksFolderPath"];
@@ -74,6 +75,7 @@ namespace YGOCardSearch
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
+                endpoints.MapControllers(); // Map API endpoints
             });
         }
     }

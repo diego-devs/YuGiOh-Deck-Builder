@@ -42,6 +42,9 @@ class Deck {
         }
     }
 
+    getDeckName() {
+        return this.deck_name;
+    }
 
     getMainDeck() {
         return this.mainDeck;

@@ -381,21 +381,25 @@ document.addEventListener('DOMContentLoaded', function () {
         removeAreaContainer.addEventListener('drop', drop);
     }
 
-    function saveDeck() {
+    document.getElementById('saveDeckButton').addEventListener('click', function () {
+        saveDeckToApi();
+    });
+    function saveDeckToApi() {
         // Get the current deck data
-        const mainDeckData = JSON.stringify(deck.getMainDeck());
-        const extraDeckData = JSON.stringify(deck.getExtraDeck());
-        const sideDeckData = JSON.stringify(deck.getSideDeck());
+        //const mainDeckData = JSON.stringify(deck.getMainDeck());
+        //const extraDeckData = JSON.stringify(deck.getExtraDeck());
+        //const sideDeckData = JSON.stringify(deck.getSideDeck());
 
         // Create an object to hold the deck data
         const deckData = {
-            mainDeck: mainDeckData,
-            extraDeck: extraDeckData,
-            sideDeck: sideDeckData
+            deck_name: deck.deck_name,
+            mainDeck: deck.getMainDeck(),
+            extraDeck: deck.getExtraDeck(),
+            sideDeck: deck.getSideDeck(),
         };
 
         // Send the deck data to the server
-        fetch('/DeckBuilder?handler=SaveDeck', {
+        fetch('/api/deck/save', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -406,6 +410,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (response.ok) {
                     // Handle success (e.g., show a success message)
                     console.log('Deck saved successfully');
+                    // Reload the page
+                    location.reload();
                 } else {
                     // Handle errors (e.g., show an error message)
                     console.error('Failed to save the deck');
