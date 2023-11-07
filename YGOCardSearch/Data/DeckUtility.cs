@@ -140,17 +140,14 @@ namespace YGOCardSearch.Data
 
             return result;
         }
+
+        // First, get the current Main, Extra and Side Deck rendered at  JS code
+        // Save the deck to the .ydk file
         public void SaveDeck()
         {
-            // Save the deck to the database
-            Context.Decks.Add(Deck);
-            Context.SaveChanges();
-            ExportDeck();
+            
+            ExportDeck(); // Save to ydk file
         }
-
-        // get current deck as it is rendered in the javascript code
-
-
 
         // get current deck from the JS code and save it as a .ydk file 
         public void ExportDeck()
