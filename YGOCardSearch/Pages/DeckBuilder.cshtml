@@ -29,10 +29,11 @@
 </head>
 <body>
     <div class="DeckBuilder_Deck_Options">
-        <button type="button" id="saveDeckButton">SAVE DECK</button>
+        <button class="btn btn-warning" type="button" id="saveDeckButton">SAVE DECK</button>
+        <button class="btn btn-dark" type="button" id="sortDeckButton">Sort</button>
         <button class="btn btn-danger" id="clearDeckButton">Clear</button>
         <button class="btn btn-secondary" id="shuffleDeckButton">Shuffle</button>
-        <button class="btn btn-outline-warning" id="addCardButton">Add card (testing)</button>
+        
     </div>
     
     @*deck-section and cards-section*@
@@ -106,7 +107,8 @@
                         <div class="input-group">
                             <input type="search"
                                    class="form-control"
-                                   asp-for="searchQuery" />
+                                   id="searchInput"
+                                   asp-for="searchQuery"  />
                             <button class="btn btn-light">Buscar</button>
                         </div>
                     </div>
@@ -114,6 +116,7 @@
             </div>
             @*Where the searched cards will display*@
             <div class="DeckBuilder_CardSearch_JS">
+                <div id="searchResultsContainer"></div>
             </div>
         </div>
     </div>

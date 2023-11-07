@@ -57,6 +57,8 @@ class Deck {
     getSideDeck() {
         return this.sideDeck;
     }
+    
+
 }
 const addCardToMainDeck = (deck, card) => deck.addCardToMainDeck(card);
 const addCardToExtraDeck = (deck, card) => deck.addCardToExtraDeck(card);

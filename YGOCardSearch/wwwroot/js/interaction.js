@@ -14,16 +14,10 @@ import {
 
 // Function to handle adding a card to a deck
 function handleAddToDeck(deckType, deck, card, onComplete) {
-    const maxAllowedCopies = 3; // Maximum allowed copies of the same card // developer todo: add banlist support
-    const cardCountInDeck = deck.mainDeck.filter((c) => c.id === card.id).length;
+    
     const maxMainCards = 60;
-    const maxExtraCards = 15; 
+    const maxExtraCards = 15;
     const maxSideCards = 15;
-
-    if (cardCountInDeck >= maxAllowedCopies) {
-        window.alert(`Invalid drop: You can't add more than ${maxAllowedCopies} copies of "${card.name}" to the ${deckType}.`);
-        return;
-    }
 
     switch (deckType) {
         case 'MainDeck':

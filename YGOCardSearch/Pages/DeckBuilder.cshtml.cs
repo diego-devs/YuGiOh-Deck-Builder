@@ -171,11 +171,11 @@ namespace YGOCardSearch.Pages
             List<Card> extraDeck = GetCardList(cleanedExtraDeckIds);
             List<Card> sideDeck = GetCardList(cleanedSideDeckIds);
 
-            // Validate that at least one card is present in the main deck
-            if (mainDeck.Count == 0)
-            {
-                throw new InvalidOperationException("The main deck must contain at least one card.");
-            }
+            //// Validate that at least one card is present in the main deck
+            //if (mainDeck.Count == 0)
+            //{
+            //    throw new InvalidOperationException("The main deck must contain at least one card.");
+            //}
 
             // Create and populate the deck object
             Deck newDeck = new Deck();
