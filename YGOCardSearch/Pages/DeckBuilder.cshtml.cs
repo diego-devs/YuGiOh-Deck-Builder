@@ -24,6 +24,7 @@ namespace YGOCardSearch.Pages
         public List<Deck> LoadedDecks; // no need of this since DecksManager page will be a thing
         // Deck a visualizar
         public Deck Deck { get; set; }
+        public string currentDeckName { get; set; }
         // Database
         public readonly YgoContext Context;
         [BindProperty(SupportsGet = true)]
@@ -31,16 +32,14 @@ namespace YGOCardSearch.Pages
         public List<Card> SearchCards { get; set; }
         public string decksPath { get; set; } 
 
-        // Dependency injection 
+        // Dependency injection of both Configuration and YgoContext 
         public DeckBuilder(YgoContext db, IConfiguration configuration)
         {
-
             // Good place to initialize data
-            // Load the Database from the Context class
+            // Load the Database
             this.Context = db;
             this._configuration = configuration;
-
-            decksPath = _configuration["Paths:DecksFolderPath"];
+            this.decksPath = _configuration["Paths:DecksFolderPath"];
 
             LoadedDecks = new List<Deck>();
             Deck = new Deck();
@@ -50,6 +49,7 @@ namespace YGOCardSearch.Pages
 
             // Get the selected Deck as focus deck
             Deck = LoadedDecks.FirstOrDefault(); // developer todo: make selection with dropdrown menu 
+            currentDeckName = Deck.DeckName;
 
             // Prepare card images, sets and prices from all decks:
             foreach (var card in Deck.MainDeck)
@@ -127,56 +127,6 @@ namespace YGOCardSearch.Pages
 
             }
         }
-        public IActionResult OnPostAddCard(int cardId, string deckDestination) // Developer todo: MAGIC STRING
-        {
-            // developer todo: Is to deck, to extra or to side deck? 
-            
-            // Logic to add the card with 'cardId' to your deck
-            Card card = Context.Cards.Single(c => c.KonamiCardId == cardId);
-            if (card == null)
-            {
-                Console.WriteLine($"Added {card.Name} card to main deck");
-                this.Deck.MainDeck.Add(card);
-            }
-            // You need to implement this logic, e.g., updating your deck model
-
-            return new JsonResult(new { success = true });
-        }
-        
-        public IActionResult OnPostSaveDeck([FromBody] Deck deckData)
-        {
-            if (deckData != null)
-            {
-                try
-                {
-                    // verify the deck is correct 
-                    
-                    // Serialize the deck object to JSON
-                    string deckJson = JsonConvert.SerializeObject(deckData);
-
-                    // Create the file path
-                    string fileName = $"{deckData.MainDeck.FirstOrDefault().Name}.json";
-                    string filePath = Path.Combine(decksPath, fileName);
-
-                    // Write the JSON data to the file
-                    System.IO.File.WriteAllText(filePath, deckJson);
-
-                    // Optionally, you can return a success message or redirect to another page
-                    // For example, you can return a view with a success message:
-                    return Page(); // Create a Success.cshtml view for displaying success message
-                }
-                catch (Exception ex)
-                {
-                    // Handle any exceptions that may occur during file creation
-                    // You can log the exception or return an error message
-                    return Page(); // Create an Error.cshtml view for displaying error message
-                }
-            }
-            return null;
-        }
-
-
-
         /// <summary>
         /// Loads a Deck from a .ydk file, extracting the main deck, extra deck, and side deck card lists.
         /// </summary>
@@ -195,6 +145,8 @@ namespace YGOCardSearch.Pages
             {
                 throw new FileNotFoundException("No deck (.ydk) files found in the specified directory.");
             }
+            // Extract the deck name from the file name (excluding the extension)
+            string deckName = Path.GetFileNameWithoutExtension(deckFilePath);
 
             // Read all lines from the deck file
             string[] deckLines = System.IO.File.ReadAllLines(deckFilePath);
@@ -230,7 +182,7 @@ namespace YGOCardSearch.Pages
             newDeck.MainDeck = mainDeck;
             newDeck.ExtraDeck = extraDeck;
             newDeck.SideDeck = sideDeck;
-            newDeck.DeckName = newDeck.MainDeck.First().Name.ToString().ToLower();
+            newDeck.DeckName = deckName;
 
             return newDeck;
         }
