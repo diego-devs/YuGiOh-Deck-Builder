@@ -164,11 +164,11 @@ body {
 }
 
 .deckView {
-    width: 50px;
+    width: 100px;
 }
 
 .deckCardImage {
-    width: 5%;
+    width: 10%;
 }
 .searchCardImage {
     width: 100px;
@@ -219,37 +219,45 @@ body {
 /*Split section Deckbuilder*/
 .split-section {
     display: flex;
-    /*align-items: flex-start;*/
-    width: 100%; /* Use the full width of the page */
+    width: 100%;
 }
 
 .cards-section {
     flex: 1;
-    width: 30%;
-    padding: 20px; /* Adjust padding as needed */
-    max-height: 800px; /* Set a maximum height as needed */
+    width: 10%;
+    padding: 20px;
+    max-height:720px;
     overflow-y: auto;
-    border: 1px solid #ccc; /* Optional border for visual separation */
+    border: 1px solid #ccc;
 }
 
 .deck-section {
     flex: 2;
-    width: 70%;
-    padding: 20px; /* Adjust padding as needed */
-    background-color: #0b102b;
-    
-}
-.detail-section {
-    flex: 3;
+    width: 60%;
     padding: 20px;
-    background-color: red;
+    background-color: #0b102b;
 }
+
+.detail-section {
+    flex: 1; /* Adjust the flex value as needed */
+    width: 10%;
+    /*padding: 20px;*/
+    max-height: 80%;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    align-content: center;
+}
+.hoover-card img {
+    position: center;
+    padding: 20px;
+}
+
 .container {
     max-width: 100%;
     position: absolute;
 }
 /* site.css */
-.search-input {
+    .search-input {
     max-width: 50%;
     margin-right: 1%;
     margin-left: 20%;
@@ -259,125 +267,10 @@ body {
     width: 90%;
 }
 
-/*Pie chart from DeckBuilder*/
-.DeckBuilder_DeckInfo {
-    display: flex;
-    height: 250px;
-    
-}
-
-.remove-area {
-    max-width: 200px;
-    position: relative;
-    margin: 30px;
-}
-
-.main-deck-card-count,
-.extra-deck-card-count,
-.side-deck-card-count {
-    position: relative;
-    color: aliceblue;
-    font-size: 25px;
-    font-display: block;
-}
-
-@import url(//fonts.googleapis.com/css?family=Oswald:400);
 
 
-.chartContainer {
-    position: relative;
-    flex: 1;
-    width: 100%;
-    padding: 20px;
-    overflow: hidden;
-}
-.infoContainer {
-    position: relative;
-    flex: 2;
-    width: 100%;
-    padding: 20px;
-    overflow: hidden;
-    height: 100%;
-}
+/*DeckBuilder page styles*/
+/*Index page styles*/
+/*CardViewer page styles*/
+/*Shared page styles*/
 
-.chartImage {
-    position: absolute;
-
-}
-.chart {
-    position: relative;
-    width: 250px;
-    height: 450px;
-    top: -90px;
-    left: 80%;
-    margin-bottom: 100px;
-    margin: -10% 0 0 -60%;
-
-}
-
-svg {
-    width: 100%;
-   
-}
-
-.doughnutTip {
-    position: absolute;
-    min-width: 30px;
-    max-width: 300px;
-    padding: 5px 15px;
-    border-radius: 1px;
-    background: rgba(0, 0, 0, 0.8);
-    color: #ddd;
-    font-size: 17px;
-    text-shadow: 0 1px 0 #000;
-    text-transform: uppercase;
-    text-align: center;
-    line-height: 1.3;
-    letter-spacing: 0.06em;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-    pointer-events: none;
-}
-
-    .doughnutTip::after {
-        position: absolute;
-        left: 50%;
-        bottom: -6px;
-        content: "";
-        height: 0;
-        margin: 0 0 0 -6px;
-        border-right: 5px solid transparent;
-        border-left: 5px solid transparent;
-        border-top: 6px solid rgba(0, 0, 0, 0.7);
-        line-height: 0;
-    }
-
-.doughnutSummary {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    color: #d5d5d5;
-    text-align: center;
-    text-shadow: 0 -1px 0 #111;
-    cursor: default;
-}
-
-.doughnutSummaryTitle {
-    position: absolute;
-    top: 30%;
-    width: 100%;
-    margin-top: -27%;
-    font-size: 22px;
-    letter-spacing: 0.06em;
-}
-
-.doughnutSummaryNumber {
-    position: absolute;
-    top: 80%;
-    width: 100%;
-    margin-top: -15%;
-    font-size: 30px;
-}
-
-.chart path:hover {
-    opacity: 0.6;
-}

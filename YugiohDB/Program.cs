@@ -27,7 +27,7 @@ namespace YugiohDB
             Console.WriteLine($"Images Local Path: {imagesLocalPath}");            
             
             // Use this Main method to download images and map the correct paths as you need or to test functionality. 
-            // LinkData();
+            // MapCardData();
 
             // 1- Download and save all cards from API
             //var allcards = await YGOProvider.GetAllCardsAsync();
@@ -36,7 +36,7 @@ namespace YugiohDB
             // 2- Load all cards from json file
             //List<Card> localCards = YgoProDeckTools.ReadAllCards(cardsLocalPath);
 
-            // 3- Download all images and images small first
+            // 3- Download all images and images sizes *** developer todo: some cards have more than 1 image
             //await YgoProDeckTools.DownloadImagesAsync(localCards, "cropped");
             //await YgoProDeckTools.DownloadCardImages(allCards, "small");
             //await YgoProDeckTools.DownloadCardImages(allCards, ""
@@ -53,7 +53,7 @@ namespace YugiohDB
 
             // 6- Save and overwrite modified cards to local folder
             //YgoProDeckTools.SaveCards(localCards, cardsLocalPath); 
-            //Console.WriteLine("All cards and images have been downloaded and mapped to local. ");
+            //Console.WriteLine("All cards and images have been downloaded and mapped to text file in local path. ");
 
             // 7- Add all cards to database
             //await YgoProDeckTools.AddAllCards(cardsLocalPath);
@@ -140,6 +140,18 @@ namespace YugiohDB
                
             }
         }
+        public static void UpdateCardDatabase() 
+        {
+            // get all cards from ygoprodeck api provider
+            // compare our database context against those cards retrieved from API
+            // identify the new cards and isolate them
+            // get the new images of these new cards
+            // map the new images correctly in local
+            // map the banlist of new cards 
+            // add new cards to context
+            // get all cards from context and compare again against the ygoprodeck file
+        }
+    
     }
     
 }

@@ -11,6 +11,30 @@ document.addEventListener('DOMContentLoaded', function () {
     renderCards(deck, searchedCards);
     updateDeckCount(deck);
 
+    
+    function addHoverListenerToCards() {
+        const cardElements = document.querySelectorAll('.deckView');
+        const bigCardImage = document.getElementById('bigCard');
+        const detailText = document.getElementById('detail-text');
+
+        cardElements.forEach(cardElement => {
+            cardElement.addEventListener('mouseover', function (event) {
+                const cardId = event.target.id;
+                console.log('Hover on card ID: ' + cardId);
+
+                // Assuming your big image path follows the same pattern
+                const cardImagePath = 'images/' + cardId + '.jpg';
+
+                bigCardImage.src = cardImagePath;
+            });
+
+            cardElement.addEventListener('mouseout', function () {
+                /*bigCardImage.src = 'images/2511.jpg'; // Clear image when not hovering*/
+            });
+        });
+    }
+
+
 
     // Function to add the dragstart listener to card elements
     function addDragStartListenerToCards() {
@@ -27,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
         renderSearch(searchedCards);
         addDragStartListenerToCards();
         addDropEventListenersToTargets();
+        addHoverListenerToCards();
     }
 
     // Function to render the entire deck cards
@@ -49,6 +74,8 @@ document.addEventListener('DOMContentLoaded', function () {
     function onRenderingComplete() {
         addDropEventListenersToTargets();
     }
+    
+
 
 
     ////// Handle drag and drop functionality events: 
@@ -140,6 +167,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         if (isValidForMainDeck === "true") {
                             handleAddToDeck(dropDeckType, deck, droppedCard, function () {
                                 addDragStartListenerToCards();
+                                addHoverListenerToCards();
                             });
                         } else {
                             // Display an error message or prevent the card from being added to Main Deck
@@ -150,6 +178,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         if (isValidForMainDeck === "false") {
                             handleAddToDeck(dropDeckType, deck, droppedCard, function () {
                                 addDragStartListenerToCards();
+                                addHoverListenerToCards();
                             });          
                         } else {
                             // Display an error message or prevent the card from being added to Extra Deck
@@ -159,7 +188,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     case 'SideDeck':
                         if (isValidForMainDeck === "true") {
                             handleAddToDeck(dropDeckType, deck, droppedCard, function () {
-                            addDragStartListenerToCards();
+                                addDragStartListenerToCards();
+                                addHoverListenerToCards();
                             });
                         } 
                         else {
@@ -493,6 +523,12 @@ document.addEventListener('DOMContentLoaded', function () {
         return array;
     }
 
+
+
+
+
+    
+        
 
 
 
