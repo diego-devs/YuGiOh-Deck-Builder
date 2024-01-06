@@ -420,12 +420,38 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     document.getElementById('sortDeckButton').addEventListener('click', function () {
-        sortDeckByCardType();
+        sortDeckByNameAndType();
     });
 
     document.getElementById('shuffleDeckButton').addEventListener('click', function () {
         shuffleDeck();
     });
+
+    function sortDeckByNameAndType() {
+        // Get the deck cards and sort them by name first, then by card type
+        deck.getMainDeck().sort((a, b) => {
+            // Get the names for comparison
+            const nameA = a.name || "";
+            const nameB = b.name || "";
+
+            // If the names are different, sort by name
+            if (nameA !== nameB) {
+                return nameA.localeCompare(nameB);
+            }
+
+            // If the names are the same, sort by card type
+            const typeA = a.type || "";
+            const typeB = b.type || "";
+
+            return typeA.localeCompare(typeB);
+        });
+
+        // Re-render the sorted deck in your UI
+        renderDeck(deck);
+
+        // You can add additional logic to update the UI here if needed
+    }
+
 
     function sortDeckByCardType() {
         // Get the deck cards and sort them by card type alphabetically
@@ -466,52 +492,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         return array;
     }
+
+
+
+
     
-    // Find the search input field by its ID
-    const searchInput = document.getElementById('searchInput');
-
-    // Find the container where search results will be displayed by its ID
-    const searchResultsContainer = document.getElementById('searchResultsContainer');
-
-    // Add an event listener to the search input to capture user input
-    searchInput.addEventListener('input', function () {
-        const searchQuery = searchInput.value; // Get the search query
-        if (searchQuery.length > 2) { // Make sure the query is long enough
-            searchCards(searchQuery);
-        } else {
-            // Clear the search results if the query is too short
-            searchResultsContainer.innerHTML = '';
-        }
-    });
-
-    // Function to search for cards using AJAX
-    function searchCards(query) {
-        // Send an AJAX request to your C# API endpoint
-        fetch('/api/search?query=' + query)
-            .then(response => response.json())
-            .then(data => {
-                // Process the JSON response and update the search results container
-                updateSearchResults(data);
-            })
-            .catch(error => {
-                console.error('Search request failed:', error);
-            });
-    }
-
-    // Function to update the search results container with search data
-    function updateSearchResults(results) {
-        // Clear the existing search results
-        searchResultsContainer.innerHTML = '';
-
-        // Create and append elements for each search result
-        results.forEach(result => {
-            const resultElement = document.createElement('div');
-            resultElement.textContent = result.name; // Adjust this based on your data structure
-            searchResultsContainer.appendChild(resultElement);
-        });
-    }
-
-
 
     
 

@@ -239,6 +239,11 @@ body {
     background-color: #0b102b;
     
 }
+.detail-section {
+    flex: 3;
+    padding: 20px;
+    background-color: red;
+}
 .container {
     max-width: 100%;
     position: absolute;

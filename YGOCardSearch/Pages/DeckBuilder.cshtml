@@ -37,7 +37,10 @@
     </div>
     
     @*deck-section and cards-section*@
-    <div class="split-section"> 
+    <div class="split-section">
+        <div class="detail-dection">
+
+        </div>
         <div class="deck-section">
             <div class="DeckBuilder_DeckInfo">
                 <div class="chartContainer">
@@ -99,9 +102,11 @@
                 </div>
             </div>
         </div>
-
         <div class="cards-section" ondrop="drop(event)" ondragover="dragOver(event)">
             <div class="DeckBuilder_CardSearch_Container">
+                
+
+
                 <form method="GET">
                     <div class="form-group">
                         <div class="input-group">
@@ -116,8 +121,11 @@
             </div>
             @*Where the searched cards will display*@
             <div class="DeckBuilder_CardSearch_JS">
-                <div id="searchResultsContainer"></div>
             </div>
+
+            
+
+
         </div>
     </div>
     <div class="remove-area" > <!-- ondrag="dragStart(event)" ondragover="dragOver(event)" ondrop="drop(event)"-->
