@@ -46,11 +46,10 @@
         
     </div>
     
-    @*deck-section and cards-section*@
+    @*Sections*@
     <div class="split-section">
         <div class="detail-section">
-            <img id="bigCard" class="inner bigCard" src="" />  @*developer todo, change this hardcode*@
-            
+            <img id="bigCard" class="inner bigCard" src="" />  
         </div>
         <div class="deck-section">
             <div class="DeckBuilder_DeckInfo">
@@ -142,8 +141,6 @@
     
     <!-- Include necessary JavaScript files here -->
 @section Scripts {
-
-
         <script>
             // Expose the deck data as JavaScript variables
             var deckData = @Html.Raw(Json.Serialize(Model.Deck));
@@ -151,14 +148,8 @@
             var extraDeckData = @Html.Raw(Json.Serialize(Model.Deck.ExtraDeck));
             var sideDeckData = @Html.Raw(Json.Serialize(Model.Deck.SideDeck));
             var searchedCards = @Html.Raw(Json.Serialize(Model.SearchCards));
-            // For testing purposes only. todo: delete this
-            var testCard = @Html.Raw(Json.Serialize(Model.testCard));
+
         </script>
-        
-
-
-
-
 }
 </body>
 
