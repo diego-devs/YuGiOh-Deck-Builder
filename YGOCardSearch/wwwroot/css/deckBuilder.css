@@ -11,6 +11,7 @@
     float: left;
     width: 100%;
     max-width: 100%;
+
 }
 
 .deckView {
@@ -44,6 +45,7 @@
     border: 2px dashed #888;
     padding: 100px;
     margin: 100px;
+
 }
 
 /* Add a glowing effect when a card is dragged over the containers */
@@ -65,6 +67,7 @@
 
 .DecksContainer {
     margin-top: 20px;
+
 }
 /* Card Viewer Site */
 /* Add your Card Viewer styles here */
@@ -72,6 +75,7 @@
 .split-section {
     display: flex;
     width: 100%;
+
 }
 
 .cards-section {
@@ -81,14 +85,16 @@
     max-height: 720px;
     overflow-y: auto;
     border: 1px solid #ccc;
+    background-color: rgba(11, 16, 43, 0.7); /* Adjust the last value (alpha) for transparency */
 }
 
 .deck-section {
     flex: 2;
     width: 60%;
     padding: 20px;
-    background-color: #0b102b;
+    background-color: rgba(11, 16, 43, 0.7); /* Adjust the last value (alpha) for transparency */
 }
+
 
 .detail-section {
     flex: 1; /* Adjust the flex value as needed */
@@ -120,3 +126,9 @@
     position: relative;
     width: 90%;
 }
+
+/* Add this CSS rule to make the text in the smaller-description class smaller */
+.smaller-description {
+    font-size: 0.8em; /* Adjust the size as needed */
+}
+

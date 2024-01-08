@@ -13,7 +13,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     
     function addHoverListenerToCards() {
-        const cardElements = document.querySelectorAll('.deckView');
+        const cardElements = document.querySelectorAll('.searchCardImage, .deckCardImage');
+
         const bigCardImage = document.getElementById('bigCard');
         const detailText = document.getElementById('detail-text');
 
@@ -39,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Function to add the dragstart listener to card elements
     function addDragStartListenerToCards() {
         // Add drag-and-drop listeners to card elements
-        const cardElements = document.querySelectorAll('.inner.deckView');
+        const cardElements = document.querySelectorAll('.inner, .deckView');
         cardElements.forEach(function (cardElement) {
             cardElement.draggable = true;
             cardElement.addEventListener('dragstart', dragStart);

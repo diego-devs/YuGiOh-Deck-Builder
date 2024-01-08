@@ -41,11 +41,12 @@ function renderDeckCards(deck, deckPart) {
 
 
 // Function to render searched cards
+// This is so messed up
 
 function renderSearchedCards(cards, containerSelector) {
     var container = document.querySelector(containerSelector);
     container.innerHTML = ''; // Clear the container
-   
+
     if (cards && cards.length > 0) {
         var cardTable = document.createElement('table');
         cardTable.className = 'searchTable table table-dark'; // Add your table classes here if needed
@@ -53,16 +54,16 @@ function renderSearchedCards(cards, containerSelector) {
         var tableHeader = document.createElement('thead');
         var headerRow = document.createElement('tr');
 
-        var headerImageCell = document.createElement('th');
+        var headerImageCell = document.createElement('td'); // Change from th to td
         headerImageCell.textContent = 'Image';
 
-        var headerNameCell = document.createElement('th');
+        var headerNameCell = document.createElement('td'); // Change from th to td
         headerNameCell.textContent = 'Name';
 
-        var headerDescriptionCell = document.createElement('th');
+        var headerDescriptionCell = document.createElement('td'); // Change from th to td
         headerDescriptionCell.textContent = 'Description';
 
-        var headerTypeCell = document.createElement('th');
+        var headerTypeCell = document.createElement('td'); // Change from th to td
         headerTypeCell.textContent = 'Type';
 
         headerRow.appendChild(headerImageCell);
@@ -102,6 +103,7 @@ function renderSearchedCards(cards, containerSelector) {
             var cardDescriptionCell = document.createElement('td');
             var cardDescription = card.desc.length > 40 ? card.desc.substring(0, 40) + '...' : card.desc;
             cardDescriptionCell.textContent = cardDescription;
+            cardDescriptionCell.className = 'smaller-description';
 
             var cardTypeCell = document.createElement('td');
             cardTypeCell.textContent = card.type;
@@ -112,12 +114,7 @@ function renderSearchedCards(cards, containerSelector) {
             cardRow.appendChild(cardDescriptionCell);
             cardRow.appendChild(cardTypeCell);
 
-            var cardView = document.createElement('span');
-            cardView.className = 'inner deckView';
-            cardView.id = card.id;
-            cardView.appendChild(cardRow);
-
-            tableBody.appendChild(cardView);
+            tableBody.appendChild(cardRow);
         });
 
         cardTable.appendChild(tableBody);

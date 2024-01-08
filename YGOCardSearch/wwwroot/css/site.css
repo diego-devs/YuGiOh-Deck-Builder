@@ -7,7 +7,7 @@ body {
     margin-bottom: 30px; /* Margin bottom by footer height */
 }
 .table {
-    background-color: #0b102b;
+    background-color: rgba(11, 16, 43, 0.7); /* Adjust the last value (alpha) for transparency */
 }
 h1 {
     font-size: 36px; /* Adjust font size as needed */

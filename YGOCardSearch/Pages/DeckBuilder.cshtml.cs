@@ -28,7 +28,7 @@ namespace YGOCardSearch.Pages
         // Database
         public readonly YgoContext Context;
         [BindProperty(SupportsGet = true)]
-        public string searchQuery { get; set; } = "blue-eyes white dragon";
+        public string searchQuery { get; set; } 
         public List<Card> SearchCards { get; set; }
         public string decksPath { get; set; } 
 
@@ -70,7 +70,7 @@ namespace YGOCardSearch.Pages
                 card.CardSets = new List<CardSet>(Context.CardSets.Where(s => s.CardId == card.CardId));
                 card.CardPrices = new List<CardPrices>(Context.CardPrices.Where(p => p.CardId == card.CardId));
             }
-            this.testCard = Context.Cards.Single(c => c.KonamiCardId == 12694768);
+            this.testCard = Context.Cards.Single(c => c.KonamiCardId == 12694768); // this should be removed
         }
         public IActionResult OnGet()
         {
