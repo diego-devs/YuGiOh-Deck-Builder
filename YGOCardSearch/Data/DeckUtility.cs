@@ -140,16 +140,5 @@ namespace YGOCardSearch.Data
 
             return result;
         }
-
-       
-
-
-
-        public void Sort()
-        {
-            Deck.MainDeck = Deck.MainDeck.OrderBy(c => c.Type).ToList();
-            Deck.ExtraDeck = Deck.ExtraDeck.OrderBy(c => c.Type).ToList();
-            Deck.SideDeck = Deck.SideDeck.OrderBy(c => c.Type).ToList();
-        }
     }
 }

@@ -29,7 +29,7 @@ namespace YugiohDB
         {
             if (imgSize == "small")
             {
-                string localFolder = "C:/Users/PC Gamer/source/repos/YuGiOhTCG/YGOCardSearch/data/images/small"; // This should be changed in prod
+                string localFolder = "C:/Users/PC Gamer/source/repos/YuGiOhTCG/YGOCardSearch/data/images/small"; // This should be changed to use configuration
 
                 using (HttpClient client = new HttpClient())
                 {
@@ -38,13 +38,10 @@ namespace YugiohDB
                     {
                         if (card.CardImages != null)
                         {
-
-
-                            // Large images
+                            // Small images
                             foreach (CardImages img in card.CardImages)
                             {
                                 var imageUrl = img.ImageUrlSmall;
-
 
                                 string fileName = $"{card.KonamiCardId}.jpg";
                                 string localPath = Path.Combine(localFolder, fileName);
@@ -148,17 +145,7 @@ namespace YugiohDB
                 Console.WriteLine("Wrong img size parameter. Use small, large or cropped");
             }
         }
-        /// Deprecated
-        public static async Task DownloadImageAsync(Card card)
-        {
-            string path = "C:/Users/d_dia/source/repos/YuGiOhTCG/YGOCardSearch/data/images/"; // This should be changed in prod
-
-            var url = card.CardImages[0].ImageUrl;
-            using (WebClient client = new WebClient())
-            {
-                client.DownloadFile(new Uri(url), $"{path}" + $"{card.CardId}.jpg");
-            }
-        }
+        
         /// <summary>
         /// Serializes and writes a list of cards to the selected path
         /// </summary>
