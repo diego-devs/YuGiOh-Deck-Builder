@@ -64,6 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
         renderDeckCards(deck.getMainDeck(), mainDeckContainer); //onRenderingComplete()
         renderDeckCards(deck.getExtraDeck(), extraDeckContainer);
         renderDeckCards(deck.getSideDeck(), sideDeckContainer);
+        addHoverListenerToCards();
 
     }
     // Function to render the searched cards part
