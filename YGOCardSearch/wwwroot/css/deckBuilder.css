@@ -1,6 +1,122 @@
-﻿namespace YGOCardSearch.wwwroot.css
-{
-    public class deckBuilder
-    {
+﻿
+/*DeckBuilder page styles*/
+/* Deck Builder Site */
+.DeckBuilder_CardSearch_Container {
+    float: right;
+    width: 100%;
+    max-width: 100%;
+}
+
+.DeckBuilder_DeckCards_Container {
+    float: left;
+    width: 100%;
+    max-width: 100%;
+}
+
+.deckView {
+    width: 100px;
+}
+
+.deckCardImage {
+    width: 10%;
+}
+
+.searchCardImage {
+    width: 100px;
+    padding: 0px;
+}
+
+.searchTable th,
+.searchTable td {
+    width: 40%; /* Adjust the width as needed */
+    vertical-align: top; /* Align content to the top of cells */
+    align-content: center;
+    align-items: center;
+}
+
+.DeckBuilder_Container_MainDeck
+.DeckBuilder_Container_ExtraDeck
+.DeckBuilder_Container_SideDeck {
+    max-width: 100%;
+    width: 100%;
+    min-height: 100px;
+    min-width: 100px;
+    border: 2px dashed #888;
+    padding: 100px;
+    margin: 100px;
+}
+
+/* Add a glowing effect when a card is dragged over the containers */
+.DeckBuilder_Container_MainDeck.dragover,
+.DeckBuilder_Container_ExtraDeck.dragover,
+.DeckBuilder_Container_SideDeck.dragover {
+    animation: glow 0.5s infinite alternate; /* Use the 'glow' animation */
+}
+/* Define the 'glow' animation */
+@keyframes glow {
+    0% {
+        box-shadow: 0 0 5px rgba(255, 223, 0, 0.8); /* Initial shadow */
     }
+
+    100% {
+        box-shadow: 0 0 20px rgba(255, 223, 0, 1); /* Glowing shadow */
+    }
+}
+
+.DecksContainer {
+    margin-top: 20px;
+}
+/* Card Viewer Site */
+/* Add your Card Viewer styles here */
+/*Split section Deckbuilder*/
+.split-section {
+    display: flex;
+    width: 100%;
+}
+
+.cards-section {
+    flex: 1;
+    width: 10%;
+    padding: 20px;
+    max-height: 720px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+}
+
+.deck-section {
+    flex: 2;
+    width: 60%;
+    padding: 20px;
+    background-color: #0b102b;
+}
+
+.detail-section {
+    flex: 1; /* Adjust the flex value as needed */
+    width: 10%;
+    /*padding: 20px;*/
+    max-height: 80%;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    align-content: center;
+}
+
+.hoover-card img {
+    position: center;
+    padding: 20px;
+}
+
+.container {
+    max-width: 100%;
+    position: absolute;
+}
+/* site.css */
+.search-input {
+    max-width: 50%;
+    margin-right: 1%;
+    margin-left: 20%;
+}
+
+.allCards-container {
+    position: relative;
+    width: 90%;
 }
