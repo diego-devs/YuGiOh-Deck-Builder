@@ -4,8 +4,7 @@
 
 @{
     var TotalDeckCards = Model.Deck.ExtraDeck.Count() + Model.Deck.MainDeck.Count();
-    var topAtkCard = Model.Deck.MainDeck.OrderByDescending(c => c.Atk ?? 0).FirstOrDefault();
-                            
+    var topAtkCard = Model.Deck.MainDeck.OrderByDescending(c => c.Atk ?? 0).FirstOrDefault(); // this is not working
 
     int pageSize = 10;
     int totalPages = (int)Math.Ceiling((double)Model.SearchCards.Count / pageSize);
@@ -19,9 +18,7 @@
 <head>
     <!-- Include your necessary CSS and meta tags here -->
     <link rel="stylesheet" href="~/css/deckBuilder.css">
-    <link rel="stylesheet" href="~/css/index.css">
-    <link rel="stylesheet" href="~/css/cardViewer.css">
-    <link rel="stylesheet" href="~/css/shared.css">
+    <link rel="stylesheet" href="~/css/site.css">
     <link rel="stylesheet" href="~/css/doughnutChart.css">
     <!-- Include script references -->
     <script type="module" src="/js/deck.js"></script>
@@ -38,16 +35,20 @@
         <button class="btn btn-dark" type="button" id="sortDeckButton">Sort</button>
         <button class="btn btn-danger" id="clearDeckButton">Clear</button>
         <button class="btn btn-secondary" id="shuffleDeckButton">Shuffle</button>
+        <button class="btn btn-secondary">
+            <a  asp-page="/HandTesting" asp-route-deck="@Model.Deck">
+                Hand Test
+            </a>
+        </button>
         
     </div>
     
-    @*deck-section and cards-section*@
+    @*Sections*@
     <div class="split-section">
         <div class="detail-section">
-            <img id="bigCard" class="inner bigCard" src="" />  @*developer todo, change this hardcode*@
-            
+            <img id="bigCard" class="inner bigCard" src="" />  
         </div>
-        <div class="deck-section">
+        <div class="deck-section"> <!-- Why this doesn't have the ondrop and ondragover event listeners and still works?** I removed it, lets see... -->
             <div class="DeckBuilder_DeckInfo">
                 <div class="chartContainer">
                     <div class="chartImage">
@@ -56,13 +57,10 @@
                 </div>
                 <div class="infoContainer">
                     <h1>Deck Name: @Model.Deck.DeckName</h1>
-                    <span>
-                        <a class="cool-button" asp-page="/HandTesting" asp-route-deck="@Model.Deck">
-                            Hand Testing
-                        </a>
-                    </span>
-                    <div class="highest-card">
-                        <h2>Highest atk card:</h2>
+                    
+                    <div class="top-cards">
+                        <h4>Strongest card:</h4>
+                        
                         <table class="table table-dark">
                             <thead>
                                 <tr>
@@ -71,7 +69,7 @@
                                     <th>Attack</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody style="height:20%">
                                 @if (topAtkCard != null)
                                 {
                                     <tr>
@@ -108,10 +106,8 @@
                 </div>
             </div>
         </div>
-        <div class="cards-section" ondrop="drop(event)" ondragover="dragOver(event)">
+        <div class="cards-section">
             <div class="DeckBuilder_CardSearch_Container">
-                
-
 
                 <form method="GET">
                     <div class="form-group">
@@ -141,8 +137,6 @@
     
     <!-- Include necessary JavaScript files here -->
 @section Scripts {
-
-
         <script>
             // Expose the deck data as JavaScript variables
             var deckData = @Html.Raw(Json.Serialize(Model.Deck));
@@ -150,14 +144,8 @@
             var extraDeckData = @Html.Raw(Json.Serialize(Model.Deck.ExtraDeck));
             var sideDeckData = @Html.Raw(Json.Serialize(Model.Deck.SideDeck));
             var searchedCards = @Html.Raw(Json.Serialize(Model.SearchCards));
-            // For testing purposes only. todo: delete this
-            var testCard = @Html.Raw(Json.Serialize(Model.testCard));
+
         </script>
-        
-
-
-
-
 }
 </body>
 

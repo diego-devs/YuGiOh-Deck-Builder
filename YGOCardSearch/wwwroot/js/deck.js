@@ -57,6 +57,34 @@ class Deck {
     getSideDeck() {
         return this.sideDeck;
     }
+
+    getCardCount() {
+        return this.mainDeck.length + this.extraDeck.length + this.sideDeck.length;
+    }
+
+    // Not used
+    getStrongestCard() {
+        let strongestCard = null;
+        let highestAttackPoints = -1; 
+        // Check cards in the main deck
+        this.mainDeck.forEach(card => {
+            if (card.atk >= 0 && card.atk > highestAttackPoints) {
+                strongestCard = card;
+                highestAttackPoints = card.atk;
+            }
+        });
+    
+        // Check cards in the extra deck
+        this.extraDeck.forEach(card => {
+            if (card.atk >= 0 && card.atk > highestAttackPoints) {
+                strongestCard = card;
+                highestAttackPoints = card.atk;
+            }
+        });
+    
+        return strongestCard;
+    }
+    
     
 
 }

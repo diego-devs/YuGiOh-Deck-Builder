@@ -93,4 +93,10 @@ artifacts/
 *.3dm
 *.max
 
+# Permited images
+!background-image-1.jpg
+!deckbuilder1.png
+!logo-header-2.jpg
+!trash-bin.png
+
 # End of https://www.toptal.com/developers/gitignore/api/images
