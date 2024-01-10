@@ -4,8 +4,6 @@ por [Diego Diaz](https://github.com/diego-devs)
 ![image](/YGOCardSearch/wwwroot/images/deckbuilder1.png)
 <p><img src="/YGOCardSearch/wwwroot/images/logo-header-2.jpg" alt="img" width="300" /></p>
 
-<!-- Si tienes un logo, reemplaza la URL -->
-
 Esta solución consta de dos proyectos: una aplicación de consola llamada **YugiohDB** y una aplicación web ASP.NET llamada **YGOCardSearch**. 
 
 1.  **YGOCardSearch**: Aplicación ASP.NET Core con Razor Pages. Proyecto principal. Buscador de cartas y Creador de Decks. 
