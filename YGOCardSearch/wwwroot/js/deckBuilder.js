@@ -4,15 +4,20 @@ import { renderSearchedCards } from './rendering.js';
 import { handleAddToDeck, handleRemoveFromDeck, updateDeckCount } from './interaction.js';
 
 document.addEventListener('DOMContentLoaded', function () {
+
     // Declare deck within the event listener scope
     const deck = new Deck(deckData);
-    console.log(deck.deck_name);
-    console.log(deck.mainDeck.length); // Corrected the typo in 'length'
+    console.log("Loaded deck: " + deck.deck_name);
+    console.log(deck.mainDeck.length); 
     renderCards(deck, searchedCards);
     updateDeckCount(deck);
+    // Call this function to add event listeners to the drop target divs
+    addDropEventListenersToTargets();
+    addDragStartListenerToCards();
+    addListenersToButtons();
 
-    
-    function addHoverListenerToCards() {
+    // This is for the left big card image details
+    function addHoverListenerToCards() { 
         const cardElements = document.querySelectorAll('.searchCardImage, .deckCardImage');
 
         const bigCardImage = document.getElementById('bigCard');
@@ -35,8 +40,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-
-
     // Function to add the dragstart listener to card elements
     function addDragStartListenerToCards() {
         // Add drag-and-drop listeners to card elements
@@ -46,7 +49,33 @@ document.addEventListener('DOMContentLoaded', function () {
             cardElement.addEventListener('dragstart', dragStart);
         });
     }
+    // Add Drop event listener to all deck types targets
+    function addDropEventListenersToTargets() {
+        // Find and select the drop target divs
+        const mainDeckContainer = document.querySelector('.DeckBuilder_Container_MainDeck');
+        const extraDeckContainer = document.querySelector('.DeckBuilder_Container_ExtraDeck');
+        const sideDeckContainer = document.querySelector('.DeckBuilder_Container_SideDeck');
+        const removeAreaContainer = document.querySelector('.remove-area');
 
+        // Add dragover event listeners to each drop target
+        mainDeckContainer.addEventListener('dragover', dragOver);
+        extraDeckContainer.addEventListener('dragover', dragOver);
+        sideDeckContainer.addEventListener('dragover', dragOver);
+        removeAreaContainer.addEventListener('dragover', dragOver);
+
+        mainDeckContainer.addEventListener('dragleave', dragLeave);
+        extraDeckContainer.addEventListener('dragleave', dragLeave);
+        sideDeckContainer.addEventListener('dragleave', dragLeave);
+        removeAreaContainer.addEventListener('dragleave', dragLeave);
+
+        // Add drop event listeners to each drop target
+        mainDeckContainer.addEventListener('drop', drop);
+        extraDeckContainer.addEventListener('drop', drop);
+        sideDeckContainer.addEventListener('drop', drop);
+        removeAreaContainer.addEventListener('drop', drop);
+    }
+
+    // Function to render all deck and search cards.
     function renderCards(deck, searchedCards) {
         renderDeck(deck);
         renderSearch(searchedCards);
@@ -64,25 +93,21 @@ document.addEventListener('DOMContentLoaded', function () {
         renderDeckCards(deck.getMainDeck(), mainDeckContainer); //onRenderingComplete()
         renderDeckCards(deck.getExtraDeck(), extraDeckContainer);
         renderDeckCards(deck.getSideDeck(), sideDeckContainer);
+
         addHoverListenerToCards();
+        addDropEventListenersToTargets();
+        addDragStartListenerToCards();
 
     }
     // Function to render the searched cards part
     function renderSearch(searchedCards) {
         renderSearchedCards(searchedCards, '.DeckBuilder_CardSearch_JS');
-    }
-
-    // Callback function to add drop event listeners after rendering is done
-    function onRenderingComplete() {
-        addDropEventListenersToTargets();
+        addHoverListenerToCards();
     }
     
+    // Handle drag and drop: 
 
-
-
-    ////// Handle drag and drop functionality events: 
-
-    // Function to handle the drop event
+    // Function to handle the drop event 
     function drop(event) {
         event.preventDefault();
         let selectedCard = event.srcElement.dataset.cardType;
@@ -93,7 +118,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const cardElement = document.getElementById(cardId);
         const isValidForMainDeck = event.dataTransfer.getData('isValidForMainDeck');// Is for Main/Side or Extra deck?
 
-       
         // Determine the deck type based on the drop target's class and ID
         const dropTarget = event.currentTarget;
         let dropDeckType = '';
@@ -118,16 +142,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 case '.DeckBuilder_Container_MainDeck':
                     handleRemoveFromDeck('MainDeck', deck, cardIdInt, function () {
                         addDragStartListenerToCards();
+                        addHoverListenerToCards();
                     });
                     break;
                 case '.DeckBuilder_Container_ExtraDeck':
                     handleRemoveFromDeck('ExtraDeck', deck, cardIdInt, function () {
                         addDragStartListenerToCards();
+                        addHoverListenerToCards();
                     });
                     break;
                 case '.DeckBuilder_Container_SideDeck':
                     handleRemoveFromDeck('SideDeck', deck, cardIdInt, function () {
                         addDragStartListenerToCards();
+                        addHoverListenerToCards();
                     });
                     break;
                 default:
@@ -211,66 +238,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         
     }
-
-    // Define card types that are valid for the Main Deck
-    const validMainDeckTypes = [
-        "Effect Monster",
-        "Flip Effect Monster",
-        "Flip Tuner Effect Monster",
-        "Gemini Monster",
-        "Normal Monster",
-        "Normal Tuner Monster",
-        "Pendulum Effect Monster",
-        "Pendulum Effect Ritual Monster",
-        "Pendulum Flip Effect Monster",
-        "Pendulum Normal Monster",
-        "Pendulum Tuner Effect Monster",
-        "Ritual Effect Monster",
-        "Ritual Monster",
-        "Spell Card",
-        "Spirit Monster",
-        "Toon Monster",
-        "Trap Card",
-        "Tuner Monster",
-        "Union Effect Monster"
-    ];
-
-    const validExtraDeckTypes = [
-        "Fusion Monster",
-        "Link Monster",
-        "Pendulum Effect Fusion Monster",
-        "Synchro Monster",
-        "Synchro Pendulum Effect Monster",
-        "Synchro Tuner Monster",
-        "XYZ Monster",
-        "XYZ Pendulum Effect Monster"
-    ];
-
-    function isCardValidForMainDeck(cardType) {
-        
-        if (validMainDeckTypes.includes(cardType)) {
-            return true;
-        } else if (validExtraDeckTypes.includes(cardType)) {
-            return false;
-        }
-
-        // Check if the card type is in the list of valid Main Deck types
-        //return validMainDeckTypes.includes(cardType);
-    }
-    function getCardCopiesInDeck(cardId) {
-        // Use the filter method to create an array of cards with the specified ID
-        const mainDeckMatches = deck.getMainDeck().filter(card => card.id === cardId);
-        const extraDeckMatches = deck.getExtraDeck().filter(card => card.id === cardId);
-        const sideDeckMatches = deck.getSideDeck().filter(card => card.id === cardId);
-
-        // Calculate the total count across all decks
-        const totalCount = mainDeckMatches.length + extraDeckMatches.length + sideDeckMatches.length;
-
-        // Return the total count
-        return totalCount;
-    }
-
-    // drag interaction
+    // Drag interaction
     function dragStart(event) {
         const cardId = event.target.id; // Get the card ID from the dragged element's ID
         const cardIntId = parseInt(cardId, 10);
@@ -279,12 +247,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
         switch (fromDeckType) {
             case '.DeckBuilder_Container_MainDeck':
-                draggedCard = deck.getMainDeck().find(c=>c.id === cardIntId);
+                draggedCard = deck.getMainDeck().find(c => c.id === cardIntId);
                 event.target.dataset.id = draggedCard.id;
                 event.target.dataset.card = draggedCard;
 
                 ////srcElement.dataset.cardType
-                if (draggedCard) { 
+                if (draggedCard) {
                     const cardType = draggedCard.type; // Get the card type from the card object
                     const isValidForMainDeck = isCardValidForMainDeck(cardType); // Determine whether the card is valid for Main Deck
                     event.dataTransfer.setData('text/plain', cardId);
@@ -300,7 +268,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
                 break;
             case '.DeckBuilder_Container_ExtraDeck':
-                draggedCard = deck.getExtraDeck().find(c=>c.id === cardIntId);
+                draggedCard = deck.getExtraDeck().find(c => c.id === cardIntId);
                 event.target.dataset.id = draggedCard.id;
                 event.target.dataset.card = draggedCard;
                 if (draggedCard) {
@@ -311,7 +279,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     event.dataTransfer.setData('text/plain', cardId);
                     event.dataTransfer.setData('cardId', cardId); // Set the card type in 'cardType'
                     event.dataTransfer.setData('text/plain', cardId);
-                    event.dataTransfer.setData('fromDeckType', fromDeckType); 
+                    event.dataTransfer.setData('fromDeckType', fromDeckType);
                     event.dataTransfer.setData('isValidForMainDeck', isValidForMainDeck);
                 }
                 else {
@@ -319,7 +287,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
                 break;
             case '.DeckBuilder_Container_SideDeck':
-                draggedCard = deck.getSideDeck().find(c=>c.id === cardIntId);
+                draggedCard = deck.getSideDeck().find(c => c.id === cardIntId);
                 event.target.dataset.id = draggedCard.id;
                 if (draggedCard) {
                     const cardType = draggedCard.type;
@@ -329,7 +297,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     event.dataTransfer.setData('text/plain', cardId);
                     event.dataTransfer.setData('cardId', cardId); // Set the card type in 'cardType'
                     event.dataTransfer.setData('text/plain', cardId);
-                    event.dataTransfer.setData('fromDeckType', fromDeckType); 
+                    event.dataTransfer.setData('fromDeckType', fromDeckType);
                     event.dataTransfer.setData('isValidForMainDeck', isValidForMainDeck);
                 }
                 else {
@@ -340,8 +308,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Find the card object from searchedCards based on cardId
                 draggedCard = searchedCards.find(c => c.id === cardIntId);
                 event.target.dataset.card = draggedCard;
-        
-                if (draggedCard) { 
+
+                if (draggedCard) {
                     const cardType = draggedCard.type; // Get the card type from the card object
                     const isValidForMainDeck = isCardValidForMainDeck(cardType);
                     event.dataTransfer.setData('text/plain', cardId);
@@ -349,7 +317,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     event.dataTransfer.setData('text/plain', cardId);
                     event.dataTransfer.setData('cardId', cardId); // Set the card type in 'cardType'
                     event.dataTransfer.setData('text/plain', cardId);
-                    event.dataTransfer.setData('fromDeckType', fromDeckType); 
+                    event.dataTransfer.setData('fromDeckType', fromDeckType);
                     event.dataTransfer.setData('isValidForMainDeck', isValidForMainDeck);
                 } else {
                     console.log(`Card with ID ${cardId} not found in searchedCards.`);
@@ -368,7 +336,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function dragOver(event) {
         event.preventDefault();
         console.log("card:" + event.srcElement.id);
-        console.log("draggin over: "+ event.target.id);
+        console.log("draggin over: " + event.target.id);
         // // Add the 'dragover' class to the container when dragging over it
         // event.currentTarget.classList.add('dragover');
     }
@@ -376,34 +344,67 @@ document.addEventListener('DOMContentLoaded', function () {
         // Remove the 'dragover' class from the container when leaving
         event.currentTarget.classList.remove('dragover');
     }
-    function addDropEventListenersToTargets() {
-        // Find and select the drop target divs
-        const mainDeckContainer = document.querySelector('.DeckBuilder_Container_MainDeck');
-        const extraDeckContainer = document.querySelector('.DeckBuilder_Container_ExtraDeck');
-        const sideDeckContainer = document.querySelector('.DeckBuilder_Container_SideDeck');
-        const removeAreaContainer = document.querySelector('.remove-area');
 
-        // Add dragover event listeners to each drop target
-        mainDeckContainer.addEventListener('dragover', dragOver);
-        extraDeckContainer.addEventListener('dragover', dragOver);
-        sideDeckContainer.addEventListener('dragover', dragOver);
-        removeAreaContainer.addEventListener('dragover', dragOver);
+    // Define card types that are valid for the Deck Types
+    const validMainDeckTypes = [
+        "Normal Monster",
+        "Effect Monster",
+        "Flip Effect Monster",
+        "Flip Tuner Effect Monster",
+        "Gemini Monster",
+        "Normal Tuner Monster",
+        "Pendulum Effect Monster",
+        "Pendulum Effect Ritual Monster",
+        "Pendulum Flip Effect Monster",
+        "Pendulum Normal Monster",
+        "Pendulum Tuner Effect Monster",
+        "Toon Monster",
+        "Spirit Monster",
+        "Union Effect Monster",
+        "Tuner Monster",
+        "Ritual Effect Monster",
+        "Ritual Monster",
+        "Spell Card",
+        "Trap Card"
+    ];
+    const validExtraDeckTypes = [
+        "Fusion Monster",
+        "Pendulum Effect Fusion Monster",
+        "Synchro Monster",
+        "Synchro Pendulum Effect Monster",
+        "Synchro Tuner Monster",
+        "XYZ Monster",
+        "XYZ Pendulum Effect Monster",
+        "Link Monster",
+    ];
+    // For ruling: valid main and extra card types
+    function isCardValidForMainDeck(cardType) {
+        
+        if (validMainDeckTypes.includes(cardType)) {
+            return true;
+        } else if (validExtraDeckTypes.includes(cardType)) {
+            return false;
+        }
 
-        mainDeckContainer.addEventListener('dragleave', dragLeave);
-        extraDeckContainer.addEventListener('dragleave', dragLeave);
-        sideDeckContainer.addEventListener('dragleave', dragLeave);
-        removeAreaContainer.addEventListener('dragleave', dragLeave);
-
-        // Add drop event listeners to each drop target
-        mainDeckContainer.addEventListener('drop', drop);
-        extraDeckContainer.addEventListener('drop', drop);
-        sideDeckContainer.addEventListener('drop', drop);
-        removeAreaContainer.addEventListener('drop', drop);
+        // Check if the card type is in the list of valid Main Deck types
+        //return validMainDeckTypes.includes(cardType);
     }
+    // For ruling: no more than 3 same cards per deck
+    function getCardCopiesInDeck(cardId) {
+        // Use the filter method to create an array of cards with the specified ID
+        const mainDeckMatches = deck.getMainDeck().filter(card => card.id === cardId);
+        const extraDeckMatches = deck.getExtraDeck().filter(card => card.id === cardId);
+        const sideDeckMatches = deck.getSideDeck().filter(card => card.id === cardId);
 
-    document.getElementById('saveDeckButton').addEventListener('click', function () {
-        saveDeckToApi();
-    });
+        // Calculate the total count across all decks
+        const totalCount = mainDeckMatches.length + extraDeckMatches.length + sideDeckMatches.length;
+
+        // Return the total count
+        return totalCount;
+    }
+    // Saving deck. Making call to C# server
+    
+    // AJAX Call to our C# API to save the deck correctly 
     function saveDeckToApi() {
         // Get the current deck data
         //const mainDeckData = JSON.stringify(deck.getMainDeck());
@@ -442,65 +443,87 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.error('Network error:', error);
             });
     }
+    function addListenersToButtons() {
+        // Save the deck making a call to Api
+        document.getElementById('saveDeckButton').addEventListener('click', function () {
+            saveDeckToApi();
+        });
+        // Remove all cards from deck
+        document.getElementById('clearDeckButton').addEventListener('click', function () {
+            clearDeck();
+        });
+        // Sorts deck
+        document.getElementById('sortDeckButton').addEventListener('click', function () {
+            sortCards();
+        });
 
-    // Call this function to add event listeners to the drop target divs
-    addDropEventListenersToTargets();
-    addDragStartListenerToCards();
+        document.getElementById('shuffleDeckButton').addEventListener('click', function () {
+            shuffleDeck();
+        });
+    }
 
-    document.getElementById('clearDeckButton').addEventListener('click', function () {
-        clearDeck();
-    });
+    function sortCards() {
+        // Sort the Main Deck
+        sortDeck(deck.getMainDeck(), validMainDeckTypes);
+        // Sort the Extra Deck
+        sortDeck(deck.getExtraDeck(), validExtraDeckTypes);
+        // Sort the Side Deck
+        sortDeck(deck.getSideDeck(), validMainDeckTypes);
+        renderDeck(deck);
+    }
 
-    document.getElementById('sortDeckButton').addEventListener('click', function () {
-        sortDeckByNameAndType();
-    });
 
-    document.getElementById('shuffleDeckButton').addEventListener('click', function () {
-        shuffleDeck();
-    });
+    // Function to sort a deck by type and name
+    function sortDeck(deck, validTypes) {
+        deck.sort((a, b) => {
+            // Get the index of the card types in the ordering array
+            const typeIndexA = validTypes.indexOf(a.type);
+            const typeIndexB = validTypes.indexOf(b.type);
 
-    function sortDeckByNameAndType() {
-        // Get the deck cards and sort them by name first, then by card type
-        deck.getMainDeck().sort((a, b) => {
-            // Get the names for comparison
-            const nameA = a.name || "";
-            const nameB = b.name || "";
-
-            // If the names are different, sort by name
-            if (nameA !== nameB) {
-                return nameA.localeCompare(nameB);
+            // Compare card types based on the custom ordering
+            const typeComparison = typeIndexA - typeIndexB;
+            if (typeComparison !== 0) {
+                return typeComparison;
             }
 
-            // If the names are the same, sort by card type
-            const typeA = a.type || "";
-            const typeB = b.type || "";
-
-            return typeA.localeCompare(typeB);
+            // If card types are the same, sort by name
+            const nameA = a.name || "";
+            const nameB = b.name || "";
+            return nameA.localeCompare(nameB);
         });
-
-        // Re-render the sorted deck in your UI
-        renderDeck(deck);
-
-        // You can add additional logic to update the UI here if needed
+        
     }
+    
 
 
-    function sortDeckByCardType() {
-        // Get the deck cards and sort them by card type alphabetically
-        deck.getMainDeck().sort((a, b) => {
-            // Get the card types for comparison
-            const typeA = a.type || "";
-            const typeB = b.type || "";
 
-            // Use localeCompare to sort in alphabetical order
-            return typeA.localeCompare(typeB);
-        });
 
-        // Re-render the sorted deck in your UI
-        renderDeck(deck);
+    //function sortDeckByNameAndType() {
+    //    // Get the deck cards and sort them by type first, then by name
+    //    deck.getMainDeck().sort((a, b) => {
+    //        // Get the index of the card types in the ordering array
+    //        const typeIndexA = validMainDeckTypes.indexOf(a.type);
+    //        const typeIndexB = validMainDeckTypes.indexOf(b.type);
 
-        // You can add additional logic to update the UI here if needed
-    }
+    //        // Compare card types based on the custom ordering
+    //        const typeComparison = typeIndexA - typeIndexB;
+    //        if (typeComparison !== 0) {
+    //            return typeComparison;
+    //        }
+
+    //        // If card types are the same, sort by name
+    //        const nameA = a.name || "";
+    //        const nameB = b.name || "";
+    //        return nameA.localeCompare(nameB);
+    //    });
+
+    //    // Re-render the sorted deck in your UI
+    //    renderDeck(deck);
+
+    //// You can add additional logic to update the UI here if needed
+    //}
+    
+
     function clearDeck() {
         deck.mainDeck = [];
         deck.extraDeck = [];
@@ -513,6 +536,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function shuffleDeck() {
         deck.mainDeck = shuffleArray(deck.mainDeck);
         deck.extraDeck = shuffleArray(deck.extraDeck);
+        deck.sideDeck = shuffleArray(deck.sideDeck);
         // Re-render the shuffled deck in your UI
         renderDeck(deck);
     }

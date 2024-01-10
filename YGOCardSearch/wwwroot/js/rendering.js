@@ -85,7 +85,8 @@ function renderSearchedCards(cards, containerSelector) {
             var cardImageCell = document.createElement('td');
             var cardImage = document.createElement('img');
             cardImage.src = cardImageSrc;
-            cardImage.className = 'inner searchCardImage';
+            cardImage.className = 'searchCardImage';
+            cardImageCell.className = 'inner'
             cardImage.alt = '' + card.name;
             cardImage.id = card.id;
             cardImage.dataset.cardType = card.type;
@@ -101,7 +102,7 @@ function renderSearchedCards(cards, containerSelector) {
             cardNameCell.appendChild(cardNameLink);
 
             var cardDescriptionCell = document.createElement('td');
-            var cardDescription = card.desc.length > 40 ? card.desc.substring(0, 40) + '...' : card.desc;
+            var cardDescription = card.desc.length > 100 ? card.desc.substring(0, 100) + '...' : card.desc;
             cardDescriptionCell.textContent = cardDescription;
             cardDescriptionCell.className = 'smaller-description';
 

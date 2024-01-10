@@ -15,8 +15,8 @@ h1 {
     color: #fff; /* Choose a color that matches your design */
     margin: 20px 0; /* Adjust margin spacing as needed */
 }
-h2 {
-    color:azure;
+h2, h4 {
+    color: azure;
 }
 
 /* Navbar Brand */

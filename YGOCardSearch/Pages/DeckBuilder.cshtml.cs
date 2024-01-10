@@ -18,7 +18,7 @@ namespace YGOCardSearch.Pages
 {
     public class DeckBuilder : PageModel
     {
-        public Card testCard { get; set; }
+        
         private readonly IConfiguration _configuration;
         // Esto tambien debera cambiar por db:
         public List<Deck> LoadedDecks; // no need of this since DecksManager page will be a thing
@@ -70,7 +70,7 @@ namespace YGOCardSearch.Pages
                 card.CardSets = new List<CardSet>(Context.CardSets.Where(s => s.CardId == card.CardId));
                 card.CardPrices = new List<CardPrices>(Context.CardPrices.Where(p => p.CardId == card.CardId));
             }
-            this.testCard = Context.Cards.Single(c => c.KonamiCardId == 12694768); // this should be removed
+            
         }
         public IActionResult OnGet()
         {
@@ -170,12 +170,6 @@ namespace YGOCardSearch.Pages
             List<Card> mainDeck = GetCardList(cleanedMainDeckIds);
             List<Card> extraDeck = GetCardList(cleanedExtraDeckIds);
             List<Card> sideDeck = GetCardList(cleanedSideDeckIds);
-
-            //// Validate that at least one card is present in the main deck
-            //if (mainDeck.Count == 0)
-            //{
-            //    throw new InvalidOperationException("The main deck must contain at least one card.");
-            //}
 
             // Create and populate the deck object
             Deck newDeck = new Deck();
