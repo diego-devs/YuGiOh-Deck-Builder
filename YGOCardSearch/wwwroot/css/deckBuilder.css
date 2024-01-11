@@ -98,6 +98,10 @@
 
 .detail-section {
     flex: 1; /* Adjust the flex value as needed */
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-top: 10px;
     width: 10%;
     /*padding: 20px;*/
     max-height: 80%;
@@ -105,7 +109,12 @@
     border: 1px solid #ccc;
     align-content: center;
 }
-
+.detail-section p {
+    color: azure;
+    position: center;
+    align-content: center;
+    text-align: center;
+}
 .hoover-card img {
     position: center;
     padding: 20px;
@@ -131,4 +140,24 @@
 .smaller-description {
     font-size: 0.8em; /* Adjust the size as needed */
 }
+
+.image-container {
+    margin-bottom: 10px; /* Adjust margin as needed */
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+    .detail-item p {
+        flex: 1;
+        margin: 0;
+        position: center;
+        align-content: center;
+        text-align: center;
+    }
+
+
 

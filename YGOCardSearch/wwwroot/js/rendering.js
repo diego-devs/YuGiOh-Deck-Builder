@@ -24,6 +24,12 @@ function renderDeckCards(deck, deckPart) {
             cardImage.id = card.id;
             cardImage.dataset.cardType = card.type;
             cardImage.dataset.fromDeckType = deckPart;
+            cardImage.dataset.cardName = card.name;
+            cardImage.dataset.cardDescription = card.desc;
+            cardImage.dataset.cardAttribute = card.attribute;
+            cardImage.dataset.cardLevel = card.level;
+            cardImage.dataset.cardArchetype = card.archetype;
+            cardImage.dataset.cardRace = card.race;
 
             cardLink.appendChild(cardImage);
             cardView.appendChild(cardLink);
@@ -87,8 +93,14 @@ function renderSearchedCards(cards, containerSelector) {
             cardImageCell.className = 'inner'
             cardImage.alt = '' + card.name;
             cardImage.id = card.id;
+            // dataset for passing data
             cardImage.dataset.cardType = card.type;
             cardImage.dataset.fromDeckType = containerSelector;
+            cardImage.dataset.cardName = card.name;
+            cardImage.dataset.cardDescription = card.desc;
+            cardImage.dataset.cardAttribute = card.attribute;
+            cardImage.dataset.cardLevel = card.level;
+            cardImage.dataset.cardArchetype = card.archetype;
 
             cardLink.appendChild(cardImage);
             cardImageCell.appendChild(cardLink);

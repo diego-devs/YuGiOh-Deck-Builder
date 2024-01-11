@@ -22,17 +22,32 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const bigCardImage = document.getElementById('bigCard');
         const detailText = document.getElementById('detail-text');
+        const detailName = document.getElementById('detail-name');
+        const detailType = document.getElementById('detail-type');
+        const detailAttribute = document.getElementById('detail-attribute');
+        const detailLevel = document.getElementById('detail-level');
+        const detailArchetype = document.getElementById('detail-archetype');
+        const detailRace = document.getElementById('detail-race');
 
         cardElements.forEach(cardElement => {
             cardElement.addEventListener('mouseover', function (event) {
                 const cardId = event.target.id;
                 console.log('Hover on card ID: ' + cardId);
 
-                // Assuming your big image path follows the same pattern
+                // Images should be stored in wwwroot/images/
                 const cardImagePath = 'images/' + cardId + '.jpg';
-
                 bigCardImage.src = cardImagePath;
+                detailName.textContent = event.target.dataset.cardName;
+                detailText.textContent = event.target.dataset.cardDescription;
+                detailType.textContent = event.target.dataset.cardType;
+                detailAttribute.textContent = event.target.dataset.cardAttribute ?? '';
+                detailLevel.textContent = event.target.dataset.cardLevel;
+                detailArchetype.textContent = event.target.dataset.cardArchetype;
+                detailRace.textContent = event.target.dataset.cardRace;
+                    
+                
             });
+
 
             cardElement.addEventListener('mouseout', function () {
                 /*bigCardImage.src = 'images/2511.jpg'; // Clear image when not hovering*/
@@ -55,24 +70,24 @@ document.addEventListener('DOMContentLoaded', function () {
         const mainDeckContainer = document.querySelector('.DeckBuilder_Container_MainDeck');
         const extraDeckContainer = document.querySelector('.DeckBuilder_Container_ExtraDeck');
         const sideDeckContainer = document.querySelector('.DeckBuilder_Container_SideDeck');
-        const removeAreaContainer = document.querySelector('.remove-area');
+/*        const removeAreaContainer = document.querySelector('.remove-area');*/
 
         // Add dragover event listeners to each drop target
         mainDeckContainer.addEventListener('dragover', dragOver);
         extraDeckContainer.addEventListener('dragover', dragOver);
         sideDeckContainer.addEventListener('dragover', dragOver);
-        removeAreaContainer.addEventListener('dragover', dragOver);
+        //removeAreaContainer.addEventListener('dragover', dragOver);
 
         mainDeckContainer.addEventListener('dragleave', dragLeave);
         extraDeckContainer.addEventListener('dragleave', dragLeave);
         sideDeckContainer.addEventListener('dragleave', dragLeave);
-        removeAreaContainer.addEventListener('dragleave', dragLeave);
+        //removeAreaContainer.addEventListener('dragleave', dragLeave);
 
         // Add drop event listeners to each drop target
         mainDeckContainer.addEventListener('drop', drop);
         extraDeckContainer.addEventListener('drop', drop);
         sideDeckContainer.addEventListener('drop', drop);
-        removeAreaContainer.addEventListener('drop', drop);
+        //removeAreaContainer.addEventListener('drop', drop);
     }
 
     // Function to render all deck and search cards.
@@ -117,6 +132,7 @@ document.addEventListener('DOMContentLoaded', function () {
         addRightClickListenersToContainer(mainDeckContainer, deck);
         addRightClickListenersToContainer(extraDeckContainer, deck);
         addRightClickListenersToContainer(sideDeckContainer, deck);
+        
     }
 
     // Function to add right-click event listeners to cards within a specific container
@@ -549,6 +565,7 @@ document.addEventListener('DOMContentLoaded', function () {
         renderDeck(deck);
     }
     // Function to sort a deck by type and name
+    // Function to sort a deck by type, level, and name
     function sortDeck(deck, validTypes) {
         deck.sort((a, b) => {
             // Get the index of the card types in the ordering array
@@ -561,12 +578,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 return typeComparison;
             }
 
-            // If card types are the same, sort by name
+            // If card types are the same, sort by level (from highest to lowest)
+            const levelComparison = b.level - a.level;
+            if (levelComparison !== 0) {
+                return levelComparison;
+            }
+
+            // If levels are the same, sort by name
             const nameA = a.name || "";
             const nameB = b.name || "";
             return nameA.localeCompare(nameB);
         });
-        
     }
     function clearDeck() {
         deck.mainDeck = [];

@@ -145,11 +145,15 @@ namespace YGOCardSearch.Pages
             {
                 throw new FileNotFoundException("No deck (.ydk) files found in the specified directory.");
             }
+
             // Extract the deck name from the file name (excluding the extension)
             string deckName = Path.GetFileNameWithoutExtension(deckFilePath);
 
             // Read all lines from the deck file
             string[] deckLines = System.IO.File.ReadAllLines(deckFilePath);
+
+            // Normalize the section notations
+            deckLines = NormalizeSectionNotations(deckLines);
 
             // Find the indices of different sections in the deck file
             int mainIndex = Array.IndexOf(deckLines, "#main");
@@ -180,6 +184,29 @@ namespace YGOCardSearch.Pages
 
             return newDeck;
         }
+
+        private string[] NormalizeSectionNotations(string[] deckLines)
+        {
+            for (int i = 0; i < deckLines.Length; i++)
+            {
+                deckLines[i] = deckLines[i].Trim(); // Remove leading and trailing whitespaces
+                if (deckLines[i].StartsWith("#main", StringComparison.OrdinalIgnoreCase))
+                {
+                    deckLines[i] = "#main";
+                }
+                else if (deckLines[i].StartsWith("#extra", StringComparison.OrdinalIgnoreCase))
+                {
+                    deckLines[i] = "#extra";
+                }
+                else if (deckLines[i].StartsWith("!side", StringComparison.OrdinalIgnoreCase))
+                {
+                    deckLines[i] = "!side";
+                }
+            }
+
+            return deckLines;
+        }
+
         /// <summary>
         /// Cleans a list of card identifiers by removing non-digit characters and returns a new list containing only the digit values.
         /// </summary>

@@ -17,8 +17,8 @@
 <html>
 <head>
     <!-- Include your necessary CSS and meta tags here -->
-    <link rel="stylesheet" href="~/css/deckBuilder.css">
     <link rel="stylesheet" href="~/css/site.css">
+    <link rel="stylesheet" href="~/css/deckBuilder.css">
     <link rel="stylesheet" href="~/css/doughnutChart.css">
     <!-- Include script references -->
     <script type="module" src="/js/deck.js"></script>
@@ -46,8 +46,35 @@
     @*Sections*@
     <div class="split-section">
         <div class="detail-section">
-            <img id="bigCard" class="inner bigCard" src="" />  
+            <!-- Image -->
+            <div class="image-container">
+                <img id="bigCard" class="inner bigCard" src="" alt="Card Image" />
+            </div>
+
+            <!-- Name -->
+            <div class="detail-item">
+                <h3 id="detail-name"></h3>
+            </div>
+
+            <!-- Type, Race, Attribute, and Level -->
+            <div class="detail-item">
+                <p id="detail-type"></p>
+                <p id="detail-race"></p>
+                <p id="detail-attribute"></p>
+                <p style="text-decoration-style:solid" id="detail-level"></p>
+            </div>
+
+            <!-- Archetype -->
+            <div class="detail-item">
+                <p id="detail-archetype"></p>
+            </div>
+
+            <!-- Text -->
+            <div class="detail-item">
+                <p id="detail-text"></p>
+            </div>
         </div>
+
         <div class="deck-section"> <!-- Why this doesn't have the ondrop and ondragover event listeners and still works?** I removed it, lets see... -->
             <div class="DeckBuilder_DeckInfo">
                 <div class="chartContainer">
