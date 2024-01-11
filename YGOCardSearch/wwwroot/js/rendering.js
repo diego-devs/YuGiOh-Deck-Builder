@@ -1,7 +1,5 @@
 // Import the renderSearchedCards function if it's in a different module
 // import { renderSearchedCards } from './your-path-to-render-searched-cards.js';
-
-
 function renderDeckCards(deck, deckPart) {
     var deckContainer = document.querySelector(deckPart);
     

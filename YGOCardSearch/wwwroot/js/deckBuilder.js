@@ -97,14 +97,86 @@ document.addEventListener('DOMContentLoaded', function () {
         addHoverListenerToCards();
         addDropEventListenersToTargets();
         addDragStartListenerToCards();
-
+        addRightClickListeners(deck)
+     
+        
     }
     // Function to render the searched cards part
     function renderSearch(searchedCards) {
         renderSearchedCards(searchedCards, '.DeckBuilder_CardSearch_JS');
         addHoverListenerToCards();
     }
-    
+
+    // Handle right click
+    // Function to add right-click event listeners to rendered cards
+    function addRightClickListeners(deck) {
+        const mainDeckContainer = '.DeckBuilder_Container_MainDeck';
+        const extraDeckContainer = '.DeckBuilder_Container_ExtraDeck';
+        const sideDeckContainer = '.DeckBuilder_Container_SideDeck';
+
+        addRightClickListenersToContainer(mainDeckContainer, deck);
+        addRightClickListenersToContainer(extraDeckContainer, deck);
+        addRightClickListenersToContainer(sideDeckContainer, deck);
+    }
+
+    // Function to add right-click event listeners to cards within a specific container
+    function addRightClickListenersToContainer(containerSelector, deck) {
+        const container = document.querySelector(containerSelector);
+
+        // Select all elements with the class 'deckCardImage'
+        const deckCardImages = container.querySelectorAll('.deckCardImage');
+
+        // Attach right-click event listener to each element with the class 'deckCardImage'
+        deckCardImages.forEach(deckCardImage => {
+            deckCardImage.addEventListener("contextmenu", function (event) {
+                event.preventDefault();
+
+                // Access information about the target element
+                const cardId = parseInt(deckCardImage.id, 10);
+                
+                const cardType = deckCardImage.dataset.cardType;
+                const fromDeckType = deckCardImage.getAttribute('data-from-deck-type');
+
+                // Use the extracted information as needed
+                console.log(`Right-clicked on card ID: ${cardId}, Type: ${cardType}, From Deck Type: ${fromDeckType}`);
+
+                handleRightClick(fromDeckType, deck, cardId);
+            });
+        });
+    }
+
+    function handleRightClick(fromDeckType, deck, cardId) {
+        // Remove the card from its respective deck based on 'fromDeckType'
+        switch (fromDeckType) {
+            case '.DeckBuilder_Container_MainDeck':
+                handleRemoveFromDeck('MainDeck', deck, cardId, function () {
+                    addDragStartListenerToCards();
+                    addHoverListenerToCards();
+                    addRightClickListeners(deck);
+                });
+                break;
+            case '.DeckBuilder_Container_ExtraDeck':
+                handleRemoveFromDeck('ExtraDeck', deck, cardId, function () {
+                    addDragStartListenerToCards();
+                    addHoverListenerToCards();
+                    addRightClickListeners(deck);
+                });
+                break;
+            case '.DeckBuilder_Container_SideDeck':
+                handleRemoveFromDeck('SideDeck', deck, cardId, function () {
+                    addDragStartListenerToCards();
+                    addHoverListenerToCards();
+                    addRightClickListeners(deck);
+                });
+                break;
+            default:
+                break;
+        }
+    }
+
+
+
+
     // Handle drag and drop: 
 
     // Function to handle the drop event 
@@ -143,18 +215,21 @@ document.addEventListener('DOMContentLoaded', function () {
                     handleRemoveFromDeck('MainDeck', deck, cardIdInt, function () {
                         addDragStartListenerToCards();
                         addHoverListenerToCards();
+                        addRightClickListeners(deck);
                     });
                     break;
                 case '.DeckBuilder_Container_ExtraDeck':
                     handleRemoveFromDeck('ExtraDeck', deck, cardIdInt, function () {
                         addDragStartListenerToCards();
                         addHoverListenerToCards();
+                        addRightClickListeners(deck);
                     });
                     break;
                 case '.DeckBuilder_Container_SideDeck':
                     handleRemoveFromDeck('SideDeck', deck, cardIdInt, function () {
                         addDragStartListenerToCards();
                         addHoverListenerToCards();
+                        addRightClickListeners(deck);
                     });
                     break;
                 default:
@@ -197,6 +272,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             handleAddToDeck(dropDeckType, deck, droppedCard, function () {
                                 addDragStartListenerToCards();
                                 addHoverListenerToCards();
+                                addRightClickListeners(deck);
                             });
                         } else {
                             // Display an error message or prevent the card from being added to Main Deck
@@ -208,6 +284,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             handleAddToDeck(dropDeckType, deck, droppedCard, function () {
                                 addDragStartListenerToCards();
                                 addHoverListenerToCards();
+                                addRightClickListeners(deck);
                             });          
                         } else {
                             // Display an error message or prevent the card from being added to Extra Deck
@@ -219,6 +296,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             handleAddToDeck(dropDeckType, deck, droppedCard, function () {
                                 addDragStartListenerToCards();
                                 addHoverListenerToCards();
+                                addRightClickListeners(deck);
                             });
                         } 
                         else {
@@ -461,7 +539,6 @@ document.addEventListener('DOMContentLoaded', function () {
             shuffleDeck();
         });
     }
-
     function sortCards() {
         // Sort the Main Deck
         sortDeck(deck.getMainDeck(), validMainDeckTypes);
@@ -471,8 +548,6 @@ document.addEventListener('DOMContentLoaded', function () {
         sortDeck(deck.getSideDeck(), validMainDeckTypes);
         renderDeck(deck);
     }
-
-
     // Function to sort a deck by type and name
     function sortDeck(deck, validTypes) {
         deck.sort((a, b) => {
@@ -493,37 +568,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         
     }
-    
-
-
-
-
-    //function sortDeckByNameAndType() {
-    //    // Get the deck cards and sort them by type first, then by name
-    //    deck.getMainDeck().sort((a, b) => {
-    //        // Get the index of the card types in the ordering array
-    //        const typeIndexA = validMainDeckTypes.indexOf(a.type);
-    //        const typeIndexB = validMainDeckTypes.indexOf(b.type);
-
-    //        // Compare card types based on the custom ordering
-    //        const typeComparison = typeIndexA - typeIndexB;
-    //        if (typeComparison !== 0) {
-    //            return typeComparison;
-    //        }
-
-    //        // If card types are the same, sort by name
-    //        const nameA = a.name || "";
-    //        const nameB = b.name || "";
-    //        return nameA.localeCompare(nameB);
-    //    });
-
-    //    // Re-render the sorted deck in your UI
-    //    renderDeck(deck);
-
-    //// You can add additional logic to update the UI here if needed
-    //}
-    
-
     function clearDeck() {
         deck.mainDeck = [];
         deck.extraDeck = [];
@@ -532,7 +576,6 @@ document.addEventListener('DOMContentLoaded', function () {
         renderDeck(deck);
         // You can add additional logic to update the UI here if needed
     }
-
     function shuffleDeck() {
         deck.mainDeck = shuffleArray(deck.mainDeck);
         deck.extraDeck = shuffleArray(deck.extraDeck);

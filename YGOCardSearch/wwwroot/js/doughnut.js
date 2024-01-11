@@ -31,35 +31,34 @@ document.addEventListener("DOMContentLoaded", function () {
         "XYZ Pendulum Effect Monster"
     ];
     var typeColors = {
-        "Effect Monster": "#d99100", // White
-        "Flip Effect Monster": "#996a0b", // White
-        "Flip Tuner Effect Monster": "#946506", // White
-        "Gemini Monster": "#d49924", // White
-        "Normal Monster": "#f2c729", // White
-        "Normal Tuner Monster": "#f5ca31", // White
-        "Pendulum Effect Monster": "#e09909", // White
-        "Pendulum Effect Ritual Monster": "#e09909", // White
-        "Pendulum Flip Effect Monster": "#e09909", // White
-        "Pendulum Normal Monster": "#e09909", // White
-        "Pendulum Tuner Effect Monster": "#e09909", // White
-        "Ritual Effect Monster": "#0b699c", // White
-        "Ritual Monster": "#389acf", // White
-        "Spell Card": "#0a8c7d", // White
-        "Spirit Monster": "#f5ca31", // White
-        "Toon Monster": "#f5ca31", // White
-        "Trap Card": "#b3007a", // White
-        "Tuner Monster": "#f5ca31", // White
-        "Union Effect Monster": "#FFFFFF", // White
-        "Fusion Monster": "#FFFFFF", // White
-        "Link Monster": "#084ebf", // White
-        "Pendulum Effect Fusion Monster": "#FFFFFF", // White
-        "Synchro Monster": "#cfcfcf", // White
-        "Synchro Pendulum Effect Monster": "#cfcfcf", // White
-        "Synchro Tuner Monster": "#cfcfcf", // White
-        "XYZ Monster": "#2b2b2b", // White
-        "XYZ Pendulum Effect Monster": "#4a4a4a" // White
+        "Effect Monster": "#d99100", 
+        "Flip Effect Monster": "#996a0b", 
+        "Flip Tuner Effect Monster": "#946506", 
+        "Gemini Monster": "#d49924", 
+        "Normal Monster": "#f2c729", 
+        "Normal Tuner Monster": "#f5ca31", 
+        "Pendulum Effect Monster": "#e09909", 
+        "Pendulum Effect Ritual Monster": "#e09909", 
+        "Pendulum Flip Effect Monster": "#e09909", 
+        "Pendulum Normal Monster": "#e09909", 
+        "Pendulum Tuner Effect Monster": "#e09909", 
+        "Ritual Effect Monster": "#0b699c", 
+        "Ritual Monster": "#389acf", 
+        "Spell Card": "#0a8c7d",
+        "Spirit Monster": "#f5ca31", 
+        "Toon Monster": "#f5ca31", 
+        "Trap Card": "#b3007a", 
+        "Tuner Monster": "#f5ca31", 
+        "Union Effect Monster": "#FFFFFF", 
+        "Fusion Monster": "#FFFFFF", 
+        "Link Monster": "#084ebf", 
+        "Pendulum Effect Fusion Monster": "#FFFFFF", 
+        "Synchro Monster": "#cfcfcf", 
+        "Synchro Pendulum Effect Monster": "#cfcfcf", 
+        "Synchro Tuner Monster": "#cfcfcf", 
+        "XYZ Monster": "#2b2b2b", 
+        "XYZ Pendulum Effect Monster": "#4a4a4a" 
     };
-
 
     // Access the deck data from the exposed JavaScript variables
     var mainDeckData = window.mainDeckData;
@@ -83,13 +82,6 @@ document.addEventListener("DOMContentLoaded", function () {
     
     drawDoughnutChart(doughnutChart, deckCounts);
 });
-
-// Generate random color
-function getRandomColor() {
-    return "#" + ((1 << 24) * Math.random() | 0).toString(16);
-}
-
-
 function drawDoughnutChart(chart, data) {
     var W = chart.offsetWidth,
         H = chart.offsetHeight,
@@ -370,4 +362,7 @@ function drawDoughnutChart(chart, data) {
     }
 
     animationLoop(drawPieSegments);
+}
+function getRandomColor() {
+    return "#" + ((1 << 24) * Math.random() | 0).toString(16);
 }

@@ -96,6 +96,8 @@ function updateDisplayedDecks() {
     renderDeckCards(decks.sideDeck, '.DeckBuilder_Container_SideDeck');
 }
 
+
+
 // Function to update the main deck card count
 function updateDeckCount(deck) {
     const mainDeckCardCountElement = document.getElementById('mainDeckCardCount');
@@ -108,6 +110,7 @@ function updateDeckCount(deck) {
     extraDeckCardCountElement.textContent = `#: ${extraDeckCount}`;
     sideDeckCardCountElement.textContent = `#: ${sideDeckCount}`
 }
+
 
 
 

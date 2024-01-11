@@ -56,37 +56,7 @@
                     </div>
                 </div>
                 <div class="infoContainer">
-                    <h1>Deck Name: @Model.Deck.DeckName</h1>
-                    
-                    <div class="top-cards">
-                        <h4>Strongest card:</h4>
-                        
-                        <table class="table table-dark">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Type</th>
-                                    <th>Attack</th>
-                                </tr>
-                            </thead>
-                            <tbody style="height:20%">
-                                @if (topAtkCard != null)
-                                {
-                                    <tr>
-                                        <td>@topAtkCard.Name</td>
-                                        <td>@topAtkCard.Type</td>
-                                        <td>@topAtkCard.Atk</td>
-                                    </tr>
-                                }
-                                else
-                                {
-                                    <tr>
-                                        <td colspan="3">No cards found.</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>       
+                    <h3>Deck Name: @Model.Deck.DeckName</h3>
                     
                 </div> 
             </div>
@@ -129,9 +99,6 @@
 
 
         </div>
-    </div>
-    <div class="remove-area" > <!-- ondrag="dragStart(event)" ondragover="dragOver(event)" ondrop="drop(event)"-->
-        <img id="remove-area" class="remove-area" src="/images/trash-bin.png" ondrag="dragStart(event)" ondragover="dragOver(event)" ondrop="drop(event)"/>
     </div>
 
     
