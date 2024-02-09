@@ -1,15 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Controller;
 using System;
-using System.Diagnostics;
 using System.IO;
-using YGOCardSearch.Data;
 using YGOCardSearch.Data.Models;
-using YGOCardSearch.Pages;
 
 namespace YGOCardSearch.API
 {

@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using System.Collections.Generic;
-using YGOCardSearch.Data.Models;
 using YGOCardSearch.DataProviders;
 using System.IO;
 using System.Linq;
@@ -13,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Security.Principal;
 using Newtonsoft.Json;
+using YGOCardSearch.Data.Models;
 
 namespace YGOCardSearch.Pages
 {

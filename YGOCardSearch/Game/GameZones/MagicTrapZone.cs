@@ -1,4 +1,6 @@
-﻿using YGOCardSearch.Data.Models;
+﻿
+
+using YGOCardSearch.Data.Models;
 
 namespace YGOCardSearch.Game.GameZones
 {

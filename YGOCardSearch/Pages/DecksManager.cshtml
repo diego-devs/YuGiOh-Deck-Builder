@@ -1,0 +1,14 @@
+﻿@page
+@model YGOCardSearch.Pages.DecksManagerModel
+@{
+    <h2>Decks Manager</h2>
+
+    <ul>
+        @foreach (var deck in Model.Decks)
+        {
+            <li>
+                <a asp-page="/DeckBuilder" asp-route-id="@deck.DeckId">@deck.DeckName</a>
+            </li>
+        }
+    </ul>
+}

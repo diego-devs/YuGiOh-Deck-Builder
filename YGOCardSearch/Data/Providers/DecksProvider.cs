@@ -1,8 +1,6 @@
-using System.Collections.Generic;
-using System.Text.Json;
 using System.Threading.Tasks;
-using YGOCardSearch.Interfaces;
 using YGOCardSearch.Data.Models;
+using YGOCardSearch.Interfaces;
 
 namespace YGOCardSearch.DataProviders
 {
@@ -12,5 +10,7 @@ namespace YGOCardSearch.DataProviders
         {
             throw new System.NotImplementedException();
         }
+
+       
     }
 }
