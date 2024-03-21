@@ -19,15 +19,12 @@ namespace YGOCardSearch.Data
         public DeckUtility(YgoContext db, IConfiguration configuration)
         {
             _configuration = configuration;
-            // Good place to initialize data
-            // Load the Database from the Context class
-            this.Context = db;
-
+            Context = db;
 
             LoadedDecks = new List<Deck>();
             Deck = new Deck();
 
-            LoadedDecks.Add(LoadDeck());
+            LoadedDecks.Add(LoadDeck(_configuration["Path:DecksFolderPath"]));
             Deck = LoadedDecks.First(); // make selection with dropdrown menu 
 
             // PrepareDeck
@@ -38,36 +35,33 @@ namespace YGOCardSearch.Data
                 card.CardPrices = new List<CardPrices>(Context.CardPrices.Where(p => p.CardId == card.CardId));
             }
         }
-
-        /// <summary>
-        /// Cleans a list of card identifiers by removing non-digit characters and returns a new list containing only the digit values.
-        /// </summary>
-        /// <param name="deckList">The list of card identifiers to be cleaned.</param>
-        /// <returns>A new list containing only the digit values from the card identifiers.</returns>
-        public static List<string> CleanDeck(List<string> deckList)
+        public List<Deck> LoadDecksView()
         {
-            var cleanedDeckList = new List<string>();
+            string[] deckFiles = Directory.GetFiles(_configuration["Paths:DecksFolderPath"], "*.ydk");
 
-            foreach (var cardId in deckList)
+            foreach (var filePath in deckFiles)
             {
-                var onlyDigits = new string(cardId.Where(char.IsDigit).ToArray());
-                if (!string.IsNullOrEmpty(onlyDigits))
+                try
                 {
-                    cleanedDeckList.Add(onlyDigits);
+                    var deck = LoadDeck(filePath); // Assuming LoadDeck is adjusted to not load from a single file
+                    LoadedDecks.Add(new DeckView { DeckId = deck.DeckId, DeckName = deck.DeckName });
                 }
+                catch (FileNotFoundException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                return null;
             }
-
-            return cleanedDeckList;
         }
         /// <summary>
         /// Loads a Deck from a .ydk file, extracting the main deck, extra deck, and side deck card lists.
         /// </summary>
         /// <param name="path">The file path of the .ydk file to load the Deck from.</param>
         /// <returns>The loaded Deck containing the main deck, extra deck, and side deck card lists.</returns>
-        public Deck LoadDeck()
+        public Deck LoadDeck(string path)
         {
             // Get all .ydk files from the specified directory
-            string[] deckFiles = Directory.GetFiles(_configuration["Paths:DecksFolderPath"], "*.ydk");
+            string[] deckFiles = Directory.GetFiles(path, "*.ydk");
 
             // Choose the first .ydk file in the directory
             string deckFilePath = deckFiles.FirstOrDefault();
@@ -78,8 +72,14 @@ namespace YGOCardSearch.Data
                 throw new FileNotFoundException("No deck (.ydk) files found in the specified directory.");
             }
 
+            // Extract the deck name from the file name (excluding the extension)
+            string deckName = Path.GetFileNameWithoutExtension(deckFilePath);
+
             // Read all lines from the deck file
             string[] deckLines = System.IO.File.ReadAllLines(deckFilePath);
+
+            // Normalize the section notations
+            deckLines = NormalizeSectionNotations(deckLines);
 
             // Find the indices of different sections in the deck file
             int mainIndex = Array.IndexOf(deckLines, "#main");
@@ -101,20 +101,57 @@ namespace YGOCardSearch.Data
             List<Card> extraDeck = GetCardList(cleanedExtraDeckIds);
             List<Card> sideDeck = GetCardList(cleanedSideDeckIds);
 
-            // Validate that at least one card is present in the main deck
-            if (mainDeck.Count == 0)
-            {
-                throw new InvalidOperationException("The main deck must contain at least one card.");
-            }
-
             // Create and populate the deck object
             Deck newDeck = new Deck();
             newDeck.MainDeck = mainDeck;
             newDeck.ExtraDeck = extraDeck;
             newDeck.SideDeck = sideDeck;
-            newDeck.DeckName = newDeck.MainDeck.First().Name.ToString().ToLower();
+            newDeck.DeckName = deckName;
 
             return newDeck;
+        }
+
+        private static string[] NormalizeSectionNotations(string[] deckLines)
+        {
+            for (int i = 0; i < deckLines.Length; i++)
+            {
+                deckLines[i] = deckLines[i].Trim(); // Remove leading and trailing whitespaces
+                if (deckLines[i].StartsWith("#main", StringComparison.OrdinalIgnoreCase))
+                {
+                    deckLines[i] = "#main";
+                }
+                else if (deckLines[i].StartsWith("#extra", StringComparison.OrdinalIgnoreCase))
+                {
+                    deckLines[i] = "#extra";
+                }
+                else if (deckLines[i].StartsWith("!side", StringComparison.OrdinalIgnoreCase))
+                {
+                    deckLines[i] = "!side";
+                }
+            }
+
+            return deckLines;
+        }
+
+        /// <summary>
+        /// Cleans a list of card identifiers by removing non-digit characters and returns a new list containing only the digit values.
+        /// </summary>
+        /// <param name="deckList">The list of card identifiers to be cleaned.</param>
+        /// <returns>A new list containing only the digit values from the card identifiers.</returns>
+        public static List<string> CleanDeck(List<string> deckList)
+        {
+            var cleanedDeckList = new List<string>();
+
+            foreach (var cardId in deckList)
+            {
+                var onlyDigits = new string(cardId.Where(char.IsDigit).ToArray());
+                if (!string.IsNullOrEmpty(onlyDigits))
+                {
+                    cleanedDeckList.Add(onlyDigits);
+                }
+            }
+
+            return cleanedDeckList;
         }
 
         /// <summary>
@@ -140,5 +177,25 @@ namespace YGOCardSearch.Data
 
             return result;
         }
+
+
+        public void PrepareCardData(Deck deck)
+        {
+            PrepareCardDataForDeck(deck.MainDeck);
+            PrepareCardDataForDeck(deck.ExtraDeck);
+            PrepareCardDataForDeck(deck.SideDeck);
+        }
+
+        private void PrepareCardDataForDeck(ICollection<Card> cards)
+        {
+            foreach (var card in cards)
+            {
+                card.CardImages = Context.CardImages.Where(i => i.CardImageId == card.KonamiCardId).ToList();
+                card.CardSets = Context.CardSets.Where(s => s.CardId == card.CardId).ToList();
+                card.CardPrices = Context.CardPrices.Where(p => p.CardId == card.CardId).ToList();
+            }
+        }
+
+
     }
 }

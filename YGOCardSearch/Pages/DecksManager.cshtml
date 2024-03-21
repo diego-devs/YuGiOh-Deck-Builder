@@ -1,14 +1,29 @@
 ﻿@page
-@model YGOCardSearch.Pages.DecksManagerModel
-@{
-    <h2>Decks Manager</h2>
+@model YGOCardSearch.Pages.DecksManager
 
-    <ul>
-        @foreach (var deck in Model.Decks)
-        {
-            <li>
-                <a asp-page="/DeckBuilder" asp-route-id="@deck.DeckId">@deck.DeckName</a>
-            </li>
-        }
-    </ul>
+@{
+    ViewData["Title"] = "Decks Manager";
 }
+
+<h2 class="mb-4">Decks Manager</h2>
+
+<div class="container">
+    @if (Model.Decks.Any())
+    {
+        <div class="list-group">
+            @foreach (var deck in Model.Decks)
+            {
+                <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" asp-page="/DeckBuilder" asp-route-id="@deck.DeckId">
+                    @deck.DeckName
+                    <span class="badge bg-primary rounded-pill" >Edit</span>
+                </a>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning" role="alert">
+            No decks found. Please create a new deck.
+        </div>
+    }
+</div>
