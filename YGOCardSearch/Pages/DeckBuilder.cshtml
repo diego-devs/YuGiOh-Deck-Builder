@@ -19,6 +19,12 @@
     <link rel="stylesheet" href="~/css/site.css">
     <link rel="stylesheet" href="~/css/deckBuilder.css">
     <link rel="stylesheet" href="~/css/doughnutChart.css">
+    <!-- Include script references -->
+    <script type="module" src="/js/deck.js"></script>
+    <script type="module" src="/js/rendering.js"></script>
+    <script type="module" src="/js/interaction.js"></script>
+    <script type="module" src="/js/deckBuilder.js"></script>
+    <script type="module" src="/js/doughnut.js"></script>
     
     
     <!-- Razor Page HTML -->
@@ -134,12 +140,7 @@
             var searchedCards = @Html.Raw(Json.Serialize(Model.SearchCards));
 
         </script>
-        <!-- Include script references -->
-        <script type="module" src="/js/deck.js"></script>
-        <script type="module" src="/js/rendering.js"></script>
-        <script type="module" src="/js/interaction.js"></script>
-        <script type="module" src="/js/deckBuilder.js"></script>
-        <script type="module" src="/js/doughnut.js"></script>
+      
 }
 </body>
 

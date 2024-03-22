@@ -21,21 +21,21 @@ function handleAddToDeck(deckType, deck, card, onComplete) {
 
     switch (deckType) {
         case 'MainDeck':
-            if (deck.mainDeck.length >= maxMainCards) {
+            if (deck.main_deck.length >= maxMainCards) {
                 window.alert(`Invalid drop: Maximum Main Deck cards allowed.`);
                 return;
             }
             addCardToMainDeck(deck, card);
             break;
         case 'ExtraDeck':
-            if (deck.extraDeck.length >= maxExtraCards) {
+            if (deck.extra_deck.length >= maxExtraCards) {
                 window.alert(`Invalid drop: Maximum Extra Deck cards allowed.`);
                 return;
             }
             addCardToExtraDeck(deck, card);
             break;
         case 'SideDeck':
-            if (deck.sideDeck.length >= maxSideCards) {
+            if (deck.side_deck.length >= maxSideCards) {
                 window.alert(`Invalid drop: Maximum Side Deck cards allowed.`);
                 return;
             }
@@ -55,13 +55,13 @@ function handleAddToDeck(deckType, deck, card, onComplete) {
 function getDeck(deck, deckType) {
     switch (deckType) {
         case 'MainDeck':
-            return deck.mainDeck;
+            return deck.main_deck;
             break;
         case 'ExtraDeck':
-            return deck.extraDeck;
+            return deck.extra_deck;
             break;
         case 'SideDeck':
-            return deck.sideDeck;
+            return deck.side_deck;
             break;
         default:
     }
@@ -91,9 +91,9 @@ function handleRemoveFromDeck(deckType, deck, card, onComplete) {
 }
 // Function to update the displayed decks
 function updateDisplayedDecks() {
-    renderDeckCards(decks.mainDeck, '.DeckBuilder_Container_MainDeck');
-    renderDeckCards(decks.extraDeck, '.DeckBuilder_Container_ExtraDeck');
-    renderDeckCards(decks.sideDeck, '.DeckBuilder_Container_SideDeck');
+    renderDeckCards(decks.main_deck, '.DeckBuilder_Container_MainDeck');
+    renderDeckCards(decks.extra_deck, '.DeckBuilder_Container_ExtraDeck');
+    renderDeckCards(decks.side_deck, '.DeckBuilder_Container_SideDeck');
 }
 
 
@@ -103,9 +103,9 @@ function updateDeckCount(deck) {
     const mainDeckCardCountElement = document.getElementById('mainDeckCardCount');
     const extraDeckCardCountElement = document.getElementById('extraDeckCardCount');
     const sideDeckCardCountElement = document.getElementById('sideDeckCardCount');
-    const mainDeckCount = deck.mainDeck.length;
-    const extraDeckCount = deck.extraDeck.length;
-    const sideDeckCount = deck.sideDeck.length;
+    const mainDeckCount = deck.main_deck.length;
+    const extraDeckCount = deck.extra_deck.length;
+    const sideDeckCount = deck.side_deck.length;
     mainDeckCardCountElement.textContent = `#: ${mainDeckCount}`;
     extraDeckCardCountElement.textContent = `#: ${extraDeckCount}`;
     sideDeckCardCountElement.textContent = `#: ${sideDeckCount}`
