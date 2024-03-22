@@ -19,19 +19,20 @@ namespace YGOCardSearch.Pages
     public class DeckBuilder : PageModel
     {
         private readonly IConfiguration _configuration;
-        // Esto tambien debera cambiar por db:
-        public List<Deck> LoadedDecks; // no need of this since DecksManager page will be a thing
+        private readonly string decksLocalFolder;
+
         // Deck a visualizar
         public Deck Deck { get; set; }
-        public string currentDeckName { get; set; }
         // Database
         public readonly YgoContext Context;
 
         [BindProperty(SupportsGet = true)]
-        public string searchQuery { get; set; } 
-        public List<Card> SearchCards { get; set; }
-        public string decksPath { get; set; } 
+        public string SearchQuery { get; set; }
 
+        [BindProperty(SupportsGet = true)]
+        public string DeckFileName { get; set; }
+
+        public List<Card> SearchCards { get; set; }
         private DeckUtility deckUtility { get; set; }
         
 
@@ -39,40 +40,31 @@ namespace YGOCardSearch.Pages
         public DeckBuilder(YgoContext db, IConfiguration configuration)
         {
             // Good place to initialize data
-            // Load the Database
             this.Context = db; 
             this._configuration = configuration;
-            this.decksPath = _configuration["Paths:DecksFolderPath"];
+            decksLocalFolder = _configuration["Paths:DecksFolderPath"];
             this.deckUtility = new DeckUtility(Context, _configuration);
 
-
-            LoadedDecks = new List<Deck>();
-            Deck = new Deck();
-            // Load all decks as a list of decks
-            LoadedDecks.Add(deckUtility.LoadDeck(decksPath));
-
-            // Get the selected Deck as focus deck
-            Deck = LoadedDecks.FirstOrDefault(); // developer todo: make selection with dropdrown menu 
-            currentDeckName = Deck.DeckName;
-
-            // Prepare card images, sets and prices from all sub decks:
-            deckUtility.PrepareCardData(Deck);
-            
+           
         }
-        public IActionResult OnGet()
+        public async Task<IActionResult> OnGetAsync()
         {
-            if (!string.IsNullOrWhiteSpace(searchQuery))
+            // Use DeckPath here to load the specific deck
+            if (!string.IsNullOrEmpty(DeckFileName))
             {
-                var results = Context.GetSearch(searchQuery);
+                // Logic to load deck using DeckPath
+                Deck = await deckUtility.LoadDeck($"{decksLocalFolder}\\{DeckFileName}.ydk");
+                deckUtility.PrepareCardData(Deck);
+            }
+
+            if (!string.IsNullOrWhiteSpace(SearchQuery))
+            {
+                var results = Context.GetSearch(SearchQuery);
                 if (results != null)
                 {
                     // Prepare card infos
-                    foreach (var card in results)
-                    {
-                        card.CardImages = new List<CardImages>(Context.CardImages.Where(i => i.CardImageId == card.KonamiCardId));
-                        card.CardSets = new List<CardSet>(Context.CardSets.Where(s => s.CardId == card.CardId));
-                        card.CardPrices = new List<CardPrices>(Context.CardPrices.Where(p => p.CardId == card.CardId));
-                    }
+                    deckUtility.PrepareCardDataSearch(results);
+
                     SearchCards = new List<Card>(results);
                     
                 }
@@ -83,12 +75,8 @@ namespace YGOCardSearch.Pages
                 if (results != null)
                 {
                     // Prepare card infos
-                    foreach (var card in results)
-                    {
-                        card.CardImages = new List<CardImages>(Context.CardImages.Where(i => i.CardImageId == card.KonamiCardId));
-                        card.CardSets = new List<CardSet>(Context.CardSets.Where(s => s.CardId == card.CardId));
-                        card.CardPrices = new List<CardPrices>(Context.CardPrices.Where(p => p.CardId == card.CardId));
-                    }
+                    deckUtility.PrepareCardDataSearch(results);
+
                     SearchCards = new List<Card>(results);
                 }
                 else if (results == null)

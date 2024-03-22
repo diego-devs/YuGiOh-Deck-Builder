@@ -13,7 +13,7 @@ namespace YGOCardSearch.Pages
     public class DecksManager : PageModel
     {
         private readonly IConfiguration _configuration;
-        public List<DeckView> Decks { get; set; }
+        public List<DeckPreview> Decks { get; set; }
         // Database
         public readonly YgoContext Context;
 
@@ -24,20 +24,15 @@ namespace YGOCardSearch.Pages
             // Load the Database
             this.Context = context;
             _configuration = configuration;
-            Decks = new List<DeckView>();
+            Decks = new List<DeckPreview>();
+            _deckUtility = new DeckUtility(Context, _configuration);
 
         }
 
         public void OnGet()
         {
-            var decks = _deckUtility.LoadDecksView();
+            Decks = _deckUtility.LoadDecksPreview();
         }
-
-       
-
-
-
-
 
     }
 }

@@ -4,15 +4,14 @@ using System.Linq;
 using System;
 using Microsoft.Extensions.Configuration;
 using YGOCardSearch.Data.Models;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace YGOCardSearch.Data
 {
     public class DeckUtility
     {
         private readonly IConfiguration _configuration;
-        // Esto tambien debera cambiar por db:
-        public List<Deck> LoadedDecks;
-        // Deck a visualizar
         public Deck Deck { get; set; }
         // Database
         public readonly YgoContext Context;
@@ -20,63 +19,46 @@ namespace YGOCardSearch.Data
         {
             _configuration = configuration;
             Context = db;
-
-            LoadedDecks = new List<Deck>();
-            Deck = new Deck();
-
-            LoadedDecks.Add(LoadDeck(_configuration["Path:DecksFolderPath"]));
-            Deck = LoadedDecks.First(); // make selection with dropdrown menu 
-
-            // PrepareDeck
-            foreach (var card in Deck.MainDeck)
-            {
-                card.CardImages = new List<CardImages>(Context.CardImages.Where(i => i.CardImageId == card.KonamiCardId));
-                card.CardSets = new List<CardSet>(Context.CardSets.Where(s => s.CardId == card.CardId));
-                card.CardPrices = new List<CardPrices>(Context.CardPrices.Where(p => p.CardId == card.CardId));
-            }
         }
-        public List<Deck> LoadDecksView()
+
+        public List<DeckPreview> LoadDecksPreview()
         {
             string[] deckFiles = Directory.GetFiles(_configuration["Paths:DecksFolderPath"], "*.ydk");
+
+            List<DeckPreview> deckPreviews = new List<DeckPreview>();
 
             foreach (var filePath in deckFiles)
             {
                 try
                 {
-                    var deck = LoadDeck(filePath); // Assuming LoadDeck is adjusted to not load from a single file
-                    LoadedDecks.Add(new DeckView { DeckId = deck.DeckId, DeckName = deck.DeckName });
+                    //var deck = LoadDeck(filePath); // Assuming LoadDeck is adjusted to not load from a single file
+                    deckPreviews.Add(new DeckPreview { DeckName = Path.GetFileNameWithoutExtension(filePath)
+                });
+                    
+
                 }
                 catch (FileNotFoundException ex)
                 {
                     Console.WriteLine(ex.Message);
+                    return null;
                 }
-                return null;
+                
             }
+            return deckPreviews;
         }
+       
         /// <summary>
         /// Loads a Deck from a .ydk file, extracting the main deck, extra deck, and side deck card lists.
         /// </summary>
         /// <param name="path">The file path of the .ydk file to load the Deck from.</param>
         /// <returns>The loaded Deck containing the main deck, extra deck, and side deck card lists.</returns>
-        public Deck LoadDeck(string path)
+        public async Task<Deck> LoadDeck(string path)
         {
-            // Get all .ydk files from the specified directory
-            string[] deckFiles = Directory.GetFiles(path, "*.ydk");
-
-            // Choose the first .ydk file in the directory
-            string deckFilePath = deckFiles.FirstOrDefault();
-
-            // Check if a deck file exists
-            if (string.IsNullOrEmpty(deckFilePath))
-            {
-                throw new FileNotFoundException("No deck (.ydk) files found in the specified directory.");
-            }
-
             // Extract the deck name from the file name (excluding the extension)
-            string deckName = Path.GetFileNameWithoutExtension(deckFilePath);
+            string deckName = Path.GetFileNameWithoutExtension(path);
 
-            // Read all lines from the deck file
-            string[] deckLines = System.IO.File.ReadAllLines(deckFilePath);
+            // Read all lines from the YDK deck file
+            string[] deckLines = System.IO.File.ReadAllLines(path);
 
             // Normalize the section notations
             deckLines = NormalizeSectionNotations(deckLines);
@@ -97,16 +79,19 @@ namespace YGOCardSearch.Data
             List<string> cleanedSideDeckIds = CleanDeck(sideDeckIds);
 
             // Convert card IDs to card objects
-            List<Card> mainDeck = GetCardList(cleanedMainDeckIds);
-            List<Card> extraDeck = GetCardList(cleanedExtraDeckIds);
-            List<Card> sideDeck = GetCardList(cleanedSideDeckIds);
+            List<Card> mainDeck = await GetCardListAsync(cleanedMainDeckIds);
+            List<Card> extraDeck = await GetCardListAsync(cleanedExtraDeckIds);
+            List<Card> sideDeck = await GetCardListAsync(cleanedSideDeckIds);
 
             // Create and populate the deck object
-            Deck newDeck = new Deck();
-            newDeck.MainDeck = mainDeck;
-            newDeck.ExtraDeck = extraDeck;
-            newDeck.SideDeck = sideDeck;
-            newDeck.DeckName = deckName;
+            Deck newDeck = new Deck()
+            {
+                MainDeck = mainDeck,
+                ExtraDeck = extraDeck,
+                SideDeck = sideDeck,
+                DeckName = deckName
+            };
+            
 
             return newDeck;
         }
@@ -159,6 +144,24 @@ namespace YGOCardSearch.Data
         /// </summary>
         /// <param name="cardList">The list of CardIdKonami to search for.</param>
         /// <returns>A list of CardModel objects.</returns>
+        public async Task<List<Card>> GetCardListAsync(List<string> cardList)
+        {
+            var result = new List<Card>();
+
+            foreach (var cardId in cardList)
+            {
+                if (int.TryParse(cardId, out int konamiCardId))
+                {
+                    var card = await Context.Cards.SingleOrDefaultAsync(c => c.KonamiCardId == konamiCardId);
+                    if (card != null)
+                    {
+                        result.Add(card);
+                    }
+                }
+            }
+
+            return result;
+        }
         public List<Card> GetCardList(List<string> cardList)
         {
             var result = new List<Card>();
@@ -193,6 +196,43 @@ namespace YGOCardSearch.Data
                 card.CardImages = Context.CardImages.Where(i => i.CardImageId == card.KonamiCardId).ToList();
                 card.CardSets = Context.CardSets.Where(s => s.CardId == card.CardId).ToList();
                 card.CardPrices = Context.CardPrices.Where(p => p.CardId == card.CardId).ToList();
+            }
+        }
+
+        internal void PrepareCardDataSearch(List<Card> results)
+        {
+            foreach (var card in results)
+            {
+                card.CardImages = Context.CardImages.Where(i => i.CardImageId == card.KonamiCardId).ToList();
+                card.CardSets = Context.CardSets.Where(s => s.CardId == card.CardId).ToList();
+                card.CardPrices = Context.CardPrices.Where(p => p.CardId == card.CardId).ToList();
+            }
+        }
+
+        public async Task PrepareCardDataAsync(Deck deck)
+        {
+            await PrepareCardDataForDeckAsync(deck.MainDeck);
+            await PrepareCardDataForDeckAsync(deck.ExtraDeck);
+            await PrepareCardDataForDeckAsync(deck.SideDeck);
+        }
+
+        private async Task PrepareCardDataForDeckAsync(ICollection<Card> cards)
+        {
+            foreach (var card in cards)
+            {
+                card.CardImages = await Context.CardImages.Where(i => i.CardImageId == card.KonamiCardId).ToListAsync();
+                card.CardSets = await Context.CardSets.Where(s => s.CardId == card.CardId).ToListAsync();
+                card.CardPrices = await Context.CardPrices.Where(p => p.CardId == card.CardId).ToListAsync();
+            }
+        }
+
+        internal async Task PrepareCardDataSearchAsync(List<Card> results)
+        {
+            foreach (var card in results)
+            {
+                card.CardImages = await Context.CardImages.Where(i => i.CardImageId == card.KonamiCardId).ToListAsync();
+                card.CardSets = await Context.CardSets.Where(s => s.CardId == card.CardId).ToListAsync();
+                card.CardPrices = await Context.CardPrices.Where(p => p.CardId == card.CardId).ToListAsync();
             }
         }
 

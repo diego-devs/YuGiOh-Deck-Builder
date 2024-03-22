@@ -5,7 +5,6 @@
 @{
     var TotalDeckCards = Model.Deck.ExtraDeck.Count() + Model.Deck.MainDeck.Count();
     var topAtkCard = Model.Deck.MainDeck.OrderByDescending(c => c.Atk ?? 0).FirstOrDefault(); // this is not working
-
     int pageSize = 10;
     int totalPages = (int)Math.Ceiling((double)Model.SearchCards.Count / pageSize);
     int currentPage = Request.Query.ContainsKey("page") ? Convert.ToInt32(Request.Query["page"]) : 1;
@@ -20,12 +19,7 @@
     <link rel="stylesheet" href="~/css/site.css">
     <link rel="stylesheet" href="~/css/deckBuilder.css">
     <link rel="stylesheet" href="~/css/doughnutChart.css">
-    <!-- Include script references -->
-    <script type="module" src="/js/deck.js"></script>
-    <script type="module" src="/js/rendering.js"></script>
-    <script type="module" src="/js/interaction.js"></script>
-    <script type="module" src="/js/deckBuilder.js"></script>
-    <script type="module" src="/js/doughnut.js"></script>
+    
     
     <!-- Razor Page HTML -->
 </head>
@@ -112,7 +106,7 @@
                             <input type="search"
                                    class="form-control"
                                    id="searchInput"
-                                   asp-for="searchQuery"  />
+                                   asp-for="SearchQuery"  />
                             <button class="btn btn-light">Buscar</button>
                         </div>
                     </div>
@@ -128,7 +122,7 @@
         </div>
     </div>
 
-    
+   
     <!-- Include necessary JavaScript files here -->
 @section Scripts {
         <script>
@@ -140,6 +134,12 @@
             var searchedCards = @Html.Raw(Json.Serialize(Model.SearchCards));
 
         </script>
+        <!-- Include script references -->
+        <script type="module" src="/js/deck.js"></script>
+        <script type="module" src="/js/rendering.js"></script>
+        <script type="module" src="/js/interaction.js"></script>
+        <script type="module" src="/js/deckBuilder.js"></script>
+        <script type="module" src="/js/doughnut.js"></script>
 }
 </body>
 
