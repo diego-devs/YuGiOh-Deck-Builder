@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.SqlServer;
 using Microsoft.EntityFrameworkCore.Migrations;
-using YGOCardSearch.Data.Models;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using YGOCardSearch.Data.Models;
 
 namespace YGOCardSearch.Data
 {

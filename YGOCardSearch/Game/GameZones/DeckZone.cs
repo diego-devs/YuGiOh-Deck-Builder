@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using YGOCardSearch.Data.Models;
 
+
 namespace YGOCardSearch.Game.GameZones
 {
     public class DeckZone

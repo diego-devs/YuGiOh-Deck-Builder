@@ -28,8 +28,9 @@ namespace YGOCardSearch
         public void ConfigureServices(IServiceCollection services)
         {
             // Register the configuration
-            services.AddSingleton(Configuration);
+            services.Configure<AppSettingsReader>(Configuration);
             services.AddControllers();
+
 
             // Access configuration values
             var decksFolderPath = Configuration["Paths:DecksFolderPath"];

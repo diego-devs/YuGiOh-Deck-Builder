@@ -4,11 +4,12 @@ import { renderSearchedCards } from './rendering.js';
 import { handleAddToDeck, handleRemoveFromDeck, updateDeckCount } from './interaction.js';
 
 document.addEventListener('DOMContentLoaded', function () {
-
+    console.log(searchedCards);
+    console.log(deckData);
     // Declare deck within the event listener scope
     const deck = new Deck(deckData);
     console.log("Loaded deck: " + deck.deck_name);
-    console.log(deck.mainDeck.length); 
+    console.log(deck.main_deck); 
     renderCards(deck, searchedCards);
     updateDeckCount(deck);
     // Call this function to add event listeners to the drop target divs
@@ -591,17 +592,17 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
     function clearDeck() {
-        deck.mainDeck = [];
-        deck.extraDeck = [];
-        deck.sideDeck = [];
+        deck.main_deck = [];
+        deck.extra_deck = [];
+        deck.side_deck = [];
         // Re-render the sorted deck in your UI
         renderDeck(deck);
         // You can add additional logic to update the UI here if needed
     }
     function shuffleDeck() {
-        deck.mainDeck = shuffleArray(deck.mainDeck);
-        deck.extraDeck = shuffleArray(deck.extraDeck);
-        deck.sideDeck = shuffleArray(deck.sideDeck);
+        deck.main_deck = shuffleArray(deck.main_deck);
+        deck.extra_deck = shuffleArray(deck.extra_deck);
+        deck.side_deck = shuffleArray(deck.side_deck);
         // Re-render the shuffled deck in your UI
         renderDeck(deck);
     }

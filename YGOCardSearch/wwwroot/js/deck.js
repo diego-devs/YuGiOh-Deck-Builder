@@ -2,43 +2,43 @@ class Deck {
     constructor(deckData) {
         this.deck_id = deckData.deck_id;
         this.deck_name = deckData.deck_name;
-        this.mainDeck = deckData.mainDeck;
-        this.extraDeck = deckData.extraDeck;
-        this.sideDeck = deckData.sideDeck;
-        this.totalCards = deckData.TotalCards;
+        this.main_deck = deckData.main_deck;
+        this.extra_deck = deckData.extra_deck;
+        this.side_deck = deckData.side_deck;
+        this.total_cards = deckData.total_cards;
     }
 
     // Implement methods to add, remove, and get cards from the decks
     addCardToMainDeck(card) {
-        this.mainDeck.push(card);
+        this.main_deck.push(card);
     }
 
     addCardToExtraDeck(card) {
-        this.extraDeck.push(card);
+        this.extra_deck.push(card);
     }
 
     addCardToSideDeck(card) {
-        this.sideDeck.push(card);
+        this.side_deck.push(card);
     }
 
     removeCardFromMainDeck(cardId) {
-        const index = this.mainDeck.findIndex(card => card.id === cardId);
+        const index = this.main_deck.findIndex(card => card.id === cardId);
         if (index !== -1) {
-            this.mainDeck.splice(index, 1);
+            this.main_deck.splice(index, 1);
         }
     }
 
     removeCardFromExtraDeck(cardId) {
-        const index = this.extraDeck.findIndex(card => card.id === cardId);
+        const index = this.extra_deck.findIndex(card => card.id === cardId);
         if (index !== -1) {
-            this.extraDeck.splice(index, 1);
+            this.extra_deck.splice(index, 1);
         }
     }
 
     removeCardFromSideDeck(cardId) {
-        const index = this.sideDeck.findIndex(card => card.id === cardId);
+        const index = this.side_deck.findIndex(card => card.id === cardId);
         if (index !== -1) {
-            this.sideDeck.splice(index, 1);
+            this.side_deck.splice(index, 1);
         }
     }
 
@@ -47,19 +47,19 @@ class Deck {
     }
 
     getMainDeck() {
-        return this.mainDeck;
+        return this.main_deck;
     }
 
     getExtraDeck() {
-        return this.extraDeck;
+        return this.extra_deck;
     }
 
     getSideDeck() {
-        return this.sideDeck;
+        return this.side_deck;
     }
 
     getCardCount() {
-        return this.mainDeck.length + this.extraDeck.length + this.sideDeck.length;
+        return this.main_deck.length + this.extra_deck.length + this.side_deck.length;
     }
 
     // Not used
@@ -67,7 +67,7 @@ class Deck {
         let strongestCard = null;
         let highestAttackPoints = -1; 
         // Check cards in the main deck
-        this.mainDeck.forEach(card => {
+        this.main_deck.forEach(card => {
             if (card.atk >= 0 && card.atk > highestAttackPoints) {
                 strongestCard = card;
                 highestAttackPoints = card.atk;
@@ -75,7 +75,7 @@ class Deck {
         });
     
         // Check cards in the extra deck
-        this.extraDeck.forEach(card => {
+        this.extra_deck.forEach(card => {
             if (card.atk >= 0 && card.atk > highestAttackPoints) {
                 strongestCard = card;
                 highestAttackPoints = card.atk;
