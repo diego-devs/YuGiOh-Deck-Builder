@@ -46,81 +46,93 @@
     @*Sections*@
     <div class="split-section">
         <div class="detail-section">
-            <!-- Image -->
-            <div class="image-container">
-                <img id="bigCard" class="inner bigCard" src="" alt="Card Image" />
-            </div>
+            <div class="image-details-container">
+                <!-- Image -->
+                <div class="image-container">
+                    <img id="bigCard" class="inner bigCard" src="~/images/default_card_back.jpg" alt="Card Image" />
+                </div>
 
-            <!-- Name -->
-            <div class="detail-item">
-                <h3 id="detail-name"></h3>
-            </div>
+                <div class="details">
+                    <!-- Name -->
+                    <div class="detail-item">
+                        <h3 id="detail-name"></h3>
+                    </div>
 
-            <!-- Type, Race, Attribute, and Level -->
-            <div class="detail-item">
-                <p id="detail-type"></p>
-                <p id="detail-race"></p>
-                <p id="detail-attribute"></p>
-                <p style="text-decoration-style:solid" id="detail-level"></p>
-            </div>
+                    <!-- Type, Race, Attribute, and Level -->
+                    <div class="detail-item">
+                        <p id="detail-type"></p>
+                        <p id="detail-race"></p>
+                        <p id="detail-attribute"></p>
+                        <p style="text-decoration-style:solid" id="detail-level"></p>
+                    </div>
 
-            <!-- Archetype -->
-            <div class="detail-item">
-                <p id="detail-archetype"></p>
-            </div>
+                    <!-- Archetype -->
+                    <div class="detail-item">
+                        <p id="detail-archetype"></p>
+                    </div>
 
-            <!-- Text -->
-            <div class="detail-item">
-                <p id="detail-text"></p>
+                    <!-- Text -->
+                    <div class="detail-item">
+                        <p id="detail-text"></p>
+                    </div>
+                </div>
             </div>
+            
+            
         </div>
 
         <div class="deck-section"> <!-- Why this doesn't have the ondrop and ondragover event listeners and still works?** I removed it, lets see... -->
-            <div class="DeckBuilder_DeckInfo">
-                <div class="chartContainer">
-                    <div class="chartImage">
-                        <div id="doughnutChart" class="chart"></div>
-                    </div>
-                </div>
-                <div class="infoContainer">
-                    <h3>Deck Name: @Model.Deck.DeckName</h3>
-                    
-                </div> 
-            </div>
-            <!-- Deck content will be added dynamically using JavaScript -->
-            <div class="DecksContainer">
-                <div class="DeckBuilder_DeckCards_Container">
-                    <h2>Main Deck</h2>
-                    <span class="main-deck-card-count" id="mainDeckCardCount"></span>
-                    <div class="DeckBuilder_Container_MainDeck" id="main-deck" data-deck-type="MainDeck" ondrop="drop(event)" ondragover="dragOver(event)" ondragstart="dragStart(event)"></div>
-                    <div class="RemoveFromDeckArea" id="remove-from-main-deck" ondrop="drop(event)" ondragover="dragOver(event)"></div>
-                    <h2>Extra deck</h2>
-                    <div class="extra-deck-card-count" id="extraDeckCardCount"></div>
-                    <div class="DeckBuilder_Container_ExtraDeck" id="extra-deck" data-deck-type="ExtraDeck" ondrop="drop(event)" ondragover="dragOver(event)"></div>
-                    <h2>Side deck</h2>
-                    <div class="side-deck-card-count" id="sideDeckCardCount"></div>
-                    <div class="DeckBuilder_Container_SideDeck" id="side-deck" data-deck-type="SideDeck" ondrop="drop(event)" ondragover="dragOver(event)"></div>
-                </div>
-            </div>
-        </div>
-        <div class="cards-section">
-            <div class="DeckBuilder_CardSearch_Container">
-
-                <form method="GET">
-                    <div class="form-group">
-                        <div class="input-group">
-                            <input type="search"
-                                   class="form-control"
-                                   id="searchInput"
-                                   asp-for="SearchQuery"  />
-                            <button class="btn btn-light">Buscar</button>
+            <div class="deck-container">
+                <div class="DeckBuilder_DeckInfo">
+                    <div class="chartContainer">
+                        <div class="chartImage">
+                            <div id="doughnutChart" class="chart"></div>
                         </div>
                     </div>
-                </form>
+                    <div class="infoContainer">
+                        <h3>Deck Name: @Model.Deck.DeckName</h3>
+
+                    </div>
+                </div>
+                <!-- Deck content will be added dynamically using JavaScript -->
+                <div class="DecksContainer">
+                    <div class="DeckBuilder_DeckCards_Container">
+                        <h2>Main Deck</h2>
+                        <span class="main-deck-card-count" id="mainDeckCardCount"></span>
+                        <div class="DeckBuilder_Container_MainDeck" id="main-deck" data-deck-type="MainDeck" ondrop="drop(event)" ondragover="dragOver(event)" ondragstart="dragStart(event)"></div>
+                        <div class="RemoveFromDeckArea" id="remove-from-main-deck" ondrop="drop(event)" ondragover="dragOver(event)"></div>
+                        <h2>Extra deck</h2>
+                        <div class="extra-deck-card-count" id="extraDeckCardCount"></div>
+                        <div class="DeckBuilder_Container_ExtraDeck" id="extra-deck" data-deck-type="ExtraDeck" ondrop="drop(event)" ondragover="dragOver(event)"></div>
+                        <h2>Side deck</h2>
+                        <div class="side-deck-card-count" id="sideDeckCardCount"></div>
+                        <div class="DeckBuilder_Container_SideDeck" id="side-deck" data-deck-type="SideDeck" ondrop="drop(event)" ondragover="dragOver(event)"></div>
+                    </div>
+                </div>
             </div>
-            @*Where the searched cards will display*@
-            <div class="DeckBuilder_CardSearch_JS">
+            
+        </div>
+        <div class="cards-section">
+            <div class="searched-cards-container">
+                <div class="DeckBuilder_CardSearch_Container">
+
+                    <form method="GET">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <input type="search"
+                                       class="form-control"
+                                       id="searchInput"
+                                       asp-for="SearchQuery" />
+                                <button class="btn btn-light">Buscar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                @*Where the searched cards will display*@
+                <div class="DeckBuilder_CardSearch_JS">
+                </div>
             </div>
+            
 
             
 

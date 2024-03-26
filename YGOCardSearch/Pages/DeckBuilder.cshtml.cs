@@ -13,13 +13,17 @@ using Microsoft.Extensions.Configuration;
 using System.Security.Principal;
 using Newtonsoft.Json;
 using YGOCardSearch.Data.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace YGOCardSearch.Pages
 {
     public class DeckBuilder : PageModel
     {
+        // Add IHttpContextAccessor for accessing session
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
         private readonly string decksLocalFolder;
+        private DeckUtility deckUtility { get; set; }
 
         // Deck a visualizar
         public Deck Deck { get; set; }
@@ -31,30 +35,41 @@ namespace YGOCardSearch.Pages
 
         [BindProperty(SupportsGet = true)]
         public string DeckFileName { get; set; }
-
         public List<Card> SearchCards { get; set; }
-        private DeckUtility deckUtility { get; set; }
-        
 
         // Dependency injection of both Configuration and YgoContext 
-        public DeckBuilder(YgoContext db, IConfiguration configuration)
+        public DeckBuilder(YgoContext db, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
-            // Good place to initialize data
-            this.Context = db; 
-            this._configuration = configuration;
+            // DI 
+            Context = db; 
+            _configuration = configuration;
             decksLocalFolder = _configuration["Paths:DecksFolderPath"];
-            this.deckUtility = new DeckUtility(Context, _configuration);
-
-           
+            deckUtility = new DeckUtility(Context, _configuration);
+            _httpContextAccessor = httpContextAccessor;
         }
+
         public async Task<IActionResult> OnGetAsync()
         {
             // Use DeckPath here to load the specific deck
             if (!string.IsNullOrEmpty(DeckFileName))
             {
                 // Logic to load deck using DeckPath
-                Deck = await deckUtility.LoadDeck($"{decksLocalFolder}\\{DeckFileName}.ydk");
+                Deck = await deckUtility.LoadDeckAsync($"{decksLocalFolder}\\{DeckFileName}.ydk");
                 deckUtility.PrepareCardData(Deck);
+
+                // Store the deck NAME in session storage
+                _httpContextAccessor.HttpContext.Session.SetString("CurrentDeckName", Deck.DeckName);
+            }
+            else 
+            {
+                // Retrieve deck from session storage if available
+                var currentDeckName = _httpContextAccessor.HttpContext.Session.GetString("CurrentDeckName");
+                if (currentDeckName != null)
+                {
+                    // Logic to load deck using DeckPath
+                    Deck = await deckUtility.LoadDeckAsync($"{decksLocalFolder}\\{currentDeckName}.ydk");
+                    deckUtility.PrepareCardData(Deck);
+                }
             }
 
             if (!string.IsNullOrWhiteSpace(SearchQuery))
@@ -64,14 +79,13 @@ namespace YGOCardSearch.Pages
                 {
                     // Prepare card infos
                     deckUtility.PrepareCardDataSearch(results);
-
                     SearchCards = new List<Card>(results);
-                    
                 }
             }
             else
             {
-                var results = Context.GetSearch("dark ruler");
+                // Return a default result
+                var results = Context.GetSearch(_configuration["DefaultSearch"]);
                 if (results != null)
                 {
                     // Prepare card infos

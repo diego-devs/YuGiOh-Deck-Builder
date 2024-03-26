@@ -5,6 +5,8 @@ body {
     background-repeat: no-repeat;
     background-attachment: fixed;
     margin-bottom: 30px; /* Margin bottom by footer height */
+    font-family: 'Chakra Petch', sans-serif;
+    ;
 }
 .table {
     background-color: rgba(11, 16, 43, 0.7); /* Adjust the last value (alpha) for transparency */

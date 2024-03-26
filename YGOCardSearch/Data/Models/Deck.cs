@@ -5,6 +5,9 @@ using System.Text.Json.Serialization;
 
 namespace YGOCardSearch.Data.Models
 {
+    // This is the primary Deck class we use to Load and Export .YDK deck files 
+    // Deck class for all decks in application
+    
     [Table("Decks")]
     public class Deck
     {

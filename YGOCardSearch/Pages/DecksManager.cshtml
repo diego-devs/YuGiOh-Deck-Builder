@@ -1,4 +1,5 @@
 ﻿@page
+@using System.Web
 @model YGOCardSearch.Pages.DecksManager
 
 @{
@@ -10,13 +11,18 @@
 <div class="container">
     @if (Model.Decks.Any())
     {
-        <div class="list-group">
+        <div class="list-group bg-dark text-light">
             @foreach (var deck in Model.Decks)
             {
-                <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" asp-page="/DeckBuilder" asp-route-DeckFileName="@deck.DeckName">
-                    @deck.DeckName
-                    <span class="badge bg-primary rounded-pill" >Edit</span>
-                </a>
+                <div class="list-group-item d-flex justify-content-between align-items-center bg-dark border-light">
+                    <a asp-page="/DeckBuilder" asp-route-DeckFileName="@deck.DeckName" class="text-light">@deck.DeckName</a>
+                    <div class="btn-group" role="group" aria-label="Deck Actions">
+                        <a class="btn btn-primary mr-1" asp-page="/DeckBuilder" asp-route-DeckFileName="@deck.DeckName">Edit</a>
+                        <button type="button" class="btn btn-success mr-1" onclick="duplicateDeck('@Html.Raw(HttpUtility.UrlEncode(deck.DeckName))')">Duplicate</button>
+                        <button type="button" class="btn btn-warning mr-1" onclick="renameDeck('@Html.Raw(HttpUtility.UrlEncode(deck.DeckName))')">Rename</button>
+                        <button type="button" class="btn btn-danger" onclick="deleteDeck('@Html.Raw(HttpUtility.UrlEncode(deck.DeckName))')">Delete</button>
+                    </div>
+                </div>
             }
         </div>
     }
@@ -27,3 +33,21 @@
         </div>
     }
 </div>
+
+@* JavaScript functions for deck actions *@
+<script>
+    function duplicateDeck(deckName) {
+        // Add logic to duplicate the deck
+        console.log("Duplicate deck: " + deckName);
+    }
+
+    function renameDeck(deckName) {
+        // Add logic to rename the deck
+        console.log("Rename deck: " + deckName);
+    }
+
+    function deleteDeck(deckName) {
+        // Add logic to delete the deck
+        console.log("Delete deck: " + deckName);
+    }
+</script>
