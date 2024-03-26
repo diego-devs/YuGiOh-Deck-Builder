@@ -204,7 +204,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const cardType = event.dataTransfer.getData('cardType'); // card type: monster, spell, etc
         const fromDeckType = event.dataTransfer.getData('fromDeckType'); // Dragged from a deck
         const cardIdInt = parseInt(cardId, 10); // card konamiID as integer
-        const cardElement = document.getElementById(cardId);
+
         const isValidForMainDeck = event.dataTransfer.getData('isValidForMainDeck');// Is for Main/Side or Extra deck?
 
         // Determine the deck type based on the drop target's class and ID
@@ -509,9 +509,9 @@ document.addEventListener('DOMContentLoaded', function () {
         // Create an object to hold the deck data
         const deckData = {
             deck_name: deck.deck_name,
-            mainDeck: deck.getMainDeck(),
-            extraDeck: deck.getExtraDeck(),
-            sideDeck: deck.getSideDeck(),
+            main_deck: deck.getMainDeck(),
+            extra_deck: deck.getExtraDeck(),
+            side_deck: deck.getSideDeck(),
         };
 
         // Send the deck data to the server
@@ -530,7 +530,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     location.reload();
                 } else {
                     // Handle errors (e.g., show an error message)
-                    console.error('Failed to save the deck');
+                    console.error('Failed response from the server. The deck was not saved.');
                 }
             })
             .catch(error => {

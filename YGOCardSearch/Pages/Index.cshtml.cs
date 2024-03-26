@@ -38,7 +38,7 @@ namespace YGOCardSearch.Pages
             }
             else
             {
-                var results = await cardsProvider.GetAllCardsAsync();
+                var results = await cardsProvider.GetSearchAsync("scareclaw");
                 if (results != null)
                 {
                     Cards = new List<Card>(results);

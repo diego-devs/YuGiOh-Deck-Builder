@@ -7,7 +7,7 @@ por [Diego Diaz](https://github.com/diego-devs)
 Esta solución consta de dos proyectos: una aplicación de consola llamada **YugiohDB** y una aplicación web ASP.NET llamada **YGOCardSearch**. 
 
 1.  **YGOCardSearch**: Aplicación ASP.NET Core con Razor Pages. Proyecto principal. Buscador de cartas y Creador de Decks. 
-2.  **YugiohDB**: Aplicación de consola que nos ayuda a descargar las cartas, imágenes y mapearlas localmente. 
+2.  **YugiohDB**: Aplicación de consola que nos ayuda a descargar las cartas, imágenes y mapearlas localmente. (Esto estará en un nuevo proyecto llamado ImagesHelper aun en construcción)
 
 ## Contenido
 

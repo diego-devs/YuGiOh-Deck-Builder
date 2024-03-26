@@ -23,22 +23,23 @@ namespace YGOCardSearch.API
             // Process the received deck data here,
             // such as saving to the database or export it as YDK file
 
-            Console.WriteLine("SaveDeck button clicked");
-            foreach (var card in deck.MainDeck)
+            Console.WriteLine($"Saving deck {deck.DeckName}.ydk");
+
+            if (deck.MainDeck != null)
             {
-                Console.WriteLine(card.Name);
+                try
+                {
+                    // Save the deck as .YDK file
+                    ExportDeck(deck);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                    return new BadRequestResult();
+                }
+                return new OkResult(); // Return a success response
             }
-            try
-            {
-                // Save the deck as .YDK file
-                ExportDeck(deck);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return new BadRequestResult();
-            }
-            return new OkResult(); // Return a success response
+            return null;
         }
 
         // get current deck from the JS code and save it as a .ydk file 
@@ -68,7 +69,7 @@ namespace YGOCardSearch.API
                     writer.WriteLine(card.KonamiCardId);
                 }
             }
-            Console.WriteLine($"Deck exported to {deckFilePath} successfully");
+            Console.WriteLine($"Deck {deckName}.ydk exported to {deckFilePath} successfully");
         }
 
     }

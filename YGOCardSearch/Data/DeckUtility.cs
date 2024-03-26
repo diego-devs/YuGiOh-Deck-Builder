@@ -52,7 +52,7 @@ namespace YGOCardSearch.Data
         /// </summary>
         /// <param name="path">The file path of the .ydk file to load the Deck from.</param>
         /// <returns>The loaded Deck containing the main deck, extra deck, and side deck card lists.</returns>
-        public async Task<Deck> LoadDeck(string path)
+        public async Task<Deck> LoadDeckAsync(string path)
         {
             // Extract the deck name from the file name (excluding the extension)
             string deckName = Path.GetFileNameWithoutExtension(path);
@@ -95,7 +95,13 @@ namespace YGOCardSearch.Data
 
             return newDeck;
         }
+        public async Task<Deck> LoadDeckAsync(int deckId)
+        {
+            return null;
+        }
+        
 
+        // Normalize sections notations from the YDK file in case any wrong file 
         private static string[] NormalizeSectionNotations(string[] deckLines)
         {
             for (int i = 0; i < deckLines.Length; i++)
@@ -208,34 +214,5 @@ namespace YGOCardSearch.Data
                 card.CardPrices = Context.CardPrices.Where(p => p.CardId == card.CardId).ToList();
             }
         }
-
-        public async Task PrepareCardDataAsync(Deck deck)
-        {
-            await PrepareCardDataForDeckAsync(deck.MainDeck);
-            await PrepareCardDataForDeckAsync(deck.ExtraDeck);
-            await PrepareCardDataForDeckAsync(deck.SideDeck);
-        }
-
-        private async Task PrepareCardDataForDeckAsync(ICollection<Card> cards)
-        {
-            foreach (var card in cards)
-            {
-                card.CardImages = await Context.CardImages.Where(i => i.CardImageId == card.KonamiCardId).ToListAsync();
-                card.CardSets = await Context.CardSets.Where(s => s.CardId == card.CardId).ToListAsync();
-                card.CardPrices = await Context.CardPrices.Where(p => p.CardId == card.CardId).ToListAsync();
-            }
-        }
-
-        internal async Task PrepareCardDataSearchAsync(List<Card> results)
-        {
-            foreach (var card in results)
-            {
-                card.CardImages = await Context.CardImages.Where(i => i.CardImageId == card.KonamiCardId).ToListAsync();
-                card.CardSets = await Context.CardSets.Where(s => s.CardId == card.CardId).ToListAsync();
-                card.CardPrices = await Context.CardPrices.Where(p => p.CardId == card.CardId).ToListAsync();
-            }
-        }
-
-
     }
 }
