@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "bCJMaKq/sk85NsbjqdxPL2thVn3zoGkCdgyC6GSoNh60uiNfGKwZLRPamEGFgDOmNhM4CyKR4/qknG3KBgfwYg==",
+  "dgSpecHash": "0nwAWz4J/AXj2fXUNfVzi19q2QbaDLEp0vYdkc75fI5PPHMvxwS0nzIHvOjP1xhxbTWcr0O62gD/Ipgn3wGr1w==",
   "success": true,
-  "projectFilePath": "C:\\Users\\PC Gamer\\source\\repos\\YuGiOhTCG\\YugiohDB\\YugiohDB.csproj",
+  "projectFilePath": "C:\\Users\\PC Gamer\\source\\repos\\yugioh\\YuGiOh DeckBuilder\\YugiohDB\\YugiohDB.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\PC Gamer\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\PC Gamer\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",

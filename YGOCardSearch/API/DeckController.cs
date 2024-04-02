@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using System;
 using System.IO;
+using YGOCardSearch.Data;
 using YGOCardSearch.Data.Models;
 
 namespace YGOCardSearch.API
@@ -11,10 +12,12 @@ namespace YGOCardSearch.API
     public class DeckController
     {
         private readonly IConfiguration _configuration;
+        private readonly DeckUtility _deckUtility;
 
         public DeckController(IConfiguration configuration)
         {
             this._configuration = configuration;
+
         }
 
         [HttpPost("save")]
@@ -71,6 +74,9 @@ namespace YGOCardSearch.API
             }
             Console.WriteLine($"Deck {deckName}.ydk exported to {deckFilePath} successfully");
         }
+
+
+
 
     }
 

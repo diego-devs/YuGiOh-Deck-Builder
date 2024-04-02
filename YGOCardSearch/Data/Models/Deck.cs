@@ -18,18 +18,33 @@ namespace YGOCardSearch.Data.Models
         public string DeckName { get; set; }
 
         [JsonPropertyName("main_deck")]
-        public ICollection<Card> MainDeck { get; set; }
+        public ICollection<Card> MainDeck { get; set; } = [];
         [JsonPropertyName("extra_deck")]
-        public ICollection<Card> ExtraDeck { get; set; }
+        public ICollection<Card> ExtraDeck { get; set; } = [];
         [JsonPropertyName("side_deck")]
-        public ICollection<Card> SideDeck { get; set; }
+        public ICollection<Card> SideDeck { get; set; } = [];
         [JsonPropertyName("total_cards")]
         public int TotalCards { get { return totalCards; } 
                                 set { totalCards = MainDeck.Count + ExtraDeck.Count; } }
         private int totalCards;
 
+
         [JsonPropertyName("deck_file_path")]
         public string DeckFilePath { get; set; }
+
+
+        public Deck(string deckName, ICollection<Card> mainDeck, ICollection<Card> extraDeck, ICollection<Card> sideDeck, string deckFilePath)
+        {
+            DeckName = deckName;
+            MainDeck = mainDeck;
+            ExtraDeck = extraDeck;
+            SideDeck = sideDeck;
+            DeckFilePath = deckFilePath;
+        }
+        public Deck()
+        {
+
+        }
 
 
     }

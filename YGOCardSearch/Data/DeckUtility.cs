@@ -214,5 +214,35 @@ namespace YGOCardSearch.Data
                 card.CardPrices = Context.CardPrices.Where(p => p.CardId == card.CardId).ToList();
             }
         }
+
+        // get current deck from the JS code and save it as a .ydk file 
+        public void ExportDeck(Deck deck)
+        {
+            // Save the deck to a .ydk file
+            string deckName = deck.DeckName; // get the deck name from file name
+            string deckFilePath = Path.Combine(_configuration["Paths:DecksFolderPath"], deckName + ".ydk");
+            using (StreamWriter writer = new StreamWriter(deckFilePath))
+            {
+                // Write the main deck
+                writer.WriteLine("#main");
+                foreach (var card in deck.MainDeck)
+                {
+                    writer.WriteLine(card.KonamiCardId);
+                }
+                // Write the extra deck
+                writer.WriteLine("#extra");
+                foreach (var card in deck.ExtraDeck)
+                {
+                    writer.WriteLine(card.KonamiCardId);
+                }
+                // Write the side deck
+                writer.WriteLine("!side");
+                foreach (var card in deck.SideDeck)
+                {
+                    writer.WriteLine(card.KonamiCardId);
+                }
+            }
+            Console.WriteLine($"Deck {deckName}.ydk exported to {deckFilePath} successfully");
+        }
     }
 }
