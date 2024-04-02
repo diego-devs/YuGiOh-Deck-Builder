@@ -1,0 +1,37 @@
+﻿@page
+@using Microsoft.EntityFrameworkCore.Metadata.Internal
+@model YGODeckBuilder.Pages.DeckFormatConverterModel
+@{
+    ViewData["Title"] = "Deck Format Converter";
+}
+<h1>Deck Format Converter Tool</h1>
+
+<p>There are two major formats for Yugioh Decks the .ydk and JSON format used in many konami videogames.</p>
+<p>This tool simplifies deck management by allowing seamless conversion between these formats.</p>
+
+<div class="alert alert-warning" role="alert">
+    This page is currently under construction and not yet functional. Please check back later for updates.
+</div>
+
+@if (!Model.ConversionCompleted)
+{
+    <div>
+        <label>Select conversion direction:</label>
+        <select bind="Model.SelectedConversionDirection">
+            <option value="YDKToJson">YDK to JSON</option>
+            <option value="JsonToYDK">JSON to YDK</option>
+        </select>
+    </div>
+
+    <div>
+        <label>Upload deck file:</label>
+        <input type="file" onchange="HandleFileUpload" />
+    </div>
+}
+else
+{
+    <div>
+        <h2>Conversion Results</h2>
+        <a>Click here to download file</a>
+    </div>
+}
