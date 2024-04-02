@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "UU8Tcnk7fNcJZh2I2/WJubroklZxRuPXLLEpx6W0UNF5+FVjH9nG1PodcsyK/eOrbZHe0YgInthJgEKMFl7qYA==",
+  "dgSpecHash": "tXpwClIS9RIdNA4bAxVqeqU6xO5xan8Pu0N5wChuZwtKZscOgfha2i7uBdR13Zy60r3rURvi2vKw1mYsZDuQuQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\PC Gamer\\source\\repos\\YuGiOhTCG\\YGOCardSearch\\YGOCardSearch.csproj",
+  "projectFilePath": "C:\\Users\\PC Gamer\\source\\repos\\yugioh\\YuGiOh DeckBuilder\\YGOCardSearch\\YGODeckBuilder.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\PC Gamer\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\PC Gamer\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",

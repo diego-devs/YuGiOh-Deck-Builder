@@ -14,6 +14,7 @@ using System.Security.Principal;
 using Newtonsoft.Json;
 using YGOCardSearch.Data.Models;
 using Microsoft.AspNetCore.Http;
+using YGOCardSearch.API;
 
 namespace YGOCardSearch.Pages
 {
@@ -69,6 +70,15 @@ namespace YGOCardSearch.Pages
                     // Logic to load deck using DeckPath
                     Deck = await deckUtility.LoadDeckAsync($"{decksLocalFolder}\\{currentDeckName}.ydk");
                     deckUtility.PrepareCardData(Deck);
+                }
+                else
+                {
+                    Deck = new Deck();
+                    Deck.DeckName = new string(DateTime.Today.ToShortDateString());
+                    Deck.DeckFilePath = $"{decksLocalFolder}\\{Deck.DeckName}.ydk";
+                    var dc = new DeckController(_configuration);
+                    dc.ExportDeck(Deck);
+                    // dev todo: add binding users deck name
                 }
             }
 
