@@ -28,7 +28,6 @@ namespace YGODeckBuilder.Data.Models
                                 set { totalCards = MainDeck.Count + ExtraDeck.Count; } }
         private int totalCards;
 
-
         [JsonPropertyName("deck_file_path")]
         public string DeckFilePath { get; set; }
 

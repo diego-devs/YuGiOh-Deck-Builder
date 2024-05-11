@@ -76,8 +76,6 @@ namespace YGODeckBuilder.Pages
                     Deck = new Deck();
                     Deck.DeckName = new string(DateTime.Today.ToShortDateString());
                     Deck.DeckFilePath = $"{decksLocalFolder}\\{Deck.DeckName}.ydk";
-                    var dc = new DeckController(_configuration);
-                    dc.ExportDeck(Deck);
                     // dev todo: add binding users deck name
                 }
             }

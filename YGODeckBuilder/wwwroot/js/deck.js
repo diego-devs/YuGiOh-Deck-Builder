@@ -5,7 +5,6 @@ class Deck {
         this.main_deck = deckData.main_deck;
         this.extra_deck = deckData.extra_deck;
         this.side_deck = deckData.side_deck;
-        this.total_cards = deckData.total_cards;
     }
 
     // Implement methods to add, remove, and get cards from the decks
@@ -62,6 +61,8 @@ class Deck {
         return this.main_deck.length + this.extra_deck.length + this.side_deck.length;
     }
 
+
+
     // Not used
     getStrongestCard() {
         let strongestCard = null;
@@ -97,6 +98,7 @@ const removeCardFromSideDeck = (deck, card) => deck.removeCardFromSideDeck(card)
 const getMainDeck = deck => deck.getMainDeck();
 const getExtraDeck = deck => deck.getExtraDeck();
 const getSideDeck = deck => deck.getSideDeck();
+
 
 export {
     Deck,

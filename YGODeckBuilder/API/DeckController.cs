@@ -17,15 +17,11 @@ namespace YGODeckBuilder.API
         public DeckController(IConfiguration configuration)
         {
             this._configuration = configuration;
-
         }
 
         [HttpPost("save")]
         public IActionResult SaveDeck([FromBody] Deck deck)
         {
-            // Process the received deck data here,
-            // such as saving to the database or export it as YDK file
-
             Console.WriteLine($"Saving deck {deck.DeckName}.ydk");
 
             if (deck.MainDeck != null)
@@ -75,12 +71,84 @@ namespace YGODeckBuilder.API
             Console.WriteLine($"Deck {deckName}.ydk exported to {deckFilePath} successfully");
         }
 
+        [HttpPost("duplicate")]
+        public IActionResult DuplicateDeck([FromBody] string deckName)
+        {
+            try
+            {
+                // Here you implement the logic to duplicate the deck
+                // You may use the ExportDeck method with appropriate modifications
+                // For simplicity, let's assume the deck is duplicated by copying the ydk file with a new name
+
+                string originalDeckFilePath = Path.Combine(_configuration["Paths:DecksFolderPath"], deckName + ".ydk");
+                string newDeckFilePath = Path.Combine(_configuration["Paths:DecksFolderPath"], "Copy_" + deckName + ".ydk");
+
+                File.Copy(originalDeckFilePath, newDeckFilePath);
+
+                Console.WriteLine($"Deck {deckName}.ydk duplicated to {newDeckFilePath} successfully");
+
+                return new OkResult();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error duplicating deck {deckName}.ydk: {e.Message}");
+                return new BadRequestResult();
+            }
+        }
+
+        [HttpPost("rename")]
+        public IActionResult RenameDeck([FromBody] RenameDeckRequest request)
+        {
+            try
+            {
+                string oldDeckFilePath = Path.Combine(_configuration["Paths:DecksFolderPath"], request.OldDeckName + ".ydk");
+                string newDeckFilePath = Path.Combine(_configuration["Paths:DecksFolderPath"], request.NewDeckName + ".ydk");
+
+                File.Move(oldDeckFilePath, newDeckFilePath);
+
+                Console.WriteLine($"Deck {request.OldDeckName}.ydk renamed to {request.NewDeckName}.ydk successfully");
+
+                return new OkResult();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error renaming deck {request.OldDeckName}.ydk: {e.Message}");
+                return new BadRequestResult();
+            }
+        }
+
+        [HttpPost("delete")]
+        public IActionResult DeleteDeck([FromBody] string deckName)
+        {
+            try
+            {
+                string deckFilePath = Path.Combine(_configuration["Paths:DecksFolderPath"], deckName + ".ydk");
+
+                File.Delete(deckFilePath);
+
+                Console.WriteLine($"Deck {deckName}.ydk deleted successfully");
+
+                return new OkResult();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error deleting deck {deckName}.ydk: {e.Message}");
+                return new BadRequestResult();
+            }
+        }
+
+        public class RenameDeckRequest
+        {
+            public string OldDeckName { get; set; }
+            public string NewDeckName { get; set; }
+        }
+
 
 
 
     }
 
 
-   
+
 
 }

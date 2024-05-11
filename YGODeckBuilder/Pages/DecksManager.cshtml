@@ -4,7 +4,12 @@
 
 @{
     ViewData["Title"] = "Decks Manager";
+    
 }
+<head>
+    <link rel="stylesheet" href="~/css/decksManager.css">
+    <script src="/js/decksManager.js"></script>
+</head>
 
 <h2 class="mb-4">Decks Manager</h2>
 
@@ -27,9 +32,9 @@
                     <a asp-page="/DeckBuilder" asp-route-DeckFileName="@deck.DeckName" class="text-white text-uppercase">@deck.DeckName</a>
                     <div class="btn-group" role="group" aria-label="Deck Actions">
                         <a class="btn btn-primary mr-1" asp-page="/DeckBuilder" asp-route-DeckFileName="@deck.DeckName">Edit</a>
-                        <button type="button" class="btn btn-success mr-1" onclick="duplicateDeck('@Html.Raw(HttpUtility.UrlEncode(deck.DeckName))')">Duplicate</button>
-                        <button type="button" class="btn btn-warning mr-1" onclick="renameDeck('@Html.Raw(HttpUtility.UrlEncode(deck.DeckName))')">Rename</button>
-                        <button type="button" class="btn btn-danger" onclick="deleteDeck('@Html.Raw(HttpUtility.UrlEncode(deck.DeckName))')">Delete</button>
+                        <button type="button" class="btn btn-success mr-1" onclick="duplicateDeck('@deck.DeckName')">Duplicate</button>
+                        <button type="button" class="btn btn-warning mr-1" onclick="renameDeck('@deck.DeckName')">Rename</button>
+                        <button type="button" class="btn btn-danger" onclick="deleteDeck('@deck.DeckName')">Delete</button>
                     </div>
                 </div>
             }
@@ -43,20 +48,4 @@
     }
 </div>
 
-@* JavaScript functions for deck actions *@
-<script>
-    function duplicateDeck(deckName) {
-        // Add logic to duplicate the deck
-        console.log("Duplicate deck: " + deckName);
-    }
 
-    function renameDeck(deckName) {
-        // Add logic to rename the deck
-        console.log("Rename deck: " + deckName);
-    }
-
-    function deleteDeck(deckName) {
-        // Add logic to delete the deck
-        console.log("Delete deck: " + deckName);
-    }
-</script>
