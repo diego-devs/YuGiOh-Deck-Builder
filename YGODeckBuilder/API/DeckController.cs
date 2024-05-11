@@ -76,25 +76,33 @@ namespace YGODeckBuilder.API
         {
             try
             {
-                // Here you implement the logic to duplicate the deck
-                // You may use the ExportDeck method with appropriate modifications
-                // For simplicity, let's assume the deck is duplicated by copying the ydk file with a new name
-
+                // Construct original and new file paths
                 string originalDeckFilePath = Path.Combine(_configuration["Paths:DecksFolderPath"], deckName + ".ydk");
                 string newDeckFilePath = Path.Combine(_configuration["Paths:DecksFolderPath"], "Copy_" + deckName + ".ydk");
 
+                // Check if the new file path already exists
+                if (File.Exists(newDeckFilePath))
+                {
+                    // Handle the case where the new file path already exists
+                    Console.WriteLine($"Error duplicating deck {deckName}.ydk: Destination file already exists");
+                    return new ConflictResult(); // Return HTTP 409 Conflict status code
+                }
+
+                // Copy the deck file to the new location
                 File.Copy(originalDeckFilePath, newDeckFilePath);
 
                 Console.WriteLine($"Deck {deckName}.ydk duplicated to {newDeckFilePath} successfully");
 
-                return new OkResult();
+                return new OkResult(); // Return HTTP 200 OK status code
             }
             catch (Exception e)
             {
+                // Handle other exceptions
                 Console.WriteLine($"Error duplicating deck {deckName}.ydk: {e.Message}");
-                return new BadRequestResult();
+                return new BadRequestResult(); // Return HTTP 400 Bad Request status code
             }
         }
+
 
         [HttpPost("rename")]
         public IActionResult RenameDeck([FromBody] RenameDeckRequest request)
@@ -136,16 +144,6 @@ namespace YGODeckBuilder.API
                 return new BadRequestResult();
             }
         }
-
-        public class RenameDeckRequest
-        {
-            public string OldDeckName { get; set; }
-            public string NewDeckName { get; set; }
-        }
-
-
-
-
     }
 
 

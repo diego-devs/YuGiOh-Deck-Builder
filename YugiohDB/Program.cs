@@ -30,33 +30,33 @@ namespace YugiohDB
             // MapCardData();
 
             // 1- Download and save all cards from API
-            //var allcards = await YGOProvider.GetAllCardsAsync();
-            //YgoProDeckTools.SaveCards(allcards, cardsLocalPath);
+            var allcards = await YGOProvider.GetAllCardsAsync();
+            YgoProDeckTools.SaveCards(allcards, cardsLocalPath);
 
             // 2- Load all cards from json file
-            //List<Card> localCards = YgoProDeckTools.ReadAllCards(cardsLocalPath);
+            List<Card> localCards = YgoProDeckTools.ReadAllCards(cardsLocalPath);
 
             // 3- Download all images and images sizes *** developer todo: some cards have more than 1 image
-            //await YgoProDeckTools.DownloadImagesAsync(localCards, "cropped");
-            //await YgoProDeckTools.DownloadCardImages(allCards, "small");
-            //await YgoProDeckTools.DownloadCardImages(allCards, ""
+            await YgoProDeckTools.DownloadImagesAsync(localCards, CardImageSize.Big);
+            await YgoProDeckTools.DownloadImagesAsync(localCards, CardImageSize.Small);
+            await YgoProDeckTools.DownloadImagesAsync(localCards, CardImageSize.Cropped);
 
             // 4- Map images to correct path in local machine
-            //var allCards = YgoProDeckTools.ReadAllCards(allCardsPath);
-            //YgoProDeckTools.MapImages(localCards, imagesLocalPath);
+            var allCards = YgoProDeckTools.ReadAllCards(cardsLocalPath);
+            YgoProDeckTools.MapImages(localCards, imagesLocalPath);
 
-            //YgoProDeckTools.SaveCards(localCards, cardsLocalPath);
+            YgoProDeckTools.SaveCards(localCards, cardsLocalPath);
 
             // 5- Map banlist info
-            //var banlists = await YGOProvider.GetAllBanlistAsync();
-            //YgoProDeckTools.MapBanlistInfo(localCards, banlists);
+            var banlists = await YGOProvider.GetAllBanlistAsync();
+            YgoProDeckTools.MapBanlistInfo(localCards, banlists);
 
             // 6- Save and overwrite modified cards to local folder
-            //YgoProDeckTools.SaveCards(localCards, cardsLocalPath); 
-            //Console.WriteLine("All cards and images have been downloaded and mapped to text file in local path. ");
+            YgoProDeckTools.SaveCards(localCards, cardsLocalPath); 
+            Console.WriteLine("All cards and images have been downloaded and mapped to text file in local path. ");
 
             // 7- Add all cards to database
-            //await YgoProDeckTools.AddAllCards(cardsLocalPath);
+            await YgoProDeckTools.AddAllCards(cardsLocalPath);
 
             await MainApplication(); // Search cards and displays them into console
 

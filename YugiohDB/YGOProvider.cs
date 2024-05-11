@@ -137,8 +137,6 @@ public static class YGOProvider
                     Ban_OCG = card.BanlistInfo.Ban_OCG,
                     Ban_GOAT = card.BanlistInfo.Ban_GOAT
                 };
-
-                
                     banlist.Add(newBL);
                 
             }

@@ -32,9 +32,9 @@
                     <a asp-page="/DeckBuilder" asp-route-DeckFileName="@deck.DeckName" class="text-white text-uppercase">@deck.DeckName</a>
                     <div class="btn-group" role="group" aria-label="Deck Actions">
                         <a class="btn btn-primary mr-1" asp-page="/DeckBuilder" asp-route-DeckFileName="@deck.DeckName">Edit</a>
-                        <button type="button" class="btn btn-success mr-1" onclick="duplicateDeck('@deck.DeckName')">Duplicate</button>
-                        <button type="button" class="btn btn-warning mr-1" onclick="renameDeck('@deck.DeckName')">Rename</button>
-                        <button type="button" class="btn btn-danger" onclick="deleteDeck('@deck.DeckName')">Delete</button>
+                        <button type="button" class="btn btn-success mr-1" id="btnDuplicateDeck" onclick="duplicateDeck('@deck.DeckName')">Duplicate</button>
+                        <button type="button" class="btn btn-warning mr-1" id="btnRenameDeck" onclick="showRenameInput('@deck.DeckName')">Rename</button>
+                        <button type="button" class="btn btn-danger" id="btnDeleteDeck" onclick="deleteDeck('@deck.DeckName')">Delete</button>
                     </div>
                 </div>
             }

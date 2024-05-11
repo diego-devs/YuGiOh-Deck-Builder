@@ -16,18 +16,27 @@ using YugiohDB.Models;
 
 namespace YugiohDB
 {
+    public enum CardImageSize
+    {
+        Small, Big, Cropped
+    }
     public class YgoProDeckTools
     {
         public readonly YgoContext Context;
+
         /// <summary>
         /// Downloads all card images to local folder. Select the size and location for the images to be downloaded.
         /// </summary>
         /// <param name="cards"></param>
         /// <param name="imgSize">Use "small", "large" or "cropped"</param>
         /// <returns></returns>
+        public static async Task DownloadImagesAsync(List<Card> cards, CardImageSize imgSize)
+        {
+
+        }
         public static async Task DownloadImagesAsync(List<Card> cards, string imgSize)
         {
-            if (imgSize == "small")
+            if (imgSize ==  "small")
             {
                 string localFolder = "C:/Users/PC Gamer/source/repos/YuGiOhTCG/YGOCardSearch/data/images/small"; // This should be changed to use configuration
 

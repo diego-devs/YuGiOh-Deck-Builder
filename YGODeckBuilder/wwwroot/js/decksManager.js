@@ -4,7 +4,7 @@ function duplicateDeck(deckName) {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ deckName: deckName })
+        body: JSON.stringify(deckName)
     })
         .then(response => {
             if (response.ok) {
@@ -25,20 +25,26 @@ function duplicateDeck(deckName) {
         });
 }
 
-function renameDeck(deckName) {
+function showRenameInput(deckName) {
+    const newDeckName = prompt("Enter new deck name:", deckName);
+    if (newDeckName !== null) { // Check if the user clicked Cancel
+        renameDeck(deckName, newDeckName);
+    }
+}
+
+function renameDeck(oldDeckName, newDeckName) {
+    const requestData = { oldDeckName: oldDeckName, newDeckName: newDeckName };
     fetch('/api/deck/rename', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(deckName)
+        body: JSON.stringify(requestData)
     })
         .then(response => {
             if (response.ok) {
-                // Handle success, e.g., refresh the page or show a success message
-                location.reload(); // Example: Refresh the page
+                location.reload(); // Refresh the page on success
             } else {
-                // Handle error, e.g., show an error message
                 alert('Error renaming deck.');
             }
         })
@@ -47,7 +53,6 @@ function renameDeck(deckName) {
             alert('Error renaming deck.');
         });
 }
-
 function deleteDeck(deckName) {
     fetch('/api/deck/delete', {
         method: 'POST',
