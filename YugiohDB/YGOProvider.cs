@@ -9,7 +9,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using YugiohDB.Models;
+using YGODeckBuilder.Data.Models;
 
 namespace YugiohDB;
 public static class YGOProvider 
@@ -19,7 +19,7 @@ public static class YGOProvider
     /// </summary>
     /// <param name="search"></param>
     /// <returns></returns>
-    public static async Task<Card> SearchAsync(string search) 
+    public static async Task<YGODeckBuilder.Data.Models.Card> SearchAsync(string search) 
     {
         string url = @"https://db.ygoprodeck.com/api/v7/cardinfo.php?fname=" + search;
             

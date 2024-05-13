@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -10,19 +11,35 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
-using YugiohDB.Models;
+using YGODeckBuilder.Data.Models;
+
 
 namespace YugiohDB
 {
     public class Program
     {
         public YgoContext Context;
-        private const string AppVersion = "v0.1";
         public static async Task Main(string[] args)
         {
+            await MainApplication(); // Search cards and displays them into console
+
+            // Access configuration
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory) 
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true) 
+                .Build(); 
+
+            var connectionString = configuration.GetConnectionString("YGODatabase");
+            var decksFolderPath = configuration.GetValue<string>("Paths:DecksFolderPath");
+            var cardsLocalPath = configuration.GetValue<string>("Paths:CardIdsFilePath");
+            var imagesLocalPath = configuration.GetValue<string>("Paths:ImagesFolder");
+
+
+            Console.WriteLine($"Connection String: {connectionString}");
+            Console.WriteLine($"Decks Folder Path: {decksFolderPath}");
+
             // change the paths from appsettings.json
-            var cardsLocalPath = @"C:/Users/PC Gamer/source/repos/YuGiOhTCG/YGOCardSearch/Data/allCards.json";
-            var imagesLocalPath = @"C:/Users/PC Gamer/source/repos/YuGiOhTCG/YGOCardSearch/Data/images";
+            
             Console.WriteLine($"Cards Local Path: {cardsLocalPath}");
             Console.WriteLine($"Images Local Path: {imagesLocalPath}");            
             
@@ -30,47 +47,53 @@ namespace YugiohDB
             // MapCardData();
 
             // 1- Download and save all cards from API
-            var allcards = await YGOProvider.GetAllCardsAsync();
-            YgoProDeckTools.SaveCards(allcards, cardsLocalPath);
+            //var allcards = await YGOProvider.GetAllCardsAsync();
+            //YgoProDeckTools.SaveCardsFile(allcards, cardsLocalPath);
 
-            // 2- Load all cards from json file
-            List<Card> localCards = YgoProDeckTools.ReadAllCards(cardsLocalPath);
+            //// 2- Load all cards from json file
+            //List<Card> localCards = YgoProDeckTools.ReadAllCards(cardsLocalPath);
 
-            // 3- Download all images and images sizes *** developer todo: some cards have more than 1 image
-            await YgoProDeckTools.DownloadImagesAsync(localCards, CardImageSize.Big);
-            await YgoProDeckTools.DownloadImagesAsync(localCards, CardImageSize.Small);
-            await YgoProDeckTools.DownloadImagesAsync(localCards, CardImageSize.Cropped);
+            //// 3- Download all images and images sizes *** developer todo: some cards have more than 1 image
+            //await YgoProDeckTools.DownloadImagesAsync(localCards, CardImageSize.Big);
+            //await YgoProDeckTools.DownloadImagesAsync(localCards, CardImageSize.Small);
+            //await YgoProDeckTools.DownloadImagesAsync(localCards, CardImageSize.Cropped);
 
-            // 4- Map images to correct path in local machine
-            var allCards = YgoProDeckTools.ReadAllCards(cardsLocalPath);
-            YgoProDeckTools.MapImages(localCards, imagesLocalPath);
+            //// 4- Map images to correct path in local machine
+            //var allCards = YgoProDeckTools.ReadAllCards(cardsLocalPath);
+            //YgoProDeckTools.MapImages(localCards, imagesLocalPath);
 
-            YgoProDeckTools.SaveCards(localCards, cardsLocalPath);
+            //YgoProDeckTools.SaveCardsFile(localCards, cardsLocalPath);
 
-            // 5- Map banlist info
-            var banlists = await YGOProvider.GetAllBanlistAsync();
-            YgoProDeckTools.MapBanlistInfo(localCards, banlists);
+            //// 5- Map banlist info
+            //var banlists = await YGOProvider.GetAllBanlistAsync();
+            //YgoProDeckTools.MapBanlistInfo(localCards, banlists);
 
-            // 6- Save and overwrite modified cards to local folder
-            YgoProDeckTools.SaveCards(localCards, cardsLocalPath); 
-            Console.WriteLine("All cards and images have been downloaded and mapped to text file in local path. ");
+            //// 6- Save and overwrite modified cards to local folder
+            //YgoProDeckTools.SaveCardsFile(localCards, cardsLocalPath); 
+            //Console.WriteLine("All cards and images have been downloaded and mapped to text file in local path. ");
 
-            // 7- Add all cards to database
-            await YgoProDeckTools.AddAllCards(cardsLocalPath);
+            //// 7- Add all cards to database
+            //await YgoProDeckTools.AddAllCards(cardsLocalPath);
 
-            await MainApplication(); // Search cards and displays them into console
+            
 
             
         }
         private static async Task MainApplication()
         {
-            Console.WriteLine($"YGO DB CARD SEARCH {AppVersion}");
+            Console.BackgroundColor = ConsoleColor.DarkBlue;
+
+            Console.WriteLine($"YGO DB CARD SEARCH");
             Console.WriteLine("Welcome");
+            Console.WriteLine("This tool will help you locate any card or element allocated in your local YuGiOh DB");
+
             START:
 
             Console.WriteLine("Type your search for a card");
+
             var userSearch = Console.ReadLine().ToString();
             var search = await YGOProvider.SearchAsync(userSearch);
+
             if (search != null)
             {
                 foreach (var c in search.Data)

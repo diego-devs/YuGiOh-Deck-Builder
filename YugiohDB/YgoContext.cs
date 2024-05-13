@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Metadata;
-using YugiohDB.Models;
+using YGODeckBuilder.Data.Models;
+
 
 namespace YugiohDB
 {

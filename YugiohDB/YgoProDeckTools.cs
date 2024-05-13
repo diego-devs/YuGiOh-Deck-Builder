@@ -12,7 +12,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
-using YugiohDB.Models;
+using YGODeckBuilder.Data.Models;
+
 
 namespace YugiohDB
 {
@@ -32,7 +33,19 @@ namespace YugiohDB
         /// <returns></returns>
         public static async Task DownloadImagesAsync(List<Card> cards, CardImageSize imgSize)
         {
+            switch (imgSize)
+            {
+                case CardImageSize.Big:
 
+                    break;
+                case CardImageSize.Small:
+                    break;
+                case CardImageSize.Cropped:
+                    break;
+                default:
+                    break;
+
+            }
         }
         public static async Task DownloadImagesAsync(List<Card> cards, string imgSize)
         {
@@ -160,7 +173,7 @@ namespace YugiohDB
         /// </summary>
         /// <param name="cards"></param>
         /// <param name="path"></param>
-        public static void SaveCards(List<Card> cards, string path)
+        public static void SaveCardsFile(List<Card> cards, string path)
         {
             var serializedCards = JsonSerializer.Serialize(cards);
             File.WriteAllText(path, serializedCards);
