@@ -40,6 +40,15 @@ namespace YGODeckBuilder.Data.Models
             SideDeck = sideDeck;
             DeckFilePath = deckFilePath;
         }
+
+        public Deck(string deckName)
+        {
+            DeckName = deckName;
+            MainDeck = new List<Card>();
+            ExtraDeck = new List<Card>();
+            SideDeck = new List<Card>();
+        }
+
         public Deck()
         {
 

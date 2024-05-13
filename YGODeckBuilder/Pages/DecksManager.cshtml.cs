@@ -37,29 +37,7 @@ namespace YGODeckBuilder.Pages
             Decks = _deckUtility.LoadDecksPreview();
         }
 
-        //public async Task<IActionResult> DuplicateDeckAsync(string selectedDeckName)
-        //{
-        //    int counter = 0;
-        //    if (Path.Exists(_configuration["Paths:DeckFolderPath"])) 
-        //    {
-        //        counter++;
-        //    }
-        //    var newDeckName = selectedDeckName + $"{counter++}";
-
-        //    Deck selectedDeck = await _deckUtility.LoadDeckAsync($"{_configuration["Paths:DecksFolderPath"]}\\{newDeckName}.ydk");
-        //    var res = _deckUtility.ExportDeck(selectedDeck);
-            
-        //    if (res)
-        //    {
-        //        return Page();
-        //    } 
-        //    else
-        //    {
-        //        var message = "Deck duplicate unsuccessful result";
-        //        Console.WriteLine(message);
-        //        return BadRequest(new { message });
-        //    }
-
+ 
     
 
     }

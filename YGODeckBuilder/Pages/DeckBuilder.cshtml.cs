@@ -66,9 +66,7 @@ namespace YGODeckBuilder.Pages
                 {
                     return RedirectToPage("/Error");
                 }
-                
 
-                
             }
             else 
             {

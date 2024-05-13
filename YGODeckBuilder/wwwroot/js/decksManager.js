@@ -75,3 +75,31 @@ function deleteDeck(deckName) {
             alert('Error deleting deck.');
         });
 }
+function showNewDeckInput(deckName) {
+    const newDeckName = prompt("Enter new deck name:", deckName);
+    if (newDeckName !== null) { // Check if the user clicked Cancel
+        newDeck(newDeckName);
+    }
+}
+function newDeck(newDeckName) {
+    fetch('/api/deck/new', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newDeckName)
+    })
+        .then(response => {
+            if (response.ok) {
+                // Handle success, e.g., refresh the page or show a success message
+                location.reload(); // Example: Refresh the page
+            } else {
+                // Handle error, e.g., show an error message
+                alert('Error deleting deck.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error deleting deck.');
+        });
+}

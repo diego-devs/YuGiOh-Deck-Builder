@@ -4,7 +4,7 @@
 
 @{
     ViewData["Title"] = "Decks Manager";
-    
+    var defaultNewDeckName = "new_deck_name";
 }
 <head>
     <link rel="stylesheet" href="~/css/decksManager.css">
@@ -17,8 +17,8 @@
     <div class="deck-menu">
         <div class="list-group-item d-flex justify-content-between align-items-center bg-dark border-light">
             <div class="btn-group" role="group" aria-label="Decks Menu">
-                <a class="btn btn-primary mr-1" asp-page="/DeckBuilder">New Deck</a>
-                <button type="button" class="btn btn-success mr-1" onclick="loadUserDeck()">Load</button>
+                <button type="button" class="btn btn-success mr-1" id="btnNewDeck" onclick="showNewDeckInput('@defaultNewDeckName')">New</button>
+                <button type="button" class="btn btn-success mr-1" id="btnLoadDeck" onclick="loadUserDeck()">Load</button>
                 <a class="btn btn-primary mr-1" href="https://ygoprodeck.com/tournaments/top-archetypes/">Browse</a>
             </div>
         </div>

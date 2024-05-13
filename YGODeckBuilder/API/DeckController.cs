@@ -4,12 +4,13 @@ using System;
 using System.IO;
 using YGODeckBuilder.Data;
 using YGODeckBuilder.Data.Models;
+using YGODeckBuilder.Pages;
 
 namespace YGODeckBuilder.API
 {
     [Microsoft.AspNetCore.Mvc.Route("api/[controller]")]
     [ApiController]
-    public class DeckController
+    public class DeckController : ControllerBase
     {
         private readonly IConfiguration _configuration;
         private readonly DeckUtility _deckUtility;
@@ -81,7 +82,7 @@ namespace YGODeckBuilder.API
                 string newDeckFilePath = Path.Combine(_configuration["Paths:DecksFolderPath"], "Copy_" + deckName + ".ydk");
 
                 // Check if the new file path already exists
-                if (File.Exists(newDeckFilePath))
+                if (System.IO.File.Exists(newDeckFilePath))
                 {
                     // Handle the case where the new file path already exists
                     Console.WriteLine($"Error duplicating deck {deckName}.ydk: Destination file already exists");
@@ -89,7 +90,7 @@ namespace YGODeckBuilder.API
                 }
 
                 // Copy the deck file to the new location
-                File.Copy(originalDeckFilePath, newDeckFilePath);
+                System.IO.File.Copy(originalDeckFilePath, newDeckFilePath);
 
                 Console.WriteLine($"Deck {deckName}.ydk duplicated to {newDeckFilePath} successfully");
 
@@ -112,7 +113,7 @@ namespace YGODeckBuilder.API
                 string oldDeckFilePath = Path.Combine(_configuration["Paths:DecksFolderPath"], request.OldDeckName + ".ydk");
                 string newDeckFilePath = Path.Combine(_configuration["Paths:DecksFolderPath"], request.NewDeckName + ".ydk");
 
-                File.Move(oldDeckFilePath, newDeckFilePath);
+                System.IO.File.Move(oldDeckFilePath, newDeckFilePath);
 
                 Console.WriteLine($"Deck {request.OldDeckName}.ydk renamed to {request.NewDeckName}.ydk successfully");
 
@@ -132,7 +133,7 @@ namespace YGODeckBuilder.API
             {
                 string deckFilePath = Path.Combine(_configuration["Paths:DecksFolderPath"], deckName + ".ydk");
 
-                File.Delete(deckFilePath);
+                System.IO.File.Delete(deckFilePath);
 
                 Console.WriteLine($"Deck {deckName}.ydk deleted successfully");
 
@@ -144,6 +145,44 @@ namespace YGODeckBuilder.API
                 return new BadRequestResult();
             }
         }
+
+        [HttpPost("new")]
+        public IActionResult NewDeck([FromBody] string deckName) 
+        {
+            // Ensure the deck name is not empty
+            if (string.IsNullOrWhiteSpace(deckName))
+            {
+                return BadRequest("Deck name cannot be empty.");
+            }
+
+            // Create a new deck object
+            Deck newDeck = new Deck();
+            newDeck.DeckName = deckName;
+
+            try
+            {
+                // Save the deck to a file
+                string decksLocalFolder = _configuration["Paths:DecksFolderPath"];
+                string deckFilePath = $"{decksLocalFolder}\\{deckName}.ydk";
+
+                // Assuming you have a method to save the deck to a file
+                ExportDeck(newDeck);
+
+                // Optionally, you can return the name of the newly created deck
+                return RedirectToPage("/DeckBuilder", new { DeckFileName = newDeck.DeckName });
+            }
+            catch (Exception ex)
+            {
+                // Log the error or handle it appropriately
+                return new ContentResult
+                {
+                    Content = $"Failed to create the new deck {ex.Message}",
+                    ContentType = "text/plain",
+                    StatusCode = 500
+                };
+            }
+        }
+       
     }
 
 
