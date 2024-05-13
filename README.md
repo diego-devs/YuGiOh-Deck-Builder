@@ -1,12 +1,12 @@
 por [Diego Diaz](https://github.com/diego-devs)
 
 # YuGiOh! Creador de Decks | Deck Builder
-![image](/YGOCardSearch/wwwroot/images/deckbuilder1.png)
-<p><img src="/YGOCardSearch/wwwroot/images/logo-header-2.jpg" alt="img" width="300" /></p>
+![image](/YGODeckBuilder/wwwroot/images/deckbuilder1.png)
+<p><img src="/YGODeckBuilder/wwwroot/images/logo-header-2.jpg" alt="img" width="300" /></p>
 
-Esta solución consta de dos proyectos: una aplicación de consola llamada **YugiohDB** y una aplicación web ASP.NET llamada **YGOCardSearch**. 
+Esta solución consta de dos proyectos: una aplicación de consola llamada **YugiohDB** y una aplicación web ASP.NET llamada **YGODeckBuilder**. 
 
-1.  **YGOCardSearch**: Aplicación ASP.NET Core con Razor Pages. Proyecto principal. Buscador de cartas y Creador de Decks. 
+1.  **YGODeckBuilder**: Aplicación ASP.NET Core con Razor Pages. Proyecto principal. Buscador de cartas y Creador de Decks. 
 2.  **YugiohDB**: Aplicación de consola que nos ayuda a descargar las cartas, imágenes y mapearlas localmente. (Esto estará en un nuevo proyecto llamado ImagesHelper aun en construcción)
 
 ## Contenido
@@ -14,7 +14,7 @@ Esta solución consta de dos proyectos: una aplicación de consola llamada **Yug
 - [YuGiOh! Creador de Decks | Deck Builder](#yugioh-creador-de-decks--deck-builder)
   - [Contenido](#contenido)
     - [Proyecto YugiohDB](#proyecto-yugiohdb)
-    - [Proyecto YGOCardSearch](#proyecto-ygocardsearch)
+    - [Proyecto YGODeckBuilder](#proyecto-ygocardsearch)
   - [Pre requisitos:](#pre-requisitos)
     - [Instalación de herramientas de Entity Framework y SQL](#instalación-de-herramientas-de-entity-framework-y-sql)
   - [Pasos para ejecutar](#pasos-para-ejecutar)
@@ -25,8 +25,8 @@ Esta solución consta de dos proyectos: una aplicación de consola llamada **Yug
 ### Proyecto YugiohDB
 El proyecto YugiohDB se creó inicialmente para obtener las cartas y descargar las imágenes, lo que permite crear una base de datos utilizando Migrations de EF Core. Puedes descargar las imágenes y montar la base de datos en tu propia máquina utilizando este proyecto, las instrucciones se encuentran en Program.cs
 
-### Proyecto YGOCardSearch
-El proyecto YGOCardSearch es el sitio principal de esta aplicación.
+### Proyecto YGODeckBuilder
+El proyecto YGODeckBuilder es el sitio principal de esta aplicación.
 Consta de un Buscador de cartas, un Visualizador de Cartas, un Constructor de Decks o Deck Builder, y próximamente deberá tener un Deck Manager o Administrador de Decks. 
 
 ## Pre requisitos:
@@ -45,8 +45,8 @@ dotnet ef
 
 1. Clona o haz Fork en el Repositorio.
 2. **Actualiza el connection string acorde a tu servidor local en los siguientes archivos:**
-    - ``YGOCardSearch/appsettings.json``
-    - ``YGOCardSearch/Data/YgoContext.cs``
+    - ``YGODeckBuilder/appsettings.json``
+    - ``YGODeckBuilder/Data/YgoContext.cs``
     - ``YugiohDB/YgoContext.cs``
 3. **Crea la base de datos:**
    
@@ -59,7 +59,7 @@ dotnet ef
 
 4. **Cargar todas las cartas de Yugioh.**
    
-   Todas las cartas de Yugioh ya se encuentran en este repositorio en la ruta YGOCardSearch/Data/ en los siguientes archivos: 
+   Todas las cartas de Yugioh ya se encuentran en este repositorio en la ruta YGODeckBuilder/Data/ en los siguientes archivos: 
    - allCards.json
    - allCards.txt
    - ids.txt
@@ -87,10 +87,10 @@ dotnet ef
     await YgoProDeckTools.AddAllCards(cardsLocalPath);
     ```
 
-5. **Contruye la Aplicación Web (Proyecto YGOCardSearch)**
-Para ejecutar la aplicación web YGOCardSearch, haz build. Puedes hacerlo en VS o por medio de comandos. Personalmente, me gusta más usar la consola y el teclado que el mouse. 
+5. **Contruye la Aplicación Web (Proyecto YGODeckBuilder)**
+Para ejecutar la aplicación web YGODeckBuilder, haz build. Puedes hacerlo en VS o por medio de comandos. Personalmente, me gusta más usar la consola y el teclado que el mouse. 
 
-En tu consola favorita navega al directorio del proyecto YGOCardSearch y ejecuta el comando: 
+En tu consola favorita navega al directorio del proyecto YGODeckBuilder y ejecuta el comando: 
 
     ```bash
     dotnet build
@@ -98,7 +98,7 @@ En tu consola favorita navega al directorio del proyecto YGOCardSearch y ejecuta
 
     La aplicación web estará disponible en http://localhost:5000 (o http://localhost:5001 si habilitas el modo HTTPS).
 
-¡Listo! Has configurado y construido la solución de **YGOCardSearch**. Si encuentras algún problema durante el proceso, asegúrate de verificar los requisitos del sistema y las dependencias necesarias en la documentación del proyecto.
+¡Listo! Has configurado y construido la solución de **YGODeckBuilder**. Si encuentras algún problema durante el proceso, asegúrate de verificar los requisitos del sistema y las dependencias necesarias en la documentación del proyecto.
 
 
 
