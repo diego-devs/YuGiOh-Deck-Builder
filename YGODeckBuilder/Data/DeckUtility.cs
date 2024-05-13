@@ -168,25 +168,6 @@ namespace YGODeckBuilder.Data
 
             return result;
         }
-        public List<Card> GetCardList(List<string> cardList)
-        {
-            var result = new List<Card>();
-
-            foreach (var cardId in cardList)
-            {
-                if (int.TryParse(cardId, out int konamiCardId))
-                {
-                    var card = Context.Cards.FirstOrDefault(c => c.KonamiCardId == konamiCardId);
-                    if (card != null)
-                    {
-                        result.Add(card);
-                    }
-                }
-            }
-
-            return result;
-        }
-
 
         public void PrepareCardData(Deck deck)
         {
@@ -216,33 +197,42 @@ namespace YGODeckBuilder.Data
         }
 
         // get current deck from the JS code and save it as a .ydk file 
-        public void ExportDeck(Deck deck)
+        public bool ExportDeck(Deck deck)
         {
             // Save the deck to a .ydk file
             string deckName = deck.DeckName; // get the deck name from file name
             string deckFilePath = Path.Combine(_configuration["Paths:DecksFolderPath"], deckName + ".ydk");
-            using (StreamWriter writer = new StreamWriter(deckFilePath))
+            try
             {
-                // Write the main deck
-                writer.WriteLine("#main");
-                foreach (var card in deck.MainDeck)
+                using (StreamWriter writer = new StreamWriter(deckFilePath))
                 {
-                    writer.WriteLine(card.KonamiCardId);
+                    // Write the main deck
+                    writer.WriteLine("#main");
+                    foreach (var card in deck.MainDeck)
+                    {
+                        writer.WriteLine(card.KonamiCardId);
+                    }
+                    // Write the extra deck
+                    writer.WriteLine("#extra");
+                    foreach (var card in deck.ExtraDeck)
+                    {
+                        writer.WriteLine(card.KonamiCardId);
+                    }
+                    // Write the side deck
+                    writer.WriteLine("!side");
+                    foreach (var card in deck.SideDeck)
+                    {
+                        writer.WriteLine(card.KonamiCardId);
+                    }
                 }
-                // Write the extra deck
-                writer.WriteLine("#extra");
-                foreach (var card in deck.ExtraDeck)
-                {
-                    writer.WriteLine(card.KonamiCardId);
-                }
-                // Write the side deck
-                writer.WriteLine("!side");
-                foreach (var card in deck.SideDeck)
-                {
-                    writer.WriteLine(card.KonamiCardId);
-                }
+
+                Console.WriteLine($"Deck {deckName}.ydk exported to {deckFilePath} successfully");
+                return true;
             }
-            Console.WriteLine($"Deck {deckName}.ydk exported to {deckFilePath} successfully");
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
     }
 }

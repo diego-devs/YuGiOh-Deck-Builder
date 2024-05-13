@@ -520,7 +520,7 @@ document.addEventListener('DOMContentLoaded', function () {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(deckData),
+            body: JSON.stringify(deck),
         })
             .then(response => {
                 if (response.ok) {

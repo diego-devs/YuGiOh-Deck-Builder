@@ -5,6 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Principal;
+using System.Threading.Tasks;
+using YGODeckBuilder.API;
 using YGODeckBuilder.Data;
 using YGODeckBuilder.Data.Models;
 
@@ -33,6 +36,9 @@ namespace YGODeckBuilder.Pages
         {
             Decks = _deckUtility.LoadDecksPreview();
         }
+
+ 
+    
 
     }
 }

@@ -54,12 +54,19 @@ namespace YGODeckBuilder.Pages
             // Use DeckPath here to load the specific deck
             if (!string.IsNullOrEmpty(DeckFileName))
             {
+                // todo: deck could not exists if renamed 
                 // Logic to load deck using DeckPath
-                Deck = await deckUtility.LoadDeckAsync($"{decksLocalFolder}\\{DeckFileName}.ydk");
-                deckUtility.PrepareCardData(Deck);
+                if (System.IO.File.Exists($"{decksLocalFolder}\\{DeckFileName}.ydk"))
+                {
+                    Deck = await deckUtility.LoadDeckAsync($"{decksLocalFolder}\\{DeckFileName}.ydk");
+                    deckUtility.PrepareCardData(Deck);
+                    // Store the deck NAME in session storage
+                    _httpContextAccessor.HttpContext.Session.SetString("CurrentDeckName", Deck.DeckName);
+                } else
+                {
+                    return RedirectToPage("/Error");
+                }
 
-                // Store the deck NAME in session storage
-                _httpContextAccessor.HttpContext.Session.SetString("CurrentDeckName", Deck.DeckName);
             }
             else 
             {
@@ -76,8 +83,6 @@ namespace YGODeckBuilder.Pages
                     Deck = new Deck();
                     Deck.DeckName = new string(DateTime.Today.ToShortDateString());
                     Deck.DeckFilePath = $"{decksLocalFolder}\\{Deck.DeckName}.ydk";
-                    var dc = new DeckController(_configuration);
-                    dc.ExportDeck(Deck);
                     // dev todo: add binding users deck name
                 }
             }
