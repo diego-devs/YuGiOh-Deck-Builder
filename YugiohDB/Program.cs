@@ -18,7 +18,7 @@ namespace YugiohDB
 {
     public class Program
     {
-        public YgoContext Context;
+        public YGODeckBuilder.Data.YgoContext Context;
         public static async Task Main(string[] args)
         {
             await MainApplication(); // Search cards and displays them into console
@@ -144,12 +144,12 @@ namespace YugiohDB
         /// </summary>
         public static void MapCardData()
         {
-            using (var context = new YgoContext())
+            using (var context = new YGODeckBuilder.Data.YgoContext())
             {
                 var AllCards = new List<Card>(context.Cards);
-                var AllImages = new List<CardImages>(context.Images);
+                var AllImages = new List<CardImages>(context.CardImages);
                 var AllSets = new List<CardSet>(context.CardSets);
-                var AllPrices = new List<CardPrices>(context.Prices);
+                var AllPrices = new List<CardPrices>(context.CardPrices);
 
                 foreach (var Card in AllCards)
                 {

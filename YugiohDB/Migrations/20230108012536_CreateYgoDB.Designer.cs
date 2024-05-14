@@ -11,7 +11,7 @@ using YugiohDB;
 
 namespace YugiohDB.Migrations
 {
-    [DbContext(typeof(YgoContext))]
+    [DbContext(typeof(YGODeckBuilder.Data.YgoContext))]
     [Migration("20230108012536_CreateYgoDB")]
     partial class CreateYgoDB
     {
