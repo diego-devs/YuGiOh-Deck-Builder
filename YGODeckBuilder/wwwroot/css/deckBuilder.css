@@ -93,8 +93,8 @@
     max-height: 700px;
     overflow-y: auto;
     border: 1px solid #ccc;
-    background-color: rgba(11, 16, 43, 0.7); /* Adjust the last value (alpha) for transparency */
-
+    background-color: rgb(0 0 0 / 70%);
+    /* Adjust the last value (alpha) for transparency */
 }
 
 .deck-section {
