@@ -36,7 +36,7 @@ namespace YGODeckBuilder.Data
         {
             return Cards.ElementAt(id);
         }
-        public List<Card> GetSearch(string searchQuery)
+        public virtual List<Card> GetSearch(string searchQuery)
         {
             string normalizedQuery = searchQuery.ToLower();
             normalizedQuery.Normalize();

@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.DotNet.Scaffolding.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using YGODeckBuilder.Data;
 using YGODeckBuilder.DataProviders;
+using YGODeckBuilder.Interfaces;
 
 namespace YGODeckBuilder
 {
@@ -30,6 +32,10 @@ namespace YGODeckBuilder
             // Register the configuration
             services.Configure<AppSettingsReader>(Configuration);
             services.AddControllers();
+            // Register IDeckUtility and its implementation
+            services.AddScoped<IDeckUtility, DeckUtility>();
+            // Register IFileSystem and its implementation
+            services.AddScoped<IFileSystem, FileSystem>();
             services.AddHttpContextAccessor();
             services.AddSession();
 

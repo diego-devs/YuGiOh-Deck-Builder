@@ -1,4 +1,4 @@
-﻿/* Background */
+﻿/* Background - url('/images/background-image-1-small.jpg'); */
 body {
     background-image: url('/images/background-image-1-small.jpg');
     background-size: cover;
@@ -9,7 +9,7 @@ body {
     ;
 }
 .table {
-    background-color: rgba(11, 16, 43, 0.7); /* Adjust the last value (alpha) for transparency */
+    background-color: rgba(37, 37, 37, 0.7); /* Adjust the last value (alpha) for transparency */
 }
 h1 {
     font-size: 36px; /* Adjust font size as needed */
@@ -31,7 +31,7 @@ a.navbar-brand {
 
 /* Links */
 a {
-    color: #0366d6; /* Provide sufficient contrast against white background */
+    color: #80b1ea; /* Provide sufficient contrast against white background */
 }
 
 /* Buttons */
@@ -63,12 +63,12 @@ a {
 .nav-pills .nav-link.active,
 .nav-pills .show > .nav-link {
     color: #fff;
-    background-color: #0b102b;
+    background-color: #1e1f26;
     border-color: #1861ac;
 }
 .navbar-color {
-    background-color: #0b102b;
-    color: #0b102b;
+    background-color: #1e1f26;
+    color: #1e1f26;
 }
 
 /* Typography and Responsive Font Size */

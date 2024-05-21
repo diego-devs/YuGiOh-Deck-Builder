@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using YGODeckBuilder.API;
 using YGODeckBuilder.Data;
 using YGODeckBuilder.Data.Models;
+using YGODeckBuilder.Interfaces;
 
 namespace YGODeckBuilder.Pages
 {
@@ -20,15 +21,15 @@ namespace YGODeckBuilder.Pages
         // Database
         public readonly YgoContext Context;
 
-        private DeckUtility _deckUtility { get; set; }
+        private IDeckUtility _deckUtility { get; set; }
 
-        public DecksManager(YgoContext context, IConfiguration configuration)
+        public DecksManager(YgoContext context, IConfiguration configuration, IDeckUtility deckUtility)
         {
             // Load the Database
             this.Context = context;
             _configuration = configuration;
             Decks = new List<DeckPreview>();
-            _deckUtility = new DeckUtility(Context, _configuration);
+            _deckUtility = deckUtility;
 
         }
 

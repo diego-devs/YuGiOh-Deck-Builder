@@ -93,8 +93,8 @@
     max-height: 700px;
     overflow-y: auto;
     border: 1px solid #ccc;
-    background-color: rgba(11, 16, 43, 0.7); /* Adjust the last value (alpha) for transparency */
-
+    background-color: rgb(0 0 0 / 70%);
+    /* Adjust the last value (alpha) for transparency */
 }
 
 .deck-section {
@@ -133,7 +133,9 @@
 }
 
 .image-container {
+    max-width: 100px;
     position: relative;
+    margin-bottom: 10px; /* Adjust margin as needed */
 }
 
 .details {
@@ -168,9 +170,7 @@
     font-size: 0.8em; /* Adjust the size as needed */
 }
 
-.image-container {
-    margin-bottom: 10px; /* Adjust margin as needed */
-}
+
 
 .detail-item {
     display: flex;
@@ -188,7 +188,17 @@
 
 
 .searched-cards-container {
-    position: fixed;
+    position: relative;
+    top: 0;
+    overflow-y: auto; /* Scroll if content overflows */
+    background-color: rgb(0 0 0 / 70%); /* Match background color */
+    box-shadow: -2px 0 5px rgba(0,0,0,0.5); /* Optional shadow for separation */
+    z-index: 1; /* Ensure it stays on top */
 }
+
+.DeckBuilder_CardSearch_JS {
+    margin-top: 20px; /* Space between the input and results */
+}
+
 
 

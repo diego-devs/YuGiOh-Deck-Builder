@@ -7,7 +7,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "YGOCardSearch": {
+    "YGODeckBuilder": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
