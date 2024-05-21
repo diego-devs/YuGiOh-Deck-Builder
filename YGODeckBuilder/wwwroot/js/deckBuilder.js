@@ -45,8 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 detailLevel.textContent = event.target.dataset.cardLevel;
                 detailArchetype.textContent = event.target.dataset.cardArchetype;
                 detailRace.textContent = event.target.dataset.cardRace;
-                    
-                
+
             });
 
 

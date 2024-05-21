@@ -25,9 +25,6 @@
     <script type="module" src="/js/interaction.js"></script>
     <script type="module" src="/js/deckBuilder.js"></script>
     <script type="module" src="/js/doughnut.js"></script>
-    
-    
-    <!-- Razor Page HTML -->
 </head>
 <body>
     <div class="DeckBuilder_Deck_Options">
@@ -36,14 +33,12 @@
         <button class="btn btn-danger" id="clearDeckButton">Clear</button>
         <button class="btn btn-secondary" id="shuffleDeckButton">Shuffle</button>
         <button class="btn btn-secondary">
-            <a  asp-page="/HandTesting" asp-route-deck="@Model.Deck">
+            <a asp-page="/HandTesting" asp-route-deck="@Model.Deck">
                 Hand Test
             </a>
         </button>
-        
     </div>
-    
-    @*Sections*@
+
     <div class="split-section">
         <div class="detail-section">
             <div class="image-details-container">
@@ -51,13 +46,11 @@
                 <div class="image-container">
                     <img id="bigCard" class="inner bigCard" src="~/images/default_card_back.jpg" alt="Card Image" />
                 </div>
-
                 <div class="details">
                     <!-- Name -->
                     <div class="detail-item">
                         <h3 id="detail-name"></h3>
                     </div>
-
                     <!-- Type, Race, Attribute, and Level -->
                     <div class="detail-item">
                         <p id="detail-type"></p>
@@ -65,23 +58,19 @@
                         <p id="detail-attribute"></p>
                         <p style="text-decoration-style:solid" id="detail-level"></p>
                     </div>
-
                     <!-- Archetype -->
                     <div class="detail-item">
                         <p id="detail-archetype"></p>
                     </div>
-
                     <!-- Text -->
                     <div class="detail-item">
                         <p id="detail-text"></p>
                     </div>
                 </div>
             </div>
-            
-            
         </div>
 
-        <div class="deck-section"> <!-- Why this doesn't have the ondrop and ondragover event listeners and still works?** I removed it, lets see... -->
+        <div class="deck-section">
             <div class="deck-container">
                 <div class="DeckBuilder_DeckInfo">
                     <div class="chartContainer">
@@ -91,10 +80,8 @@
                     </div>
                     <div class="infoContainer">
                         <h3>Deck Name: @Model.Deck.DeckName</h3>
-
                     </div>
                 </div>
-                <!-- Deck content will be added dynamically using JavaScript -->
                 <div class="DecksContainer">
                     <div class="DeckBuilder_DeckCards_Container">
                         <h2>Main Deck</h2>
@@ -110,39 +97,29 @@
                     </div>
                 </div>
             </div>
-            
         </div>
+
         <div class="cards-section">
             <div class="searched-cards-container">
                 <div class="DeckBuilder_CardSearch_Container">
-
                     <form method="GET">
                         <div class="form-group">
                             <div class="input-group">
-                                <input type="search"
-                                       class="form-control"
-                                       id="searchInput"
-                                       asp-for="SearchQuery" />
+                                <input type="search" class="form-control" id="searchInput" asp-for="SearchQuery" />
                                 <button class="btn btn-light">Buscar</button>
                             </div>
                         </div>
                     </form>
                 </div>
-                @*Where the searched cards will display*@
                 <div class="DeckBuilder_CardSearch_JS">
+                    <!-- Searched cards will be displayed here -->
                 </div>
             </div>
-            
-
-            
-
-
         </div>
     </div>
 
-   
     <!-- Include necessary JavaScript files here -->
-@section Scripts {
+    @section Scripts {
         <script>
             // Expose the deck data as JavaScript variables
             var deckData = @Html.Raw(Json.Serialize(Model.Deck));
@@ -150,10 +127,7 @@
             var extraDeckData = @Html.Raw(Json.Serialize(Model.Deck.ExtraDeck));
             var sideDeckData = @Html.Raw(Json.Serialize(Model.Deck.SideDeck));
             var searchedCards = @Html.Raw(Json.Serialize(Model.SearchCards));
-
         </script>
-      
-}
+    }
 </body>
-
 </html>

@@ -1,6 +1,6 @@
 ﻿/* Background - url('/images/background-image-1-small.jpg'); */
 body {
-    background-image: url('/images/background-image-2.png');
+    background-image: url('/images/background-image-1-small.jpg');
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
