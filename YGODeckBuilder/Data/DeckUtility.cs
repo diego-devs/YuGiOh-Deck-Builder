@@ -6,25 +6,31 @@ using Microsoft.Extensions.Configuration;
 using YGODeckBuilder.Data.Models;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using YGODeckBuilder.Interfaces;
 
 namespace YGODeckBuilder.Data
 {
-    public class DeckUtility
+    public class DeckUtility : IDeckUtility
     {
         private readonly IConfiguration _configuration;
         public Deck Deck { get; set; }
         // Database
         public readonly YgoContext Context;
+        public readonly string _decksFolderPath;
         public DeckUtility(YgoContext db, IConfiguration configuration)
         {
             _configuration = configuration;
             Context = db;
+            _decksFolderPath = _configuration["Paths:DecksFolderPath"];
+            if (string.IsNullOrEmpty(_decksFolderPath))
+            {
+                throw new ArgumentNullException(nameof(_decksFolderPath), "Decks folder path cannot be null or empty.");
+            }
         }
 
-        public List<DeckPreview> LoadDecksPreview()
+        public virtual List<DeckPreview> LoadDecksPreview()
         {
             string[] deckFiles = Directory.GetFiles(_configuration["Paths:DecksFolderPath"], "*.ydk");
-
             List<DeckPreview> deckPreviews = new List<DeckPreview>();
 
             foreach (var filePath in deckFiles)
@@ -34,19 +40,15 @@ namespace YGODeckBuilder.Data
                     //var deck = LoadDeck(filePath); // Assuming LoadDeck is adjusted to not load from a single file
                     deckPreviews.Add(new DeckPreview { DeckName = Path.GetFileNameWithoutExtension(filePath)
                 });
-                    
-
                 }
                 catch (FileNotFoundException ex)
                 {
                     Console.WriteLine(ex.Message);
                     return null;
                 }
-                
             }
             return deckPreviews;
         }
-       
         /// <summary>
         /// Loads a Deck from a .ydk file, extracting the main deck, extra deck, and side deck card lists.
         /// </summary>
@@ -186,9 +188,9 @@ namespace YGODeckBuilder.Data
             }
         }
 
-        internal void PrepareCardDataSearch(List<Card> results)
+        void IDeckUtility.PrepareCardDataSearch(List<Card> cards)
         {
-            foreach (var card in results)
+            foreach (var card in cards)
             {
                 card.CardImages = Context.CardImages.Where(i => i.CardImageId == card.KonamiCardId).ToList();
                 card.CardSets = Context.CardSets.Where(s => s.CardId == card.CardId).ToList();
@@ -234,5 +236,7 @@ namespace YGODeckBuilder.Data
                 throw;
             }
         }
+
+ 
     }
 }

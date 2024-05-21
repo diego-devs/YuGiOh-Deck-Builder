@@ -1,13 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "jCSIEhx4q2KXt3oFxzGzaMUlDWvCUSreVT1yFFo3a8qId+sWQYqAcn2tY4JY//vuTwllJwClBiDlIFX/rkoYFQ==",
+  "dgSpecHash": "WAUhupc232vKwy7uKmaVloLmHN2m4t5aZ/dDYfq1BLk4EKhr9gv2TRZ19Pd17Hq8aqTHxVAScMmv6n3fy7hiJQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\PC Gamer\\source\\repos\\yugioh\\YuGiOh DeckBuilder\\YGODeckBuilder.Tests\\YGODeckBuilder.Tests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\PC Gamer\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\PC Gamer\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",
     "C:\\Users\\PC Gamer\\.nuget\\packages\\castle.core\\5.1.1\\castle.core.5.1.1.nupkg.sha512",
-    "C:\\Users\\PC Gamer\\.nuget\\packages\\coverlet.collector\\6.0.0\\coverlet.collector.6.0.0.nupkg.sha512",
     "C:\\Users\\PC Gamer\\.nuget\\packages\\humanizer\\2.14.1\\humanizer.2.14.1.nupkg.sha512",
     "C:\\Users\\PC Gamer\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\PC Gamer\\.nuget\\packages\\humanizer.core.af\\2.14.1\\humanizer.core.af.2.14.1.nupkg.sha512",

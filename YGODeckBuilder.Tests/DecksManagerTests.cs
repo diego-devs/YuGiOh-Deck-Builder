@@ -9,6 +9,7 @@ using YGODeckBuilder.Data.Models;
 using YGODeckBuilder.Pages;
 using Xunit;
 using Microsoft.Extensions.Configuration;
+using YGODeckBuilder.Interfaces;
 
 namespace YGODeckBuilder.Tests
 {
@@ -20,17 +21,20 @@ namespace YGODeckBuilder.Tests
             // Arrange
             var mockContext = new Mock<YgoContext>();
             var mockConfig = new Mock<IConfiguration>();
-            var mockDeckUtility = new Mock<DeckUtility>(mockContext.Object, mockConfig.Object);
-            mockDeckUtility.Setup(d => d.LoadDecksPreview()).Returns(new List<DeckPreview>());
+            mockConfig.Setup(c => c["Paths:DecksFolderPath"]).Returns("someValidPath");
 
-            var decksManager = new DecksManager(mockContext.Object, mockConfig.Object);
-            decksManager.Decks = new List<DeckPreview>();
+            var mockDeckUtility = new Mock<IDeckUtility>();
+            var deckPreviews = new List<DeckPreview> { new DeckPreview { DeckName = "testDeck" } };
+            mockDeckUtility.Setup(d => d.LoadDecksPreview()).Returns(deckPreviews);
+
+            var decksManager = new DecksManager(mockContext.Object, mockConfig.Object, mockDeckUtility.Object);
 
             // Act
             decksManager.OnGet();
 
             // Assert
             Assert.NotNull(decksManager.Decks);
+            Assert.Equal(deckPreviews, decksManager.Decks);
         }
     }
 }

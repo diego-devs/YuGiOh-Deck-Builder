@@ -15,6 +15,8 @@ using Newtonsoft.Json;
 using YGODeckBuilder.Data.Models;
 using Microsoft.AspNetCore.Http;
 using YGODeckBuilder.API;
+using YGODeckBuilder.Interfaces;
+using Microsoft.DotNet.Scaffolding.Shared;
 
 namespace YGODeckBuilder.Pages
 {
@@ -24,7 +26,8 @@ namespace YGODeckBuilder.Pages
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
         private readonly string decksLocalFolder;
-        private DeckUtility deckUtility { get; set; }
+        private readonly IDeckUtility _deckUtility;
+        private readonly IFileSystem _fileSystem;
 
         // Deck a visualizar
         public Deck Deck { get; set; }
@@ -37,16 +40,21 @@ namespace YGODeckBuilder.Pages
         [BindProperty(SupportsGet = true)]
         public string DeckFileName { get; set; }
         public List<Card> SearchCards { get; set; }
+        public IFileSystem FileSystem { get; set; }
 
         // Dependency injection of both Configuration and YgoContext 
-        public DeckBuilder(YgoContext db, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public DeckBuilder(YgoContext db, 
+                        IConfiguration configuration, 
+                        IHttpContextAccessor httpContextAccessor, 
+                        IDeckUtility deckUtility, 
+                        IFileSystem fileSystem)
         {
-            // DI 
-            Context = db; 
+            Context = db;
             _configuration = configuration;
             decksLocalFolder = _configuration["Paths:DecksFolderPath"];
-            deckUtility = new DeckUtility(Context, _configuration);
+            _deckUtility = deckUtility;
             _httpContextAccessor = httpContextAccessor;
+            _fileSystem = fileSystem;
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -56,17 +64,16 @@ namespace YGODeckBuilder.Pages
             {
                 // todo: deck could not exists if renamed 
                 // Logic to load deck using DeckPath
-                if (System.IO.File.Exists($"{decksLocalFolder}\\{DeckFileName}.ydk"))
+                if (_fileSystem.FileExists($"{decksLocalFolder}\\{DeckFileName}.ydk"))
                 {
-                    Deck = await deckUtility.LoadDeckAsync($"{decksLocalFolder}\\{DeckFileName}.ydk");
-                    deckUtility.PrepareCardData(Deck);
+                    Deck = await _deckUtility.LoadDeckAsync($"{decksLocalFolder}\\{DeckFileName}.ydk");
+                    _deckUtility.PrepareCardData(Deck);
                     // Store the deck NAME in session storage
                     _httpContextAccessor.HttpContext.Session.SetString("CurrentDeckName", Deck.DeckName);
                 } else
                 {
                     return RedirectToPage("/Error");
                 }
-
             }
             else 
             {
@@ -75,8 +82,8 @@ namespace YGODeckBuilder.Pages
                 if (currentDeckName != null)
                 {
                     // Logic to load deck using DeckPath
-                    Deck = await deckUtility.LoadDeckAsync($"{decksLocalFolder}\\{currentDeckName}.ydk");
-                    deckUtility.PrepareCardData(Deck);
+                    Deck = await _deckUtility.LoadDeckAsync($"{decksLocalFolder}\\{currentDeckName}.ydk");
+                    _deckUtility.PrepareCardData(Deck);
                 }
                 else
                 {
@@ -93,7 +100,7 @@ namespace YGODeckBuilder.Pages
                 if (results != null)
                 {
                     // Prepare card infos
-                    deckUtility.PrepareCardDataSearch(results);
+                    _deckUtility.PrepareCardDataSearch(results);
                     SearchCards = new List<Card>(results);
                 }
             }
@@ -104,7 +111,7 @@ namespace YGODeckBuilder.Pages
                 if (results != null)
                 {
                     // Prepare card infos
-                    deckUtility.PrepareCardDataSearch(results);
+                    _deckUtility.PrepareCardDataSearch(results);
 
                     SearchCards = new List<Card>(results);
                 }

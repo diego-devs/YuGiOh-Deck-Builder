@@ -6,7 +6,7 @@
     var TotalDeckCards = Model.Deck.ExtraDeck.Count() + Model.Deck.MainDeck.Count();
     var topAtkCard = Model.Deck.MainDeck.OrderByDescending(c => c.Atk ?? 0).FirstOrDefault(); // this is not working
     int pageSize = 10;
-    int totalPages = (int)Math.Ceiling((double)Model.SearchCards.Count / pageSize);
+    int totalPages = Model.SearchCards != null ? (int)Math.Ceiling((double)Model.SearchCards.Count / pageSize) : 0;
     int currentPage = Request.Query.ContainsKey("page") ? Convert.ToInt32(Request.Query["page"]) : 1;
     int startIndex = (currentPage - 1) * pageSize;
     int endIndex = Math.Min(startIndex + pageSize - 1, Model.SearchCards.Count - 1);
@@ -111,9 +111,12 @@
                         </div>
                     </form>
                 </div>
-                <div class="DeckBuilder_CardSearch_JS">
-                    <!-- Searched cards will be displayed here -->
-                </div>
+                @if (Model.SearchCards != null && Model.SearchCards.Count > 0)
+                {
+                    <div class="DeckBuilder_CardSearch_JS">
+                        <!-- Searched cards will be displayed here -->
+                    </div>
+                }
             </div>
         </div>
     </div>
