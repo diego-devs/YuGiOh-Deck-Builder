@@ -1,124 +1,115 @@
 ﻿@page
 @model YGODeckBuilder.Pages.HandTestingModel
 @{
-    var test = 100;
-    var myDeck = Model.deck;
+    ViewData["Title"] = "Hand Testing";
 }
-<head>
-    <title>Draggable Cards from Deck Example</title>
-    <style>
-        #deck {
-            width: 200px;
-            height: 200px;
-            background-color: #f1f1f1;
-            border: 1px solid #ccc;
-            position: absolute;
-            cursor: pointer;
+
+<h1>Hand Testing</h1>
+
+<div id="deck" class="deck-area">Deck (@Model.Deck.MainDeck.Count cards)</div>
+
+<div id="hand" class="hand-area"></div>
+
+<button id="drawButton">Draw Card</button>
+<button id="shuffleButton">Shuffle Deck</button>
+
+<script>
+    let deckCards = @Json.Serialize(Model.Deck.MainDeck);
+    let handCards = [];
+
+    function updateDeckDisplay() {
+        document.getElementById('deck').innerText = `Deck (${deckCards.length} cards)`;
+    }
+
+    function createCardElement(card) {
+        const cardElement = document.createElement('div');
+        cardElement.className = 'card';
+        cardElement.style.backgroundImage = `url(${card.imageUrl})`;
+        cardElement.style.backgroundSize = 'cover';
+        cardElement.style.backgroundPosition = 'center';
+        cardElement.dataset.cardId = card.id;
+        cardElement.addEventListener('mousedown', startDragging);
+        return cardElement;
+    }
+
+    function drawCard() {
+        if (deckCards.length > 0) {
+            const card = deckCards.pop();
+            handCards.push(card);
+            const cardElement = createCardElement(card);
+            document.getElementById('hand').appendChild(cardElement);
+            updateDeckDisplay();
         }
+    }
 
-        .card {
-            width: 100px;
-            height: 150px;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            position: absolute;
-            cursor: move;
+    function shuffleDeck() {
+        for (let i = deckCards.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [deckCards[i], deckCards[j]] = [deckCards[j], deckCards[i]];
         }
-    </style>
-</head>
-<body>
-    <button id="shuffleButton">Shuffle Cards</button>
+        updateDeckDisplay();
+    }
 
-    <div id="deck"></div>
+    let isDragging = false;
+    let draggedCard = null;
+    let offset = { x: 0, y: 0 };
 
-    <script>
-        // JavaScript code
-        // JavaScript code to draw cards from the deck
-        var deck = document.getElementById('deck');
-        
-        var isDragging = false;
-        var selectedCard = null;
-        var offset = { x: 0, y: 0 };
-        var t = @test
+    function startDragging(e) {
+        isDragging = true;
+        draggedCard = e.target;
+        offset.x = e.clientX - draggedCard.offsetLeft;
+        offset.y = e.clientY - draggedCard.offsetTop;
+        draggedCard.style.zIndex = 1000;
+    }
 
-        deck.addEventListener('mousedown', drawCard);
-        document.addEventListener('mousemove', dragCard);
-        document.addEventListener('mouseup', dragEnd);
-
-        function drawCard(e) {
-            if (!isDragging) {
-                // Create a new card element
-                var card = document.createElement('div');
-                card.className = 'card';
-                card.style.left = e.clientX - card.offsetWidth / 2 + 'px';
-                card.style.top = e.clientY - card.offsetHeight / 2 + 'px';
-                card.addEventListener('mousedown', selectCard);
-                card.addEventListener('mouseup', deselectCard);
-                
-
-                // Append the card to the document
-                document.body.appendChild(card);
-            }
+    function drag(e) {
+        if (isDragging) {
+            draggedCard.style.left = (e.clientX - offset.x) + 'px';
+            draggedCard.style.top = (e.clientY - offset.y) + 'px';
         }
+    }
 
-        function selectCard(e) {
-            isDragging = true;
-            selectedCard = e.target;
-            selectedCard.style.zIndex = 9999; // Bring the selected card to the front
-
-            // Calculate the offset between the mouse position and the card position
-            offset.x = e.clientX - selectedCard.offsetLeft;
-            offset.y = e.clientY - selectedCard.offsetTop;
+    function stopDragging() {
+        isDragging = false;
+        if (draggedCard) {
+            draggedCard.style.zIndex = '';
+            draggedCard = null;
         }
+    }
 
-        function dragCard(e) {
-            if (isDragging && selectedCard !== null) {
-                // Calculate new position
-                var newX = e.clientX - offset.x;
-                var newY = e.clientY - offset.y;
+    document.getElementById('drawButton').addEventListener('click', drawCard);
+    document.getElementById('shuffleButton').addEventListener('click', shuffleDeck);
+    document.addEventListener('mousemove', drag);
+    document.addEventListener('mouseup', stopDragging);
 
-                // Update card position
-                selectedCard.style.left = newX + 'px';
-                selectedCard.style.top = newY + 'px';
-            }
-        }
+    // Initial setup
+    updateDeckDisplay();
+</script>
 
-        function deselectCard() {
-            isDragging = false;
-            selectedCard = null;
-        }
+<style>
+    .deck-area {
+        width: 120px;
+        height: 180px;
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        text-align: center;
+        line-height: 180px;
+        margin-bottom: 20px;
+    }
 
-        function dragEnd() {
-            isDragging = false;
-            selectedCard = null;
+    .hand-area {
+        min-height: 200px;
+        border: 1px dashed #ccc;
+        padding: 10px;
+    }
 
-        }
-        // Place this code after the existing JavaScript code
-
-        // Add event listener to the shuffle button
-        var shuffleButton = document.getElementById('shuffleButton');
-        shuffleButton.addEventListener('click', shuffleCards);
-
-        function shuffleCards() {
-            // Remove all drawn cards from the document
-            var cards = document.querySelectorAll('.card');
-            cards.forEach(function (card) {
-                card.parentNode.removeChild(card);
-            });
-
-            // Reset the selected card and dragging state
-            selectedCard = null;
-            isDragging = false;
-
-            // Reset the deck
-            deck.innerHTML = '';
-
-            // Add your code to generate and shuffle the cards here
-            // ...
-            // ...
-            // ...
-            // After generating and shuffling the cards, append them to the deck
-        }
-
-    </script>
-</body>
+    .card {
+        width: 100px;
+        height: 150px;
+        border: 1px solid #000;
+        display: inline-block;
+        margin: 5px;
+        position: absolute;
+        cursor: move;
+    }
+</style>

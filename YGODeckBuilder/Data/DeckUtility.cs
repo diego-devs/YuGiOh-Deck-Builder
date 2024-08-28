@@ -7,6 +7,7 @@ using YGODeckBuilder.Data.Models;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using YGODeckBuilder.Interfaces;
+using Microsoft.AspNetCore.Components;
 
 namespace YGODeckBuilder.Data
 {
@@ -237,6 +238,23 @@ namespace YGODeckBuilder.Data
             }
         }
 
- 
+        public void ShuffleDeck()
+        {
+            var random = new Random();
+            Deck.MainDeck = Deck.MainDeck.OrderBy(x => random.Next()).ToList();
+        }
+
+        public List<Card> DrawCards(int count)
+        {
+            var drawnCards = new List<Card>();
+            for (int i = 0; i < count && Deck.MainDeck.Count > 0; i++)
+            {
+                var card = Deck.MainDeck.ElementAt(i);
+                Deck.MainDeck.Remove(card);
+                drawnCards.Add(card);
+            }
+            return drawnCards;
+        }
+
     }
 }
