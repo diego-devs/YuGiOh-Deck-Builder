@@ -166,6 +166,10 @@ namespace YGODeckBuilder.Data
                     {
                         result.Add(card);
                     }
+                    else
+                    {
+                        Console.WriteLine($"card with id {konamiCardId} not found in database");
+                    }
                 }
             }
 

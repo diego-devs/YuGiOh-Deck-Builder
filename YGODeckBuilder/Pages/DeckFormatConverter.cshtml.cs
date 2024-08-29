@@ -6,6 +6,7 @@ using YGODeckBuilder.Data.Models;
 
 namespace YGODeckBuilder.Pages
 {
+    // TO DO
     public class DeckFormatConverterModel : PageModel
     {
         public bool ConversionCompleted { get; set; } = false;

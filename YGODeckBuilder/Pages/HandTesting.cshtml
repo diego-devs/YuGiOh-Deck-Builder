@@ -6,7 +6,7 @@
 
 <h1>Hand Testing</h1>
 
-<div id="deck" class="deck-area">Deck (@Model.Deck.MainDeck.Count cards)</div>
+<div id="deck" class="deck-area">Deck </div>
 
 <div id="hand" class="hand-area"></div>
 
@@ -24,7 +24,7 @@
     function createCardElement(card) {
         const cardElement = document.createElement('div');
         cardElement.className = 'card';
-        cardElement.style.backgroundImage = `url(${card.imageUrl})`;
+        cardElement.style.backgroundImage = `url(${card.image})`; // this is not working
         cardElement.style.backgroundSize = 'cover';
         cardElement.style.backgroundPosition = 'center';
         cardElement.dataset.cardId = card.id;

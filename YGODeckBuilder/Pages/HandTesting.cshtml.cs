@@ -19,7 +19,7 @@ namespace YGODeckBuilder.Pages
     {
         private readonly DeckUtility deckUtility;
         private readonly IConfiguration _configuration;
-        public Deck Deck { get; set; }
+        public Deck Deck { get; set; } = new Deck();
         public List<Card> CurrentHand { get; set; } = new List<Card>();
 
         public HandTestingModel(YgoContext db, IConfiguration config)
@@ -28,7 +28,7 @@ namespace YGODeckBuilder.Pages
             _configuration = config;
         }
 
-        public async void OnGet(string deckName)
+        public async Task OnGetAsync(string deckName)
         {
             if (string.IsNullOrEmpty(deckName))
             {
@@ -37,7 +37,7 @@ namespace YGODeckBuilder.Pages
             }
 
             // Get the path to the .ydk file
-            string decksFolderPath = _configuration["DecksFolderPath"];
+            string decksFolderPath = _configuration["Paths:DecksFolderPath"];
             string deckFilePath = Path.Combine(decksFolderPath, $"{deckName}.ydk");
 
             if (!System.IO.File.Exists(deckFilePath))
