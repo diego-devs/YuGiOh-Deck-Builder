@@ -32,8 +32,8 @@
         <button class="btn btn-dark" type="button" id="sortDeckButton">Sort</button>
         <button class="btn btn-danger" id="clearDeckButton">Clear</button>
         <button class="btn btn-secondary" id="shuffleDeckButton">Shuffle</button>
-        <button class="btn btn-secondary">
-            <a asp-page="/HandTesting" asp-route-deck="@Model.Deck">
+        <button class="btn btn-secondary" id="handTestButton">
+            <a asp-page="/HandTesting" asp-route-deckName="@Model.Deck.DeckName">
                 Hand Test
             </a>
         </button>
@@ -130,6 +130,12 @@
             var extraDeckData = @Html.Raw(Json.Serialize(Model.Deck.ExtraDeck));
             var sideDeckData = @Html.Raw(Json.Serialize(Model.Deck.SideDeck));
             var searchedCards = @Html.Raw(Json.Serialize(Model.SearchCards));
+
+            document.getElementById('handTestButton').addEventListener('click', function() {
+            var deckJson = JSON.stringify(deckData);
+            var encodedDeckJson = encodeURIComponent(deckJson);
+            window.location.href = '/HandTesting?deck=' + encodedDeckJson;
+        });
         </script>
     }
 </body>

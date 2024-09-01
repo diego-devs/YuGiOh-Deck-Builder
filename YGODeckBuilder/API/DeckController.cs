@@ -147,7 +147,7 @@ namespace YGODeckBuilder.API
         }
 
         [HttpPost("new")]
-        public IActionResult NewDeck([FromBody] string deckName) 
+        public IActionResult CreateDeck([FromBody] string deckName) 
         {
             // Ensure the deck name is not empty
             if (string.IsNullOrWhiteSpace(deckName))

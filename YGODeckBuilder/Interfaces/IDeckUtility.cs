@@ -10,6 +10,8 @@ namespace YGODeckBuilder.Interfaces
         List<DeckPreview> LoadDecksPreview();
         void PrepareCardData(Deck deck);
         void PrepareCardDataSearch(List<Card> cards);
+        void ShuffleDeck();
+        List<Card> DrawCards(int count);
         
     }
 }
