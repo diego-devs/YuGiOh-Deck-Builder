@@ -17,14 +17,14 @@ namespace YGODeckBuilder.Pages
 
     public class HandTestingModel : PageModel
     {
-        private readonly DeckUtility deckUtility;
+        private readonly DeckUtility _deckUtility;
         private readonly IConfiguration _configuration;
         public Deck Deck { get; set; } = new Deck();
-        public List<Card> CurrentHand { get; set; } = new List<Card>();
+        public string ImagesFolder { get; set; }
 
         public HandTestingModel(YgoContext db, IConfiguration config)
         {
-            deckUtility = new DeckUtility(db, config);
+            _deckUtility = new DeckUtility(db, config);
             _configuration = config;
         }
 
@@ -35,7 +35,7 @@ namespace YGODeckBuilder.Pages
                 // Handle error: no deck name provided
                 return;
             }
-
+            ImagesFolder = _configuration["Paths:ImagesFolder"].Replace("\\", "/");
             // Get the path to the .ydk file
             string decksFolderPath = _configuration["Paths:DecksFolderPath"];
             string deckFilePath = Path.Combine(decksFolderPath, $"{deckName}.ydk");
@@ -47,7 +47,7 @@ namespace YGODeckBuilder.Pages
             }
 
             // Load the deck from the .ydk file
-            Deck = await deckUtility.LoadDeckAsync(deckFilePath);
+            Deck = await _deckUtility.LoadDeckAsync(deckFilePath);
 
             if (Deck == null)
             {
@@ -55,9 +55,8 @@ namespace YGODeckBuilder.Pages
                 return;
             }
 
-            deckUtility.Deck = Deck;
-            deckUtility.ShuffleDeck();
-            DrawInitialHand();
+            _deckUtility.Deck = Deck;
+            _deckUtility.ShuffleDeck();
         }
 
         private void InitializeDeck(string deckJson)
@@ -89,29 +88,8 @@ namespace YGODeckBuilder.Pages
                 Deck = new Deck();
             }
 
-            deckUtility.Deck = Deck;
-            deckUtility.ShuffleDeck();
-        }
-
-        private void DrawInitialHand(int cardCount = 5)
-        {
-            CurrentHand = deckUtility.DrawCards(cardCount);
-        }
-
-        public IActionResult OnPostDrawCard()
-        {
-            var drawnCard = deckUtility.DrawCards(1).FirstOrDefault();
-            if (drawnCard != null)
-            {
-                CurrentHand.Add(drawnCard);
-            }
-            return Page();
-        }
-
-        public IActionResult OnPostShuffleDeck()
-        {
-            deckUtility.ShuffleDeck();
-            return Page();
+            _deckUtility.Deck = Deck;
+            _deckUtility.ShuffleDeck();
         }
     }
 }
