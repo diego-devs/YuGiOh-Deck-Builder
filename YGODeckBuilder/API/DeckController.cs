@@ -3,7 +3,6 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.IO;
 using YGODeckBuilder.Data;
-using YGODeckBuilder.Data.Models;
 using YGODeckBuilder.Pages;
 
 namespace YGODeckBuilder.API

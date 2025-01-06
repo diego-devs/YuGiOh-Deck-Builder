@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
-namespace YGODeckBuilder.Data.Models
+namespace YGODeckBuilder.Data.EntityModels
 {
     [Table("Images")]
     public class CardImages

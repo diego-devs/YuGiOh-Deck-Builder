@@ -2,12 +2,13 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using YGODeckBuilder.Data.EntityModels;
 
-namespace YGODeckBuilder.Data.Models
+namespace YGODeckBuilder.Data
 {
     // This is the primary Deck class we use to Load and Export .YDK deck files 
     // Deck class for all decks in application
-    
+
     [Table("Decks")]
     public class Deck
     {
@@ -24,8 +25,11 @@ namespace YGODeckBuilder.Data.Models
         [JsonPropertyName("side_deck")]
         public ICollection<Card> SideDeck { get; set; } = [];
         [JsonPropertyName("total_cards")]
-        public int TotalCards { get { return totalCards; } 
-                                set { totalCards = MainDeck.Count + ExtraDeck.Count; } }
+        public int TotalCards
+        {
+            get { return totalCards; }
+            set { totalCards = MainDeck.Count + ExtraDeck.Count; }
+        }
         private int totalCards;
 
         [JsonPropertyName("deck_file_path")]

@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace YGODeckBuilder.Data.Models.JsonFormatDeck
+namespace YGODeckBuilder.Data.JsonFormatDeck
 {
-    public class JsonDeckExtra
+    public class JsonDeckSide
     {
         [JsonPropertyName("ids")]
         public List<int> Ids { get; set; }

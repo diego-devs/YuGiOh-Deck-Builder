@@ -3,11 +3,11 @@ using System.IO;
 using System.Linq;
 using System;
 using Microsoft.Extensions.Configuration;
-using YGODeckBuilder.Data.Models;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using YGODeckBuilder.Interfaces;
 using Microsoft.AspNetCore.Components;
+using YGODeckBuilder.Data.EntityModels;
 
 namespace YGODeckBuilder.Data
 {

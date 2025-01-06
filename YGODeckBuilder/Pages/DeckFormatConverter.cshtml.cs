@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using YGODeckBuilder.Data.Models.JsonFormatDeck;
 using YGODeckBuilder.Data;
-using YGODeckBuilder.Data.Models;
+using YGODeckBuilder.Data.JsonFormatDeck;
 
 namespace YGODeckBuilder.Pages
 {

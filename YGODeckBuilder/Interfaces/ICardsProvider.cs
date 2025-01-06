@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using YGODeckBuilder.Data.Models;
+using YGODeckBuilder.Data.EntityModels;
 
 namespace YGODeckBuilder
 {

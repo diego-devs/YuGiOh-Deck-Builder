@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace YGODeckBuilder.Data
+namespace YGODeckBuilder.SharedData
 {
     public class FileSystem : IFileSystem
     {
@@ -34,7 +34,7 @@ namespace YGODeckBuilder.Data
 
         public bool FileExists(string path)
         {
-            return System.IO.File.Exists(path);
+            return File.Exists(path);
         }
 
         public void MakeFileWritable(string path)

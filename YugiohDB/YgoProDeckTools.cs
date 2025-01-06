@@ -13,8 +13,7 @@ using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using YGODeckBuilder.Data;
-using YGODeckBuilder.Data.Models;
-
+using YGODeckBuilder.Data.EntityModels;
 
 namespace YugiohDB
 {

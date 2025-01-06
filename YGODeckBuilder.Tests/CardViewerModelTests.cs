@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using YGODeckBuilder.Data.Models;
 using YGODeckBuilder.Pages;
 using Moq;
+using YGODeckBuilder.Data.EntityModels;
 
 namespace YGODeckBuilder.Tests
 {

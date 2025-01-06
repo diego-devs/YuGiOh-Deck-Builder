@@ -6,10 +6,11 @@ using YGODeckBuilder.Pages;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using YGODeckBuilder.Data;
-using YGODeckBuilder.Data.Models;
+using YGODeckBuilder.Data.EntityModels;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using YGODeckBuilder.Interfaces;
 using Microsoft.DotNet.Scaffolding.Shared;
+using YGODeckBuilder.Data.EntityModels;
 
 namespace YGODeckBuilder.Tests
 {

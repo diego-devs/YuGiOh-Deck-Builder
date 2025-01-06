@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace YGODeckBuilder.Data.Models
+namespace YGODeckBuilder.Data.EntityModels
 {
     [Table("Cards")]
     public class Card
@@ -48,7 +48,7 @@ namespace YGODeckBuilder.Data.Models
 
         [JsonPropertyName("archetype")]
         [MaybeNull]
-        public string? Archetype { get; set; }
+        public string Archetype { get; set; }
 
         [JsonPropertyName("scale")]
         public int? Scale { get; set; }

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace YGODeckBuilder.Data.Models.JsonFormatDeck
+namespace YGODeckBuilder.Data.JsonFormatDeck
 {
     public class JsonDeckPickCards
     {

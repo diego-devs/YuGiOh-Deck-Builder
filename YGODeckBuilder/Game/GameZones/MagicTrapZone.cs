@@ -1,6 +1,4 @@
-﻿
-
-using YGODeckBuilder.Data.Models;
+﻿using YGODeckBuilder.Data.EntityModels;
 
 namespace YGODeckBuilder.Game.GameZones
 {

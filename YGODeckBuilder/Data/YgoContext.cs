@@ -5,7 +5,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using YGODeckBuilder.Data.Models;
+using YGODeckBuilder.Data.EntityModels;
 
 namespace YGODeckBuilder.Data
 {

@@ -12,11 +12,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Security.Principal;
 using Newtonsoft.Json;
-using YGODeckBuilder.Data.Models;
 using Microsoft.AspNetCore.Http;
 using YGODeckBuilder.API;
 using YGODeckBuilder.Interfaces;
 using Microsoft.DotNet.Scaffolding.Shared;
+using YGODeckBuilder.Data.EntityModels;
 
 namespace YGODeckBuilder.Pages
 {

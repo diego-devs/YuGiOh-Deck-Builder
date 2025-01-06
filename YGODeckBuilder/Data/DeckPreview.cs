@@ -1,4 +1,4 @@
-﻿namespace YGODeckBuilder.Data.Models
+﻿namespace YGODeckBuilder.Data
 {
     public class DeckPreview
     {
