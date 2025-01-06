@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using System;
 using System.IO;
+using System.Text.Json.Serialization;
 using YGODeckBuilder.Data;
 using YGODeckBuilder.Pages;
 
@@ -9,12 +10,12 @@ namespace YGODeckBuilder.API
 {
     [Microsoft.AspNetCore.Mvc.Route("api/[controller]")]
     [ApiController]
-    public class DeckController : ControllerBase
+    public class DecksManagerController : ControllerBase
     {
         private readonly IConfiguration _configuration;
         private readonly DeckUtility _deckUtility;
 
-        public DeckController(IConfiguration configuration)
+        public DecksManagerController(IConfiguration configuration)
         {
             this._configuration = configuration;
         }
@@ -184,7 +185,11 @@ namespace YGODeckBuilder.API
        
     }
 
-
-
-
+    public class RenameDeckRequest
+    {
+        [JsonPropertyName("oldDeckName")]
+        public string OldDeckName { get; set; }
+        [JsonPropertyName("newDeckName")]
+        public string NewDeckName { get; set; }
+    }
 }

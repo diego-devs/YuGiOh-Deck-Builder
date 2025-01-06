@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace YGODeckBuilder.SharedData
+namespace YGODeckBuilder.Data.SharedData
 {
     public class FileSystem : IFileSystem
     {

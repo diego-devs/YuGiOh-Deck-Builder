@@ -18,9 +18,4 @@
 	  <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DeckFormatConverter\" />
-    <Folder Include="DecksManager\" />
-  </ItemGroup>
-
 </Project>
