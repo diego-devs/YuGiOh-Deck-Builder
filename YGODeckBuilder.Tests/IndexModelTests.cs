@@ -20,7 +20,7 @@ namespace YGODeckBuilder.Tests
             var cards = new List<Card> { new Card(), new Card() };
             mockCardsProvider.Setup(p => p.GetSearchAsync(It.IsAny<string>())).ReturnsAsync(cards);
 
-            var indexModel = new IndexModel(mockCardsProvider.Object)
+            var indexModel = new MainPageModel(mockCardsProvider.Object)
             {
                 Search = "test"
             };
@@ -37,7 +37,7 @@ namespace YGODeckBuilder.Tests
         public void GetCurrentChange_ValidPrice_ReturnsCorrectChange()
         {
             // Act
-            var result = IndexModel.GetCurrentChange("10");
+            var result = MainPageModel.GetCurrentChange("10");
 
             // Assert
             Assert.Equal(200, result);

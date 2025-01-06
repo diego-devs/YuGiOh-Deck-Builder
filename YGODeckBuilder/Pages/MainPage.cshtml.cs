@@ -9,7 +9,7 @@ using YGODeckBuilder.Data.Models;
 
 namespace YGODeckBuilder.Pages
 {
-    public class IndexModel : PageModel
+    public class MainPageModel : PageModel
     {
         [BindProperty(SupportsGet = true)]
         public string Search { get; set; }
@@ -17,7 +17,7 @@ namespace YGODeckBuilder.Pages
         public List<Card> Cards { get; set; }
         public Card Card { get; set; }
 
-        public IndexModel(ICardsProvider cardsProvider)
+        public MainPageModel(ICardsProvider cardsProvider)
         {
             this.cardsProvider = cardsProvider;
         }

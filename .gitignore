@@ -100,3 +100,14 @@ artifacts/
 !trash-bin.png
 
 # End of https://www.toptal.com/developers/gitignore/api/images
+YGODeckBuilder.Tests/obj/project.assets.json
+YGODeckBuilder.Tests/obj/project.nuget.cache
+YGODeckBuilder.Tests/obj/YGODeckBuilder.Tests.csproj.nuget.dgspec.json
+YGODeckBuilder.Tests/obj/YGODeckBuilder.Tests.csproj.nuget.g.props
+YGODeckBuilder/obj/project.assets.json
+YGODeckBuilder/obj/project.nuget.cache
+YGODeckBuilder/obj/YGODeckBuilder.csproj.nuget.dgspec.json
+YGODeckBuilder/obj/YGODeckBuilder.csproj.nuget.g.props
+YugiohDB/obj/project.assets.json
+YugiohDB/obj/project.nuget.cache
+YugiohDB/obj/YugiohDB.csproj.nuget.dgspec.json
