@@ -43,7 +43,7 @@ namespace YGODeckBuilder
             // Access configuration values
             var decksFolderPath = Configuration["Paths:DecksFolderPath"];
             var cardIdsFilePath = Configuration["Paths:CardIdsFilePath"];
-            var connectionString = Configuration["ConnectionStrings:yugiContext"];
+            var connectionString = Configuration["ConnectionStrings:YGODatabase"];
 
             // Use the configuration values as needed
             Console.WriteLine($"Decks Folder Path: {decksFolderPath}");

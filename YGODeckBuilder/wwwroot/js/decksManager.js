@@ -1,5 +1,5 @@
 function duplicateDeck(deckName) {
-    fetch('/api/deck/duplicate', {
+    fetch('/api/DecksManager/duplicate', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -34,7 +34,7 @@ function showRenameInput(deckName) {
 
 function renameDeck(oldDeckName, newDeckName) {
     const requestData = { oldDeckName: oldDeckName, newDeckName: newDeckName };
-    fetch('/api/deck/rename', {
+    fetch('/api/DecksManager/rename', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -54,7 +54,7 @@ function renameDeck(oldDeckName, newDeckName) {
         });
 }
 function deleteDeck(deckName) {
-    fetch('/api/deck/delete', {
+    fetch('/api/DecksManager/delete', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -82,7 +82,7 @@ function showNewDeckInput(deckName) {
     }
 }
 function newDeck(newDeckName) {
-    fetch('/api/deck/new', {
+    fetch('/api/DecksManager/new', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -95,11 +95,11 @@ function newDeck(newDeckName) {
                 location.reload(); // Example: Refresh the page
             } else {
                 // Handle error, e.g., show an error message
-                alert('Error deleting deck.');
+                alert('Error creating new deck.');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Error deleting deck.');
+            alert('Error creating new deck.');
         });
 }

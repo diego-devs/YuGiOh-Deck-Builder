@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Bson;
 using System;
 using System.IO;
 using System.Text.Json.Serialization;
+using System.Threading;
 using YGODeckBuilder.Data;
 using YGODeckBuilder.Pages;
 
@@ -14,10 +16,12 @@ namespace YGODeckBuilder.API
     {
         private readonly IConfiguration _configuration;
         private readonly DeckUtility _deckUtility;
+        private YgoContext _ygoContext;
 
-        public DecksManagerController(IConfiguration configuration)
+        public DecksManagerController(IConfiguration configuration, YgoContext ygoContext)
         {
             this._configuration = configuration;
+            _ygoContext = ygoContext;
         }
 
         [HttpPost("save")]
@@ -31,6 +35,8 @@ namespace YGODeckBuilder.API
                 {
                     // Save the deck as .YDK file
                     ExportDeck(deck);
+                    // Save the deck into database
+                    SaveDeckInDB();
                 }
                 catch (Exception e)
                 {
@@ -40,6 +46,11 @@ namespace YGODeckBuilder.API
                 return new OkResult(); // Return a success response
             }
             return null;
+        }
+
+        private void SaveDeckInDB()
+        {
+            
         }
 
         // get current deck from the JS code and save it as a .ydk file 
@@ -68,13 +79,13 @@ namespace YGODeckBuilder.API
                 {
                     writer.WriteLine(card.KonamiCardId);
                 }
+                Console.WriteLine($"Deck {deckName}.ydk exported to {deckFilePath} successfully");
             }
-            Console.WriteLine($"Deck {deckName}.ydk exported to {deckFilePath} successfully");
         }
 
         [HttpPost("duplicate")]
         public IActionResult DuplicateDeck([FromBody] string deckName)
-        {
+        { 
             try
             {
                 // Construct original and new file paths

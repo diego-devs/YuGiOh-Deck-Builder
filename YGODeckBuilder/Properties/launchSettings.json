@@ -10,6 +10,7 @@
     "YGODeckBuilder": {
       "commandName": "Project",
       "launchBrowser": true,
+      "launchUrl": "MainPage",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
