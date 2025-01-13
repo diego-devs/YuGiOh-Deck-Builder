@@ -514,7 +514,7 @@ document.addEventListener('DOMContentLoaded', function () {
         };
 
         // Send the deck data to the server
-        fetch('/api/deck/save', {
+        fetch('/api/DecksManager/save', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

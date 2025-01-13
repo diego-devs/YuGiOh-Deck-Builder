@@ -11,8 +11,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
-using YGODeckBuilder.Data.Models;
-
+using YGODeckBuilder.Data.EntityModels;
 
 namespace YugiohDB
 {
@@ -41,7 +40,10 @@ namespace YugiohDB
             // change the paths from appsettings.json
             
             Console.WriteLine($"Cards Local Path: {cardsLocalPath}");
-            Console.WriteLine($"Images Local Path: {imagesLocalPath}");            
+            Console.WriteLine($"Images Local Path: {imagesLocalPath}");        
+            
+            // Use this method to save the ydk files in the decks location to the YGO database
+            
             
             // Use this Main method to download images and map the correct paths as you need or to test functionality. 
             // MapCardData();

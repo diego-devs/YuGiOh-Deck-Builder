@@ -9,7 +9,6 @@ using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Threading.Tasks;
 using YGODeckBuilder.Data;
-using YGODeckBuilder.Data.Models;
 using System.IO;
 
 namespace YGODeckBuilder.Pages
@@ -53,39 +52,6 @@ namespace YGODeckBuilder.Pages
             {
                 // Handle error: failed to load deck
                 return;
-            }
-
-            _deckUtility.Deck = Deck;
-            _deckUtility.ShuffleDeck();
-        }
-
-        private void InitializeDeck(string deckJson)
-        {
-            if (!string.IsNullOrEmpty(deckJson))
-            {
-                try
-                {
-                    var options = new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    };
-                    Deck = JsonSerializer.Deserialize<Deck>(deckJson, options);
-
-                    if (Deck == null)
-                    {
-                        throw new JsonException("Deserialization resulted in a null Deck object.");
-                    }
-                }
-                catch (JsonException ex)
-                {
-                    // Log the error and create a new empty deck
-                    Console.WriteLine($"Error deserializing deck: {ex.Message}");
-                    Deck = new Deck();
-                }
-            }
-            else
-            {
-                Deck = new Deck();
             }
 
             _deckUtility.Deck = Deck;

@@ -1,8 +1,8 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Text.Json;
-using YGODeckBuilder.Data.Models;
-using YGODeckBuilder.Data.Models.JsonFormatDeck;
+using YGODeckBuilder.Data.JsonFormatDeck;
+using YGODeckBuilder.Data;
 
 namespace YGODeckBuilder.Data
 {

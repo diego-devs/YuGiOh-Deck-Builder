@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
-using YGODeckBuilder.Data.Models;
+using YGODeckBuilder.Data.EntityModels;
 
 namespace YGODeckBuilder.Pages
 {

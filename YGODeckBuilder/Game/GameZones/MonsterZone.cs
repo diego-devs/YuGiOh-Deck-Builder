@@ -1,5 +1,5 @@
 ﻿using System.Net.Http.Headers;
-using YGODeckBuilder.Data.Models;
+using YGODeckBuilder.Data.EntityModels;
 
 namespace YGODeckBuilder.Game.GameZones
 {

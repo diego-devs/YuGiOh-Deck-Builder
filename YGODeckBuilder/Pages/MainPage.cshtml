@@ -1,0 +1,110 @@
+﻿@page
+@model MainPageModel
+@{
+    ViewData["Title"] = "Search for cards";
+
+    int pageSize = 10;
+    int currentPage = Request.Query.ContainsKey("page") ? Convert.ToInt32(Request.Query["page"]) : 1;
+    if (currentPage < 1) currentPage = 1;
+
+    int totalCards = Model.Cards?.Count ?? 0;
+    int totalPages = (int)Math.Ceiling((double)totalCards / pageSize);
+    if (currentPage > totalPages) currentPage = totalPages;
+
+    int startIndex = (currentPage - 1) * pageSize;
+    int endIndex = Math.Min(startIndex + pageSize, totalCards);
+}
+
+<div class="allCards-container">
+    <div class="text-center">
+        <h1 style="text-align: center">Todas las cartas del universo de YuGiOh TCG</h1>
+    </div>
+
+    <form method="GET">
+        <div class="form-group">
+            <div class="input-group">
+                <input type="search" class="form-control search-input" asp-for="Search" />
+                <input type="hidden" name="page" value="1" />
+                <button class="btn btn-light">Buscar</button>
+            </div>
+        </div>
+    </form>
+
+    @if (Model.Cards != null && Model.Cards.Any())
+    {
+        <table class="table table-dark justify-content-between">
+            <thead>
+                <tr>
+                    <th>Carta</th>
+                    <th>Nombre</th>
+                    <th>Atributo</th>
+                    <th>Tipo</th>
+                    <th>Descripci&oacute;n</th>
+                    <th>Precios</th>
+                    <th>Detalles</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = startIndex; i < endIndex; i++)
+                {
+                    var card = Model.Cards[i];
+
+                    <tr>
+                        <td>
+                            <div class="inner">
+                                <a asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
+                                    <img src="@card.CardImages.FirstOrDefault()?.ImageUrlSmall">
+                                </a>
+                            </div>
+                        </td>
+                        <td>@card.Name</td>
+                        <td>@card.Attribute</td>
+                        <td>@card.Type</td>
+                        <td>@card.Desc</td>
+                        <td>
+                            @{
+                                try
+                                {
+                                    <p>@card.CardPrices.FirstOrDefault()?.Amazon.ToString()</p>
+                                }
+                                catch (Exception)
+                                {
+                                    <p>the price should go here</p>
+                                }
+                            }
+                        </td>
+                        <td>
+                            <a class="btn btn-link" asp-page="CardViewer" asp-route-id="@card.KonamiCardId">
+                                Ver detalles
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="text-center">
+            <nav aria-label="Pagination">
+                <ul class="pagination">
+                    @for (int pageNum = 1; pageNum <= totalPages; pageNum++)
+                    {
+                        <li class="page-item @(pageNum == currentPage ? "active" : "")">
+                            <a class="page-link" href="?page=@pageNum&Search=@Model.Search">@pageNum</a>
+                        </li>
+                    }
+                    }
+                </ul>
+            </nav>
+            <p>Page @currentPage of @totalPages</p>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>>:O!</strong> No se encontraron cartas con ese nombre. Prueba buscando de nuevo.
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+</div>

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using YGODeckBuilder.Data.Models;
+using YGODeckBuilder.Data;
+using YGODeckBuilder.Data.EntityModels;
 
 namespace YGODeckBuilder.Interfaces
 {

@@ -34,15 +34,13 @@ namespace YGODeckBuilder
             services.AddControllers();
             // Register IDeckUtility and its implementation
             services.AddScoped<IDeckUtility, DeckUtility>();
-            // Register IFileSystem and its implementation
-            services.AddScoped<IFileSystem, FileSystem>();
             services.AddHttpContextAccessor();
             services.AddSession();
 
             // Access configuration values
             var decksFolderPath = Configuration["Paths:DecksFolderPath"];
             var cardIdsFilePath = Configuration["Paths:CardIdsFilePath"];
-            var connectionString = Configuration["ConnectionStrings:yugiContext"];
+            var connectionString = Configuration["ConnectionStrings:YGODatabase"];
 
             // Use the configuration values as needed
             Console.WriteLine($"Decks Folder Path: {decksFolderPath}");

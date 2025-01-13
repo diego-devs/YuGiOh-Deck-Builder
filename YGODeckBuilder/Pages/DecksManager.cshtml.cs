@@ -9,7 +9,6 @@ using System.Security.Principal;
 using System.Threading.Tasks;
 using YGODeckBuilder.API;
 using YGODeckBuilder.Data;
-using YGODeckBuilder.Data.Models;
 using YGODeckBuilder.Interfaces;
 
 namespace YGODeckBuilder.Pages
@@ -20,7 +19,6 @@ namespace YGODeckBuilder.Pages
         public List<DeckPreview> Decks { get; set; }
         // Database
         public readonly YgoContext Context;
-
         private IDeckUtility _deckUtility { get; set; }
 
         public DecksManager(YgoContext context, IConfiguration configuration, IDeckUtility deckUtility)
@@ -37,9 +35,5 @@ namespace YGODeckBuilder.Pages
         {
             Decks = _deckUtility.LoadDecksPreview();
         }
-
- 
-    
-
     }
 }

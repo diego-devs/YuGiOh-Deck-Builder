@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using YGODeckBuilder.Data;
-using YGODeckBuilder.Data.Models;
 using YGODeckBuilder.Pages;
 using Xunit;
 using Microsoft.Extensions.Configuration;

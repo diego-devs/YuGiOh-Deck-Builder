@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using YGODeckBuilder.Data.Models;
+using YGODeckBuilder.Data.EntityModels;
 using YGODeckBuilder.Game.GameZones;
 using YGODeckBuilder.Game.Models;
 
