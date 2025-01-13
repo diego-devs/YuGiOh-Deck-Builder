@@ -16,29 +16,43 @@ namespace YGODeckBuilder.API
         private readonly DeckUtility _deckUtility;
         private YgoContext _ygoContext;
 
-        public DeckConverterController(IConfiguration configuration, YgoContext ygoContext)
+        public DeckConverterController(IConfiguration configuration, YgoContext ygoContext, DeckUtility deckUtility)
         {
-            this._configuration = configuration;
+            _configuration = configuration;
             _ygoContext = ygoContext;
+            _deckUtility = deckUtility;
         }
         // Convert deck
         [HttpPost("convert")]
-        public async Task<JsonDeck> ConvertDeck(string deckPath, bool isYdk)
+        public async Task<IActionResult> ConvertDeck(string deckPath, bool isYdk)
         {
-            // work to do here
+            try
+            {
+                string outputPath = Path.Combine(_configuration["Paths:DecksFolderPath"], 
+                    Path.GetFileNameWithoutExtension(deckPath));
 
-            if (isYdk) // convert to json
-            {
-                var deckName = System.IO.Path.GetFileNameWithoutExtension(deckPath);
-                var deck = await _deckUtility.LoadDeckAsync(deckPath);
-                var jsonDeck = DeckFormatConverter.ConvertYdkToJson(deck);
-                return null;
-                //System.IO.File.WriteAllText(_configuration["Paths:DecksFolderPath"]);
+                if (isYdk) // convert YDK to JSON
+                {
+                    var deck = await _deckUtility.LoadDeckAsync(deckPath);
+                    var jsonDeck = DeckFormatConverter.ConvertYdkToJson(deck);
+                    string jsonOutputPath = outputPath + ".json";
+                    await System.IO.File.WriteAllTextAsync(jsonOutputPath, System.Text.Json.JsonSerializer.Serialize(jsonDeck));
+                    return Ok(jsonDeck);
+                }
+                else // convert JSON to YDK
+                {
+                    var jsonContent = await System.IO.File.ReadAllTextAsync(deckPath);
+                    var jsonDeck = System.Text.Json.JsonSerializer.Deserialize<JsonDeck>(jsonContent);
+                    var ydkDeck = DeckFormatConverter.ConvertJsonToYdk(jsonDeck);
+                    string ydkOutputPath = outputPath + ".ydk";
+                    await _deckUtility.ExportDeck(ydkDeck, ydkOutputPath);
+                    return Ok(ydkDeck);
+                }
             }
-            else // convert to ydk
+            catch (Exception ex)
             {
-                return null; // to do...
-            } 
+                return BadRequest($"Error converting deck: {ex.Message}");
+            }
         }
     }
 }

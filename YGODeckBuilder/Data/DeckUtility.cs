@@ -98,6 +98,42 @@ namespace YGODeckBuilder.Data
 
             return newDeck;
         }
+         /// <summary>
+        /// Exports the deck object into a file using the .ydk format 
+        /// </summary>
+        /// <param name="deck"></param>
+        public void ExportDeck(Deck deck)
+        {
+            // Save the deck to a .ydk file
+            string deckName = deck.DeckName; // get the deck name from file name
+            string deckFilePath = Path.Combine(_configuration["Paths:DecksFolderPath"], deckName + ".ydk");
+            using (StreamWriter writer = new StreamWriter(deckFilePath))
+            {
+                // Write the main deck
+                writer.WriteLine("#main");
+                foreach (var card in deck.MainDeck)
+                {
+                    writer.WriteLine(card.KonamiCardId);
+                }
+                // Write the extra deck
+                writer.WriteLine("#extra");
+                foreach (var card in deck.ExtraDeck)
+                {
+                    writer.WriteLine(card.KonamiCardId);
+                }
+                // Write the side deck
+                writer.WriteLine("!side");
+                foreach (var card in deck.SideDeck)
+                {
+                    writer.WriteLine(card.KonamiCardId);
+                }
+                Console.WriteLine($"Deck {deckName}.ydk exported to {deckFilePath} successfully");
+            }
+        }
+        public void ExportDeck(Deck deck, string path)
+        {
+            ExportDeck(deck);
+        }
 
         /// <summary>
         /// Normalize sections notations from the YDK file in case any wrong file 
@@ -202,50 +238,6 @@ namespace YGODeckBuilder.Data
                 card.CardPrices = Context.CardPrices.Where(p => p.CardId == card.CardId).ToList();
             }
         }
-
-        /// <summary>
-        /// get current deck from the JS code and save it as a .ydk file 
-        /// </summary>
-        /// <param name="deck"></param>
-        /// <returns></returns>
-        public bool ExportDeck(Deck deck)
-        {
-            // Save the deck to a .ydk file
-            string deckName = deck.DeckName; // get the deck name from file name
-            string deckFilePath = Path.Combine(_configuration["Paths:DecksFolderPath"], deckName + ".ydk");
-            try
-            {
-                using (StreamWriter writer = new StreamWriter(deckFilePath))
-                {
-                    // Write the main deck
-                    writer.WriteLine("#main");
-                    foreach (var card in deck.MainDeck)
-                    {
-                        writer.WriteLine(card.KonamiCardId);
-                    }
-                    // Write the extra deck
-                    writer.WriteLine("#extra");
-                    foreach (var card in deck.ExtraDeck)
-                    {
-                        writer.WriteLine(card.KonamiCardId);
-                    }
-                    // Write the side deck
-                    writer.WriteLine("!side");
-                    foreach (var card in deck.SideDeck)
-                    {
-                        writer.WriteLine(card.KonamiCardId);
-                    }
-                }
-
-                Console.WriteLine($"Deck {deckName}.ydk exported to {deckFilePath} successfully");
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
-
         public void ShuffleDeck()
         {
             var random = new Random();
