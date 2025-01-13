@@ -36,7 +36,7 @@ namespace YGODeckBuilder.API
                     // Save the deck as .YDK file
                     ExportDeck(deck);
                     // Save the deck into database
-                    SaveDeckInDB();
+                    RecordDeck(deck);
                 }
                 catch (Exception e)
                 {
@@ -48,12 +48,16 @@ namespace YGODeckBuilder.API
             return null;
         }
 
-        private void SaveDeckInDB()
+        private void RecordDeck(Deck deck)
         {
-            
+            // Save deck into deck table in db
         }
 
         // get current deck from the JS code and save it as a .ydk file 
+        /// <summary>
+        /// Exports the deck object into a file using the .ydk format 
+        /// </summary>
+        /// <param name="deck"></param>
         public void ExportDeck(Deck deck)
         {
             // Save the deck to a .ydk file
@@ -81,6 +85,34 @@ namespace YGODeckBuilder.API
                 }
                 Console.WriteLine($"Deck {deckName}.ydk exported to {deckFilePath} successfully");
             }
+        }
+        [HttpPost("load")]
+        public IActionResult LoadDeck([FromBody] string path)
+        {
+            if (string.IsNullOrEmpty(path)) return new BadRequestResult();
+            if (Path.GetExtension(path) != ".ydk") return new BadRequestResult();
+
+            var deckName = Path.GetFileNameWithoutExtension(path);
+
+            var destinationPath = Path.Combine(_configuration["Paths:DecksFolderPath"], deckName + ".ydk");
+            
+            // record deck into database table
+            //// read ydkfile into a Deck object
+
+            if (System.IO.File.Exists(destinationPath))
+            {
+                Console.WriteLine($"Error duplicating deck {path}.ydk: Destination file already exists");
+                return new ConflictResult(); // HTTP 409 Conflict status code
+            }
+
+            System.IO.File.Copy(path, destinationPath);
+
+            Console.WriteLine($"Deck {deckName}.ydk duplicated to {destinationPath} successfully");
+
+            // use that Deck oject to create a new ydk file
+            // save the new ydk file into decks location
+
+            return Ok();
         }
 
         [HttpPost("duplicate")]
@@ -160,26 +192,18 @@ namespace YGODeckBuilder.API
         [HttpPost("new")]
         public IActionResult CreateDeck([FromBody] string deckName) 
         {
-            // Ensure the deck name is not empty
-            if (string.IsNullOrWhiteSpace(deckName))
-            {
-                return BadRequest("Deck name cannot be empty.");
-            }
-
-            // Create a new deck object
+            if (string.IsNullOrWhiteSpace(deckName)) return BadRequest("Deck name cannot be empty.");
+            
             Deck newDeck = new Deck();
             newDeck.DeckName = deckName;
 
             try
             {
-                // Save the deck to a file
                 string decksLocalFolder = _configuration["Paths:DecksFolderPath"];
                 string deckFilePath = $"{decksLocalFolder}\\{deckName}.ydk";
 
-                // Assuming you have a method to save the deck to a file
                 ExportDeck(newDeck);
 
-                // Optionally, you can return the name of the newly created deck
                 return RedirectToPage("/DeckBuilder", new { DeckFileName = newDeck.DeckName });
             }
             catch (Exception ex)
@@ -192,8 +216,7 @@ namespace YGODeckBuilder.API
                     StatusCode = 500
                 };
             }
-        }
-       
+        }  
     }
 
     public class RenameDeckRequest
