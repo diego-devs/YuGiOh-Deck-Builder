@@ -17,6 +17,8 @@ namespace YGODeckBuilder.Data
         public int DeckId { get; set; }
         [JsonPropertyName("deck_name")]
         public string DeckName { get; set; }
+        [JsonPropertyName("file")]
+        public string File { get; set;}
 
         [JsonPropertyName("main_deck")]
         public ICollection<Card> MainDeck { get; set; } = [];
@@ -34,7 +36,6 @@ namespace YGODeckBuilder.Data
 
         [JsonPropertyName("deck_file_path")]
         public string DeckFilePath { get; set; }
-
 
         public Deck(string deckName, ICollection<Card> mainDeck, ICollection<Card> extraDeck, ICollection<Card> sideDeck, string deckFilePath)
         {

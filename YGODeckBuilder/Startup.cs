@@ -35,8 +35,6 @@ namespace YGODeckBuilder
             services.AddControllers();
             // Register IDeckUtility and its implementation
             services.AddScoped<IDeckUtility, DeckUtility>();
-            // Register IFileSystem and its implementation
-            services.AddScoped<IFileSystem, FileSystem>();
             services.AddHttpContextAccessor();
             services.AddSession();
 

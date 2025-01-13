@@ -40,7 +40,6 @@ namespace YGODeckBuilder.Data
         {
             string normalizedQuery = searchQuery.ToLower();
             normalizedQuery.Normalize();
-            // developer todo: normalize better the query
 
             // Use LINQ to filter cards that match the search query
             var matchingCards = Cards
@@ -50,7 +49,7 @@ namespace YGODeckBuilder.Data
                 .ToList();
             if (matchingCards.IsNullOrEmpty())
             {
-                Console.WriteLine("Not a single card found.");
+                Console.WriteLine("No card found.");
                 
             }
 

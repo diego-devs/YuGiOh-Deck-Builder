@@ -98,13 +98,12 @@ namespace YGODeckBuilder.Data
 
             return newDeck;
         }
-        public async Task<Deck> LoadDeckAsync(int deckId)
-        {
-            return null;
-        }
-        
 
-        // Normalize sections notations from the YDK file in case any wrong file 
+        /// <summary>
+        /// Normalize sections notations from the YDK file in case any wrong file 
+        /// </summary>
+        /// <param name="deckLines"></param>
+        /// <returns></returns>
         private static string[] NormalizeSectionNotations(string[] deckLines)
         {
             for (int i = 0; i < deckLines.Length; i++)
@@ -185,6 +184,7 @@ namespace YGODeckBuilder.Data
 
         private void PrepareCardDataForDeck(ICollection<Card> cards)
         {
+            // we do this manually, sure there is a better way to do this from entity relations
             foreach (var card in cards)
             {
                 card.CardImages = Context.CardImages.Where(i => i.CardImageId == card.KonamiCardId).ToList();
@@ -203,7 +203,11 @@ namespace YGODeckBuilder.Data
             }
         }
 
-        // get current deck from the JS code and save it as a .ydk file 
+        /// <summary>
+        /// get current deck from the JS code and save it as a .ydk file 
+        /// </summary>
+        /// <param name="deck"></param>
+        /// <returns></returns>
         public bool ExportDeck(Deck deck)
         {
             // Save the deck to a .ydk file
@@ -259,6 +263,12 @@ namespace YGODeckBuilder.Data
             }
             return drawnCards;
         }
-
+    }
+    public class DeckPreview
+    {
+        public int DeckId { get; set; }
+        public string DeckName { get; set; }
+        // Add other properties as needed for the display
+        public int CardsCount { get; set; }
     }
 }

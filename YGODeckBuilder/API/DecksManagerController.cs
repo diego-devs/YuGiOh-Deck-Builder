@@ -51,9 +51,10 @@ namespace YGODeckBuilder.API
         private void RecordDeck(Deck deck)
         {
             // Save deck into deck table in db
+            _ygoContext.Decks.Add(deck);
+            _ygoContext.SaveChanges();
         }
 
-        // get current deck from the JS code and save it as a .ydk file 
         /// <summary>
         /// Exports the deck object into a file using the .ydk format 
         /// </summary>
@@ -120,22 +121,18 @@ namespace YGODeckBuilder.API
         { 
             try
             {
-                // Construct original and new file paths
-                string originalDeckFilePath = Path.Combine(_configuration["Paths:DecksFolderPath"], deckName + ".ydk");
-                string newDeckFilePath = Path.Combine(_configuration["Paths:DecksFolderPath"], "Copy_" + deckName + ".ydk");
+                string originPath = Path.Combine(_configuration["Paths:DecksFolderPath"], deckName + ".ydk");
+                string destinationPath = Path.Combine(_configuration["Paths:DecksFolderPath"], "Copy_" + deckName + ".ydk");
 
-                // Check if the new file path already exists
-                if (System.IO.File.Exists(newDeckFilePath))
+                if (System.IO.File.Exists(destinationPath))
                 {
-                    // Handle the case where the new file path already exists
                     Console.WriteLine($"Error duplicating deck {deckName}.ydk: Destination file already exists");
                     return new ConflictResult(); // Return HTTP 409 Conflict status code
                 }
 
-                // Copy the deck file to the new location
-                System.IO.File.Copy(originalDeckFilePath, newDeckFilePath);
+                System.IO.File.Copy(originPath, destinationPath);
 
-                Console.WriteLine($"Deck {deckName}.ydk duplicated to {newDeckFilePath} successfully");
+                Console.WriteLine($"Deck {deckName}.ydk duplicated to {destinationPath} successfully");
 
                 return new OkResult(); // Return HTTP 200 OK status code
             }
@@ -175,7 +172,6 @@ namespace YGODeckBuilder.API
             try
             {
                 string deckFilePath = Path.Combine(_configuration["Paths:DecksFolderPath"], deckName + ".ydk");
-
                 System.IO.File.Delete(deckFilePath);
 
                 Console.WriteLine($"Deck {deckName}.ydk deleted successfully");
