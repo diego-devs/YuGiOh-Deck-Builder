@@ -13,6 +13,8 @@ namespace YGODeckBuilder.Interfaces
         void PrepareCardDataSearch(List<Card> cards);
         void ShuffleDeck();
         List<Card> DrawCards(int count);
+        void ExportDeck(Deck deck);
+        void ExportDeck(Deck deck, string path);
         
     }
 }

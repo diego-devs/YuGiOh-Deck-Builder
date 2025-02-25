@@ -42,7 +42,7 @@ namespace YGODeckBuilder.Tests
             mockContext.Setup(c => c.GetSearch(It.IsAny<string>())).Returns(cards);
 
             // Inject the mocks into the DeckBuilder instance
-            var deckBuilder = new DeckBuilder(mockContext.Object, mockConfig.Object, mockHttpContextAccessor.Object, mockDeckUtility.Object, mockFileSystem.Object)
+            var deckBuilder = new DeckBuilder(mockContext.Object, mockConfig.Object, mockHttpContextAccessor.Object, mockDeckUtility.Object)
             {
                 DeckFileName = "test.ydk"
             };

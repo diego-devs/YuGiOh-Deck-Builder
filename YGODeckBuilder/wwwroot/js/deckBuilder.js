@@ -4,12 +4,12 @@ import { renderSearchedCards } from './rendering.js';
 import { handleAddToDeck, handleRemoveFromDeck, updateDeckCount } from './interaction.js';
 
 document.addEventListener('DOMContentLoaded', function () {
-    console.log(searchedCards);
-    console.log(deckData);
+    //console.log(searchedCards);
+    //console.log(deckData);
     // Declare deck within the event listener scope
     const deck = new Deck(deckData);
     console.log("Loaded deck: " + deck.deck_name);
-    console.log(deck.main_deck); 
+    //console.log(deck.main_deck); 
     renderCards(deck, searchedCards);
     updateDeckCount(deck);
     // Call this function to add event listeners to the drop target divs
@@ -54,7 +54,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     }
-
     // Function to add the dragstart listener to card elements
     function addDragStartListenerToCards() {
         // Add drag-and-drop listeners to card elements
@@ -89,7 +88,6 @@ document.addEventListener('DOMContentLoaded', function () {
         sideDeckContainer.addEventListener('drop', drop);
         //removeAreaContainer.addEventListener('drop', drop);
     }
-
     // Function to render all deck and search cards.
     function renderCards(deck, searchedCards) {
         renderDeck(deck);
@@ -98,7 +96,6 @@ document.addEventListener('DOMContentLoaded', function () {
         addDropEventListenersToTargets();
         addHoverListenerToCards();
     }
-
     // Function to render the entire deck cards
     function renderDeck(deck) {
         const mainDeckContainer = '.DeckBuilder_Container_MainDeck';
@@ -121,7 +118,6 @@ document.addEventListener('DOMContentLoaded', function () {
         renderSearchedCards(searchedCards, '.DeckBuilder_CardSearch_JS');
         addHoverListenerToCards();
     }
-
     // Handle right click
     // Function to add right-click event listeners to rendered cards
     function addRightClickListeners(deck) {
@@ -134,7 +130,6 @@ document.addEventListener('DOMContentLoaded', function () {
         addRightClickListenersToContainer(sideDeckContainer, deck);
         
     }
-
     // Function to add right-click event listeners to cards within a specific container
     function addRightClickListenersToContainer(containerSelector, deck) {
         const container = document.querySelector(containerSelector);
@@ -160,7 +155,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     }
-
     function handleRightClick(fromDeckType, deck, cardId) {
         // Remove the card from its respective deck based on 'fromDeckType'
         switch (fromDeckType) {
@@ -189,12 +183,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 break;
         }
     }
-
-
-
-
     // Handle drag and drop: 
-
     // Function to handle the drop event 
     function drop(event) {
         event.preventDefault();
@@ -497,7 +486,6 @@ document.addEventListener('DOMContentLoaded', function () {
         return totalCount;
     }
     // Saving deck. Making call to C# server
-    
     // AJAX Call to our C# API to save the deck correctly 
     function saveDeckToApi() {
         // Get the current deck data
@@ -514,7 +502,7 @@ document.addEventListener('DOMContentLoaded', function () {
         };
 
         // Send the deck data to the server
-        fetch('/api/DecksManager/save', {
+        fetch('/api/decks/save', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -613,19 +601,4 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         return array;
     }
-
-
-
-
-
-    
-        
-
-
-
-    
-
-    
-
-
 });

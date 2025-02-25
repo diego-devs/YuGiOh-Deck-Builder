@@ -1,5 +1,5 @@
 function duplicateDeck(deckName) {
-    fetch('/api/DecksManager/duplicate', {
+    fetch('/api/decks/duplicate', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -21,12 +21,10 @@ function duplicateDeck(deckName) {
             alert('Error duplicating deck.');
         });
 }
-
 function showLoadInput() {
     // Simulate clicking the hidden file input
     document.getElementById('deckFileInput').click();
 }
-
 function loadDeck(event) {
     const file = event.target.files[0];
     if (!file) {
@@ -43,7 +41,7 @@ function loadDeck(event) {
         const fileContent = e.target.result; // File content
         const fileName = file.name; // File name (e.g., "myDeck.ydk")
 
-        fetch('/api/DecksManager/load', {
+        fetch('/api/decks/load', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -69,14 +67,12 @@ function loadDeck(event) {
 
     reader.readAsText(file);
 }
-
 function showRenameInput(deckName) {
     const newDeckName = prompt("Enter new deck name:", deckName);
     if (newDeckName !== null) { // Check if the user clicked Cancel
         renameDeck(deckName, newDeckName);
     }
 }
-
 function renameDeck(oldDeckName, newDeckName) {
     const requestData = { oldDeckName: oldDeckName, newDeckName: newDeckName };
     fetch('/api/DecksManager/rename', {
@@ -99,7 +95,7 @@ function renameDeck(oldDeckName, newDeckName) {
         });
 }
 function deleteDeck(deckName) {
-    fetch('/api/DecksManager/delete', {
+    fetch('/api/decks/delete', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -125,7 +121,8 @@ function showNewDeckInput(deckName) {
     }
 }
 function newDeck(newDeckName) {
-    fetch('/api/DecksManager/new', {
+    console.log('test');
+    fetch('/api/decks/new', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

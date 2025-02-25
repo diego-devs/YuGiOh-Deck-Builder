@@ -27,7 +27,6 @@ namespace YGODeckBuilder.Pages
         private readonly IConfiguration _configuration;
         private readonly string decksLocalFolder;
         private readonly IDeckUtility _deckUtility;
-        private readonly IFileSystem _fileSystem;
 
         // Deck a visualizar
         public Deck Deck { get; set; }
@@ -40,21 +39,18 @@ namespace YGODeckBuilder.Pages
         [BindProperty(SupportsGet = true)]
         public string DeckFileName { get; set; }
         public List<Card> SearchCards { get; set; }
-        public IFileSystem FileSystem { get; set; }
 
         // Dependency injection of both Configuration and YgoContext 
         public DeckBuilder(YgoContext db, 
                         IConfiguration configuration, 
                         IHttpContextAccessor httpContextAccessor, 
-                        IDeckUtility deckUtility, 
-                        IFileSystem fileSystem)
+                        IDeckUtility deckUtility)
         {
             Context = db;
             _configuration = configuration;
             decksLocalFolder = _configuration["Paths:DecksFolderPath"];
             _deckUtility = deckUtility;
             _httpContextAccessor = httpContextAccessor;
-            _fileSystem = fileSystem;
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -64,7 +60,8 @@ namespace YGODeckBuilder.Pages
             {
                 // todo: deck could not exists if renamed 
                 // Logic to load deck using DeckPath
-                if (_fileSystem.FileExists($"{decksLocalFolder}\\{DeckFileName}.ydk"))
+                
+                if (System.IO.File.Exists($"{decksLocalFolder}\\{DeckFileName}.ydk"))
                 {
                     Deck = await _deckUtility.LoadDeckAsync($"{decksLocalFolder}\\{DeckFileName}.ydk");
                     _deckUtility.PrepareCardData(Deck);

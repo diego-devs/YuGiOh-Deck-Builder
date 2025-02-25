@@ -1,24 +1,28 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Bson;
+using Newtonsoft.Json.Linq;
 using System;
 using System.IO;
 using System.Text.Json.Serialization;
 using System.Threading;
+using System.Threading.Tasks;
 using YGODeckBuilder.Data;
+using YGODeckBuilder.Interfaces;
 using YGODeckBuilder.Pages;
 
 namespace YGODeckBuilder.API
 {
-    [Microsoft.AspNetCore.Mvc.Route("api/[controller]")]
+    [Microsoft.AspNetCore.Mvc.Route("api/decks")]
     [ApiController]
     public class DecksManagerController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly DeckUtility _deckUtility;
+        private readonly IDeckUtility _deckUtility;
         private YgoContext _ygoContext;
 
-        public DecksManagerController(IConfiguration configuration, YgoContext ygoContext, DeckUtility deckUtility)
+        public DecksManagerController(IConfiguration configuration, YgoContext ygoContext, IDeckUtility deckUtility)
         {
             this._configuration = configuration;
             _ygoContext = ygoContext;
@@ -57,33 +61,34 @@ namespace YGODeckBuilder.API
         }
 
        
-        [HttpPost("load")]
-        public IActionResult LoadDeck([FromBody] string path)
+        [HttpPost("upload")]
+        public async Task<Deck> UploadDeck([FromBody] string path)
         {
-            if (string.IsNullOrEmpty(path)) return new BadRequestResult();
-            if (Path.GetExtension(path) != ".ydk") return new BadRequestResult();
+            if (string.IsNullOrEmpty(path))
+                throw new BadHttpRequestException("Path cannot be empty");
+            if (Path.GetExtension(path) != ".ydk") 
+                throw new BadHttpRequestException("File must be a .ydk file");
 
             var deckName = Path.GetFileNameWithoutExtension(path);
-
             var destinationPath = Path.Combine(_configuration["Paths:DecksFolderPath"], deckName + ".ydk");
-            
-            // record deck into database table
-            //// read ydkfile into a Deck object
 
             if (System.IO.File.Exists(destinationPath))
             {
                 Console.WriteLine($"Error duplicating deck {path}.ydk: Destination file already exists");
-                return new ConflictResult(); // HTTP 409 Conflict status code
-            }
+                throw new BadHttpRequestException($"Deck {Path.GetFileName(path)} already exists");
+            }   
+            
+            // copy ydkfile to local folder
+            System.IO.File.Copy(path, destinationPath); 
+            var deck = await _deckUtility.LoadDeckAsync(destinationPath);
+            deck.DeckName = deckName;
 
-            System.IO.File.Copy(path, destinationPath);
+            // record deck into database
+            RecordDeck(deck); 
 
             Console.WriteLine($"Deck {deckName}.ydk duplicated to {destinationPath} successfully");
-
-            // use that Deck oject to create a new ydk file
-            // save the new ydk file into decks location
-
-            return Ok();
+            
+            return deck;
         }
 
         [HttpPost("duplicate")]
@@ -156,8 +161,9 @@ namespace YGODeckBuilder.API
         }
 
         [HttpPost("new")]
-        public IActionResult CreateDeck([FromBody] string deckName) 
+        public IActionResult CreateDeck([FromBody] string name) 
         {
+            string deckName = name;
             if (string.IsNullOrWhiteSpace(deckName)) return BadRequest("Deck name cannot be empty.");
             
             Deck newDeck = new Deck();
@@ -168,7 +174,7 @@ namespace YGODeckBuilder.API
                 string decksLocalFolder = _configuration["Paths:DecksFolderPath"];
                 string deckFilePath = $"{decksLocalFolder}\\{deckName}.ydk";
 
-                ExportDeck(newDeck);
+                _deckUtility.ExportDeck(newDeck);
 
                 return RedirectToPage("/DeckBuilder", new { DeckFileName = newDeck.DeckName });
             }
