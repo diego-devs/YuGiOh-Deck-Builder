@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ using YGODeckBuilder.Data.JsonFormatDeck;
 
 namespace YGODeckBuilder.API
 {
-    [Route("api/[controller]")]
+    [Route("api/converter")]
     [ApiController]
     public class DeckConverterController : ControllerBase
     {
@@ -45,7 +46,9 @@ namespace YGODeckBuilder.API
                     var jsonDeck = System.Text.Json.JsonSerializer.Deserialize<JsonDeck>(jsonContent);
                     var ydkDeck = DeckFormatConverter.ConvertJsonToYdk(jsonDeck);
                     string ydkOutputPath = outputPath + ".ydk";
-                    await _deckUtility.ExportDeck(ydkDeck, ydkOutputPath);
+                    _deckUtility.ExportDeck(ydkDeck, ydkOutputPath);
+
+                    
                     return Ok(ydkDeck);
                 }
             }

@@ -38,7 +38,7 @@ namespace YGODeckBuilder.Pages
             }
             else
             {
-                var results = await cardsProvider.GetSearchAsync("scareclaw");
+                var results = await cardsProvider.GetSearchAsync("dark magician");
                 if (results != null)
                 {
                     Cards = new List<Card>(results);

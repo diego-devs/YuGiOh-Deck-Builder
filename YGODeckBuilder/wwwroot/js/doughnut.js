@@ -64,7 +64,6 @@ document.addEventListener("DOMContentLoaded", function () {
     var mainDeckData = window.mainDeckData;
     var extraDeckData = window.extraDeckData;
     
-
     // Continue with your code to count and draw the doughnut chart
     var deckCounts = allDeckTypes.map(function (type) {
         console.log("Type:", type);
@@ -79,7 +78,6 @@ document.addEventListener("DOMContentLoaded", function () {
         };
     });
 
-    
     drawDoughnutChart(doughnutChart, deckCounts);
 });
 function drawDoughnutChart(chart, data) {
