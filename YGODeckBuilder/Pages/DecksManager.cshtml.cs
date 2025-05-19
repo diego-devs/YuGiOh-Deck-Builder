@@ -28,7 +28,6 @@ namespace YGODeckBuilder.Pages
             _configuration = configuration;
             Decks = new List<DeckPreview>();
             _deckUtility = deckUtility;
-
         }
 
         public void OnGet()
