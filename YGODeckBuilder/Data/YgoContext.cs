@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using YGODeckBuilder.Data.EntityModels;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace YGODeckBuilder.Data
 {
@@ -27,6 +28,8 @@ namespace YGODeckBuilder.Data
         public DbSet<SetInfo> SetsInfo { get; set; }
         public DbSet<BanlistInfo> CardsBanlist { get; set; }
         public DbSet<MiscInfo> MiscInfos { get; set; }
+        public DbSet<Collection> Collections { get; set; }
+        public DbSet<CollectionCard> CollectionCards { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)     
         {
@@ -54,6 +57,16 @@ namespace YGODeckBuilder.Data
             }
 
             return matchingCards;
+        }
+        public override int SaveChanges()
+        {
+            var modifiedEntries = ChangeTracker.Entries()
+                .Where(x => x.Entity is Collection && x.State == EntityState.Modified);
+            foreach (var entry in modifiedEntries)
+            {
+                ((Collection)entry.Entity).LastModifiedDate = DateTime.UtcNow;
+            }
+            return base.SaveChanges();
         }
 
     }

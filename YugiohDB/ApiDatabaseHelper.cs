@@ -17,11 +17,7 @@ using YGODeckBuilder.Data.EntityModels;
 
 namespace YugiohDB
 {
-    public enum CardImageSize
-    {
-        Small, Big, Cropped
-    }
-    public class YgoProDeckTools
+    public class ApiDatabaseHelper
     {
         public readonly YgoContext Context;
 
@@ -36,20 +32,21 @@ namespace YugiohDB
             switch (imgSize)
             {
                 case CardImageSize.Big:
-
+                    await DownloadImagesAsync(cards, "large");
                     break;
                 case CardImageSize.Small:
+                    await DownloadImagesAsync(cards, "small");
                     break;
                 case CardImageSize.Cropped:
+                    await DownloadImagesAsync(cards, "cropped");
                     break;
                 default:
                     break;
-
             }
         }
         public static async Task DownloadImagesAsync(List<Card> cards, string imgSize)
         {
-            if (imgSize ==  "small")
+            if (imgSize == "small")
             {
                 string localFolder = "C:/Users/PC Gamer/source/repos/YuGiOhTCG/YGOCardSearch/data/images/small"; // This should be changed to use configuration
 
@@ -167,7 +164,7 @@ namespace YugiohDB
                 Console.WriteLine("Wrong img size parameter. Use small, large or cropped");
             }
         }
-        
+
         /// <summary>
         /// Serializes and writes a list of cards to the selected path
         /// </summary>
@@ -200,7 +197,7 @@ namespace YugiohDB
         /// Adds all cards from json file to Database
         /// </summary>
         /// <returns></returns>
-        public static async Task AddAllCards(string allCardsPath)
+        public static async Task AddCardsToDatabaseAsync(string allCardsPath)
         {
             // This is the process to add all cards to Database
             // path to allcards.txt file json file
@@ -258,6 +255,11 @@ namespace YugiohDB
             }
             Console.WriteLine($"All cards linked to local images at {LocalImagesPath}");
         }
+        /// <summary>
+        /// Maps the banlist info to the card
+        /// </summary>
+        /// <param name="cards"></param>
+        /// <param name="banlist"></param>
         public static void MapBanlistInfo(List<Card> cards, List<BanlistInfo> banlist)
         {
             foreach (var bl in banlist)
@@ -268,6 +270,30 @@ namespace YugiohDB
             }
 
 
+        }
+        /// <summary>
+        /// For mapping correctly the database to a EF object. Database is not all related. 
+        /// Maybe this should run only when loading the database and only once. Singleton pattern? 
+        /// </summary>
+        public static void MapCardData()
+        {
+            using (var context = new YGODeckBuilder.Data.YgoContext())
+            {
+                var AllCards = new List<Card>(context.Cards);
+                var AllImages = new List<CardImages>(context.CardImages);
+                var AllSets = new List<CardSet>(context.CardSets);
+                var AllPrices = new List<CardPrices>(context.CardPrices);
+
+                foreach (var Card in AllCards)
+                {
+                    Card.CardImages = new List<CardImages>(AllImages.Where(c => c.CardImageId == Card.KonamiCardId)) { };
+                    Card.CardSets = new List<CardSet>(AllSets.Where(c => c.CardId == Card.CardId));
+                    Card.CardPrices = new List<CardPrices>(AllPrices.Where(c => c.CardId == Card.CardId));
+
+                }
+                context.Cards.UpdateRange(AllCards);
+                context.SaveChanges();
+            }
         }
     }
 }
