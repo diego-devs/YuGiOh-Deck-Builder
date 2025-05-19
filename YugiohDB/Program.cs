@@ -22,74 +22,106 @@ namespace YugiohDB
         public static async Task Main(string[] args)
         {
             string option = DisplayWelcomeScreen();
+            bool exitRequested = false;
 
-            switch (option)
+            while (!exitRequested)
             {
-                case "1":
-                    await MainApplication();
-                    break;
-                case "2":
-                    var _configuration = SetupConfiguration();
-                    string configOption = DisplayConfigurationOptions();
-                    switch (configOption)
-                    {
-                        case "1":
-                            Console.WriteLine("Option 1: Download and save all cards");
-                            var allcards = await YGOProvider.GetAllCardsAsync();
-                            ApiDatabaseHelper.SaveCardsFile(allcards, _configuration.CardsLocalPath);
-                            Console.WriteLine("Cards downloaded and saved in local path successfully.");
-                            break;
+                switch (option)
+                {
+                    case "1":
+                        await MainApplication();
+                        break;
 
-                        case "2":
-                            Console.WriteLine("Option 2: Download and map card images");
-                            var localCards = ApiDatabaseHelper.ReadAllCards(_configuration.CardsLocalPath);
-                            await ApiDatabaseHelper.DownloadImagesAsync(localCards, CardImageSize.Big);
-                            await ApiDatabaseHelper.DownloadImagesAsync(localCards, CardImageSize.Small);
-                            await ApiDatabaseHelper.DownloadImagesAsync(localCards, CardImageSize.Cropped);
-                            ApiDatabaseHelper.MapImages(localCards, _configuration.ImagesLocalPath);
-                            Console.WriteLine("Images downloaded and mapped in local path successfully.");
-                            break;
+                    case "2":
+                        await HandleConfigurationOptions();
+                        break;
 
-                        case "3":
-                            Console.WriteLine("Option 3: Map banlist information");
-                            var cards = ApiDatabaseHelper.ReadAllCards(_configuration.CardsLocalPath);
-                            var banlists = await YGOProvider.GetAllBanlistAsync();
-                            ApiDatabaseHelper.MapBanlistInfo(cards, banlists);
-                            ApiDatabaseHelper.SaveCardsFile(cards, _configuration.CardsLocalPath);
-                            Console.WriteLine("Banlist information mapped successfully.");
-                            break;
+                    case "q":
+                    case "Q":
+                        exitRequested = true;
+                        Console.WriteLine("Exiting the program...");
+                        break;
 
-                        case "4":
-                            Console.WriteLine("Option 4: Map card data");
-                            ApiDatabaseHelper.MapCardData();
-                            Console.WriteLine("Card data mapped successfully.");
-                            break;
-
-                        case "5":
-                            Console.WriteLine("Option 5: Save local cards to database");
-                            var cardsToSave = ApiDatabaseHelper.ReadAllCards(_configuration.CardsLocalPath);
-                            await ApiDatabaseHelper.AddCardsToDatabaseAsync(_configuration.CardsLocalPath);
-                            using (var context = new YgoContext())
-                            {
-                                await context.Database.EnsureCreatedAsync();
-                                await context.Cards.AddRangeAsync(cardsToSave);
-                                await context.SaveChangesAsync();
-                            }
-                            Console.WriteLine("Cards saved to database successfully.");
-                            break;
-
-                        default:
-                            Console.WriteLine("Invalid option selected.");
-                            break;
-                    }
-                    break;
-
-                default:
-                    Console.WriteLine("Invalid option selected. Exiting...");
-                    QuitProgram();
-                    break;
+                    default:
+                        Console.WriteLine("Invalid option selected. Try again.");
+                        break;
+                }
             }
         }
+        private static async Task HandleConfigurationOptions()
+        {
+            var _configuration = SetupConfiguration();
+            bool returnToMain = false;
+
+            while (!returnToMain)
+            {
+                string configOption = DisplayConfigurationOptions();
+
+                switch (configOption)
+                {
+                    case "1":
+                        Console.WriteLine("Downloading and saving all cards...");
+                        var allCards = await YGOProvider.GetAllCardsAsync();
+                        ApiDatabaseHelper.SaveCardsFile(allCards, _configuration.CardsLocalPath);
+                        Console.WriteLine("✅ Cards saved successfully.");
+                        break;
+
+                    case "2":
+                        Console.WriteLine("Downloading and mapping card images...");
+                        var localCards = ApiDatabaseHelper.ReadAllCards(_configuration.CardsLocalPath);
+                        await ApiDatabaseHelper.DownloadImagesAsync(localCards, CardImageSize.Big, _configuration.ImagesLocalPath);
+                        await ApiDatabaseHelper.DownloadImagesAsync(localCards, CardImageSize.Small, _configuration.ImagesSmall);
+                        await ApiDatabaseHelper.DownloadImagesAsync(localCards, CardImageSize.Cropped, _configuration.ImagesCropped);
+                        ApiDatabaseHelper.MapImages(localCards, _configuration.ImagesLocalPath);
+                        Console.WriteLine("✅ Images mapped successfully.");
+                        break;
+
+                    case "3":
+                        Console.WriteLine("Mapping banlist information...");
+                        var cards = ApiDatabaseHelper.ReadAllCards(_configuration.CardsLocalPath);
+                        var banlists = await YGOProvider.GetAllBanlistAsync();
+                        ApiDatabaseHelper.MapBanlistInfo(cards, banlists);
+                        ApiDatabaseHelper.SaveCardsFile(cards, _configuration.CardsLocalPath);
+                        Console.WriteLine("✅ Banlist info mapped successfully.");
+                        break;
+
+                    case "4":
+                        Console.WriteLine("Mapping card data...");
+                        ApiDatabaseHelper.MapCardData();
+                        Console.WriteLine("✅ Card data mapped successfully.");
+                        break;
+
+                    case "5":
+                        Console.WriteLine("Saving cards to database...");
+                        var cardsToSave = ApiDatabaseHelper.ReadAllCards(_configuration.CardsLocalPath);
+                        await ApiDatabaseHelper.AddCardsToDatabaseAsync(_configuration.CardsLocalPath);
+                        using (var context = new YgoContext())
+                        {
+                            await context.Database.EnsureCreatedAsync();
+                            await context.Cards.AddRangeAsync(cardsToSave);
+                            await context.SaveChangesAsync();
+                        }
+                        Console.WriteLine("✅ Cards saved to DB successfully.");
+                        break;
+
+                    case "b":
+                    case "B":
+                        returnToMain = true;
+                        break;
+
+                    default:
+                        Console.WriteLine("❌ Invalid option. Please try again.");
+                        break;
+                }
+
+                if (!returnToMain)
+                {
+                    Console.WriteLine("\nPress Enter to return to Configuration Options...");
+                    Console.ReadLine();
+                }
+            }
+        }
+
         private static async Task RunDevelopmentTasks(ConfigurationStructure _configuration)
         {
             // Legacy development tasks> 
@@ -121,9 +153,9 @@ namespace YugiohDB
             
             List<Card> localCards = ApiDatabaseHelper.ReadAllCards(_configuration.CardsLocalPath);
 
-            await ApiDatabaseHelper.DownloadImagesAsync(localCards, CardImageSize.Big);
-            await ApiDatabaseHelper.DownloadImagesAsync(localCards, CardImageSize.Small);
-            await ApiDatabaseHelper.DownloadImagesAsync(localCards, CardImageSize.Cropped);
+            await ApiDatabaseHelper.DownloadImagesAsync(localCards, CardImageSize.Big, _configuration.CardsLocalPath);
+            await ApiDatabaseHelper.DownloadImagesAsync(localCards, CardImageSize.Small, _configuration.CardsLocalPath);
+            await ApiDatabaseHelper.DownloadImagesAsync(localCards, CardImageSize.Cropped, _configuration.CardsLocalPath);
 
             ApiDatabaseHelper.MapCardData();
         }
@@ -140,13 +172,16 @@ namespace YugiohDB
             var decksFolderPath = config.GetValue<string>("Paths:DecksFolderPath");
             var cardsLocalPath = config.GetValue<string>("Paths:CardIdsFilePath");
             var imagesLocalPath = config.GetValue<string>("Paths:ImagesFolder");
+            var imagesSmall = config.GetValue<string>("Paths:ImagesSmall");
+            var imagesCropped = config.GetValue<string>("Paths:ImagesCropped");
 
-            var configuration = new ConfigurationStructure(connectionString, decksFolderPath, cardsLocalPath, imagesLocalPath);
-            LogConfiguration(connectionString, decksFolderPath, cardsLocalPath, imagesLocalPath);
+            var configuration = new ConfigurationStructure(connectionString, decksFolderPath, cardsLocalPath, imagesLocalPath, imagesSmall, imagesCropped);
+            // To do: Use dotnet ILogger instead
+            LogConfiguration(connectionString, decksFolderPath, cardsLocalPath, imagesLocalPath, imagesSmall, imagesCropped);
 
             return configuration;
 
-            static void LogConfiguration(string connectionString, string decksFolderPath, string cardsLocalPath, string imagesLocalPath)
+            static void LogConfiguration(string connectionString, string decksFolderPath, string cardsLocalPath, string imagesLocalPath, string imagesSmall, string imagesCropped)
             {
                 Console.WriteLine($"Connection String: {connectionString}");
                 Console.WriteLine($"Decks Folder Path: {decksFolderPath}");
@@ -270,13 +305,17 @@ namespace YugiohDB
             public string DecksFolderPath { get; set; }
             public string CardsLocalPath { get; set; }
             public string ImagesLocalPath { get; set; }
+            public string ImagesSmall { get; set; }
+            public string ImagesCropped { get; set; }
 
-            public ConfigurationStructure(string connectionString, string decksFolderPath, string cardsLocalPath, string imagesLocalPath)
+            public ConfigurationStructure(string connectionString, string decksFolderPath, string cardsLocalPath, string imagesLocalPath, string imagesSmall, string imagesCropped)
             {
                 ConnectionString = connectionString;
                 DecksFolderPath = decksFolderPath;
                 CardsLocalPath = cardsLocalPath;
                 ImagesLocalPath = imagesLocalPath;
+                ImagesSmall = imagesSmall;
+                ImagesCropped = imagesCropped;
             }
         }
     }

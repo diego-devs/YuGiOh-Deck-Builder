@@ -27,28 +27,28 @@ namespace YugiohDB
         /// <param name="cards"></param>
         /// <param name="imgSize">Use "small", "large" or "cropped"</param>
         /// <returns></returns>
-        public static async Task DownloadImagesAsync(List<Card> cards, CardImageSize imgSize)
+        public static async Task DownloadImagesAsync(List<Card> cards, CardImageSize imgSize, string path)
         {
             switch (imgSize)
             {
                 case CardImageSize.Big:
-                    await DownloadImagesAsync(cards, "large");
+                    await DownloadImagesAsync(cards, "large", path);
                     break;
                 case CardImageSize.Small:
-                    await DownloadImagesAsync(cards, "small");
+                    await DownloadImagesAsync(cards, "small", path);
                     break;
                 case CardImageSize.Cropped:
-                    await DownloadImagesAsync(cards, "cropped");
+                    await DownloadImagesAsync(cards, "cropped", path);
                     break;
                 default:
                     break;
             }
         }
-        public static async Task DownloadImagesAsync(List<Card> cards, string imgSize)
+        public static async Task DownloadImagesAsync(List<Card> cards, string imgSize, string path)
         {
             if (imgSize == "small")
             {
-                string localFolder = "C:/Users/PC Gamer/source/repos/YuGiOhTCG/YGOCardSearch/data/images/small"; // This should be changed to use configuration
+                string localFolder = path; ///"C:/Users/PC Gamer/source/repos/YuGiOhTCG/YGOCardSearch/data/images/small"; // This should be changed to use configuration
 
                 using (HttpClient client = new HttpClient())
                 {
@@ -213,8 +213,8 @@ namespace YugiohDB
                 {
                     // Add all the cards to database excecuting SQL commands and using EF
                     //context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT [YgoDB].[dbo].[Cards] ON");
-                    context.Cards.AddRange(allCards);
-                    context.SaveChanges();
+                    await context.Cards.AddRangeAsync(allCards);
+                    await context.SaveChangesAsync();
                     //context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT [YgoDB].[dbo].[Cards] OFF");
                     //transaction.Commit();
                 }
