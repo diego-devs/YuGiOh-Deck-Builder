@@ -28,9 +28,12 @@ namespace YGODeckBuilder.Data
         public DbSet<BanlistInfo> CardsBanlist { get; set; }
         public DbSet<MiscInfo> MiscInfos { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)     
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=.\SQLEXPRESS;Database=YgoDB;Encrypt=True;TrustServerCertificate=True;Trusted_Connection=True;");
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer(@"Server=.\SQLEXPRESS;Database=YgoDB;Encrypt=True;TrustServerCertificate=True;Trusted_Connection=True;");
+            }
         }
         public Card GetCard(int id)
         {
@@ -39,7 +42,6 @@ namespace YGODeckBuilder.Data
         public virtual List<Card> GetSearch(string searchQuery)
         {
             string normalizedQuery = searchQuery.ToLower();
-            normalizedQuery.Normalize();
 
             // Use LINQ to filter cards that match the search query
             var matchingCards = Cards

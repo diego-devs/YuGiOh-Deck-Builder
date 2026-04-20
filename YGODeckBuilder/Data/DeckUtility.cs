@@ -104,35 +104,32 @@ namespace YGODeckBuilder.Data
         /// <param name="deck"></param>
         public void ExportDeck(Deck deck)
         {
-            // Save the deck to a .ydk file
-            string deckName = deck.DeckName; // get the deck name from file name
+            string deckName = deck.DeckName;
             string deckFilePath = Path.Combine(_configuration["Paths:DecksFolderPath"], deckName + ".ydk");
-            using (StreamWriter writer = new StreamWriter(deckFilePath))
-            {
-                // Write the main deck
-                writer.WriteLine("#main");
-                foreach (var card in deck.MainDeck)
-                {
-                    writer.WriteLine(card.KonamiCardId);
-                }
-                // Write the extra deck
-                writer.WriteLine("#extra");
-                foreach (var card in deck.ExtraDeck)
-                {
-                    writer.WriteLine(card.KonamiCardId);
-                }
-                // Write the side deck
-                writer.WriteLine("!side");
-                foreach (var card in deck.SideDeck)
-                {
-                    writer.WriteLine(card.KonamiCardId);
-                }
-                Console.WriteLine($"Deck {deckName}.ydk exported to {deckFilePath} successfully");
-            }
+            ExportDeckInternal(deck, deckFilePath);
         }
+
         public void ExportDeck(Deck deck, string path)
         {
-            ExportDeck(deck);
+            ExportDeckInternal(deck, path);
+        }
+
+        private void ExportDeckInternal(Deck deck, string deckFilePath)
+        {
+            string deckName = deck.DeckName;
+            using (StreamWriter writer = new StreamWriter(deckFilePath))
+            {
+                writer.WriteLine("#main");
+                foreach (var card in deck.MainDeck)
+                    writer.WriteLine(card.KonamiCardId);
+                writer.WriteLine("#extra");
+                foreach (var card in deck.ExtraDeck)
+                    writer.WriteLine(card.KonamiCardId);
+                writer.WriteLine("!side");
+                foreach (var card in deck.SideDeck)
+                    writer.WriteLine(card.KonamiCardId);
+                Console.WriteLine($"Deck {deckName}.ydk exported to {deckFilePath} successfully");
+            }
         }
 
         /// <summary>

@@ -45,15 +45,10 @@ public static class YGOProvider
 
             throw;
         }
-        
-        
-        
     }
     /// <summary>
     /// Downloads to local json file of all cards, response as it is from API ( data object )
     /// </summary>
-    /// <returns></returns>
-    /// 
     public static async Task DownloadAllCardsAsync(string localPath)
     {
         string apiUrl = "https://db.ygoprodeck.com/api/v7/cardinfo.php&misc=yes";
@@ -72,7 +67,7 @@ public static class YGOProvider
         }
         
     }
-    // 
+
     public static async Task<List<Card>> GetAllCardsAsync() 
     {
         string url = "http://db.ygoprodeck.com/api/v7/cardinfo.php?&misc=yes"; //Gets all cards with misc

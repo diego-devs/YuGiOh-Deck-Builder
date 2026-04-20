@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using YGODeckBuilder.Data;
 using YGODeckBuilder.DataProviders;
 using YGODeckBuilder.Interfaces;
@@ -19,9 +20,12 @@ namespace YGODeckBuilder
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly ILogger<Startup> _logger;
+
+        public Startup(IConfiguration configuration, ILogger<Startup> logger)
         {
             Configuration = configuration; // appsettings.json
+            _logger = logger;
         }
 
         public IConfiguration Configuration { get; }
@@ -43,9 +47,9 @@ namespace YGODeckBuilder
             var connectionString = Configuration["ConnectionStrings:YGODatabase"];
 
             // Use the configuration values as needed
-            Console.WriteLine($"Decks Folder Path: {decksFolderPath}");
-            Console.WriteLine($"Card IDs File Path: {cardIdsFilePath}");
-            Console.WriteLine($"Connetion String Path: {connectionString}");
+            _logger.LogInformation("Decks Folder Path: {DecksFolderPath}", decksFolderPath);
+            _logger.LogInformation("Card IDs File Path: {CardIdsFilePath}", cardIdsFilePath);
+            _logger.LogInformation("Connection String configured: {HasConnectionString}", !string.IsNullOrEmpty(connectionString));
 
             services.AddSingleton<ICardsProvider, YgoAPIProvider>();
 

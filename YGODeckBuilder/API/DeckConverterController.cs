@@ -23,14 +23,31 @@ namespace YGODeckBuilder.API
             _ygoContext = ygoContext;
             _deckUtility = deckUtility;
         }
+        private static string SanitizeDeckName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name)) return null;
+            if (name.Length > 100) return null;
+            if (name.Contains("..") || name.Contains('/') || name.Contains('\\')) return null;
+            foreach (char c in name)
+            {
+                if (!char.IsLetterOrDigit(c) && c != ' ' && c != '-' && c != '_')
+                    return null;
+            }
+            return name;
+        }
+
         // Convert deck
         [HttpPost("convert")]
         public async Task<IActionResult> ConvertDeck(string deckPath, bool isYdk)
         {
+            var deckFileName = Path.GetFileNameWithoutExtension(deckPath);
+            if (SanitizeDeckName(deckFileName) == null)
+                return BadRequest("Invalid deck name.");
+
             try
             {
-                string outputPath = Path.Combine(_configuration["Paths:DecksFolderPath"], 
-                    Path.GetFileNameWithoutExtension(deckPath));
+                string outputPath = Path.Combine(_configuration["Paths:DecksFolderPath"],
+                    deckFileName);
 
                 if (isYdk) // convert YDK to JSON
                 {

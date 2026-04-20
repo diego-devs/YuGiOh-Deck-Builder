@@ -46,8 +46,8 @@
     position: relative;
 }
 
-.DeckBuilder_Container_MainDeck
-.DeckBuilder_Container_ExtraDeck
+.DeckBuilder_Container_MainDeck,
+.DeckBuilder_Container_ExtraDeck,
 .DeckBuilder_Container_SideDeck {
     max-width: 100%;
     width: 100%;

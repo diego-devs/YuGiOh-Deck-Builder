@@ -22,21 +22,21 @@ function handleAddToDeck(deckType, deck, card, onComplete) {
     switch (deckType) {
         case 'MainDeck':
             if (deck.main_deck.length >= maxMainCards) {
-                window.alert(`Invalid drop: Maximum Main Deck cards allowed.`);
+                showToast(`Invalid drop: Maximum Main Deck cards allowed.`, 'error');
                 return;
             }
             addCardToMainDeck(deck, card);
             break;
         case 'ExtraDeck':
             if (deck.extra_deck.length >= maxExtraCards) {
-                window.alert(`Invalid drop: Maximum Extra Deck cards allowed.`);
+                showToast(`Invalid drop: Maximum Extra Deck cards allowed.`, 'error');
                 return;
             }
             addCardToExtraDeck(deck, card);
             break;
         case 'SideDeck':
             if (deck.side_deck.length >= maxSideCards) {
-                window.alert(`Invalid drop: Maximum Side Deck cards allowed.`);
+                showToast(`Invalid drop: Maximum Side Deck cards allowed.`, 'error');
                 return;
             }
             addCardToSideDeck(deck, card);
@@ -89,14 +89,6 @@ function handleRemoveFromDeck(deckType, deck, card, onComplete) {
         onComplete();
     }
 }
-// Function to update the displayed decks
-function updateDisplayedDecks() {
-    renderDeckCards(decks.main_deck, '.DeckBuilder_Container_MainDeck');
-    renderDeckCards(decks.extra_deck, '.DeckBuilder_Container_ExtraDeck');
-    renderDeckCards(decks.side_deck, '.DeckBuilder_Container_SideDeck');
-}
-
-
 
 // Function to update the main deck card count
 function updateDeckCount(deck) {
@@ -108,10 +100,13 @@ function updateDeckCount(deck) {
     const sideDeckCount = deck.side_deck.length;
     mainDeckCardCountElement.textContent = `#: ${mainDeckCount}`;
     extraDeckCardCountElement.textContent = `#: ${extraDeckCount}`;
-    sideDeckCardCountElement.textContent = `#: ${sideDeckCount}`
+    sideDeckCardCountElement.textContent = `#: ${sideDeckCount}`;
+    if (typeof window.refreshDoughnutChart === 'function') {
+        window.refreshDoughnutChart(deck.main_deck, deck.extra_deck);
+    }
 }
 
 
 
 
-export { handleAddToDeck, handleRemoveFromDeck, updateDisplayedDecks, updateDeckCount };
+export { handleAddToDeck, handleRemoveFromDeck, updateDeckCount };

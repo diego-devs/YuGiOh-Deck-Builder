@@ -27,12 +27,7 @@ namespace YGODeckBuilder.Data
         [JsonPropertyName("side_deck")]
         public ICollection<Card> SideDeck { get; set; } = [];
         [JsonPropertyName("total_cards")]
-        public int TotalCards
-        {
-            get { return totalCards; }
-            set { totalCards = MainDeck.Count + ExtraDeck.Count; }
-        }
-        private int totalCards;
+        public int TotalCards => MainDeck.Count + ExtraDeck.Count + SideDeck.Count;
 
         [JsonPropertyName("deck_file_path")]
         public string DeckFilePath { get; set; }

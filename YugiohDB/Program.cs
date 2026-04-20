@@ -20,7 +20,7 @@ namespace YugiohDB
         public YGODeckBuilder.Data.YgoContext Context;
         public static async Task Main(string[] args)
         {
-            await MainApplication(); // Search cards and displays them into console
+            await MainApplication(); // Configure the cards database and locations
 
             // Access configuration
             var configuration = new ConfigurationBuilder()
@@ -33,18 +33,16 @@ namespace YugiohDB
             var cardsLocalPath = configuration.GetValue<string>("Paths:CardIdsFilePath");
             var imagesLocalPath = configuration.GetValue<string>("Paths:ImagesFolder");
 
-
             Console.WriteLine($"Connection String: {connectionString}");
             Console.WriteLine($"Decks Folder Path: {decksFolderPath}");
 
             // change the paths from appsettings.json
             
             Console.WriteLine($"Cards Local Path: {cardsLocalPath}");
-            Console.WriteLine($"Images Local Path: {imagesLocalPath}");        
-            
+            Console.WriteLine($"Images Local Path: {imagesLocalPath}");
+
             // Use this method to save the ydk files in the decks location to the YGO database
-            
-            
+
             // Use this Main method to download images and map the correct paths as you need or to test functionality. 
             // MapCardData();
 
@@ -77,11 +75,26 @@ namespace YugiohDB
             //// 7- Add all cards to database
             //await YgoProDeckTools.AddAllCards(cardsLocalPath);
 
-            
-
-            
         }
         private static async Task MainApplication()
+        {
+            // The objective of this console application is to setup the cards database and correctly link and map all 
+            // images, banlist and any needed card info correctly both into a json file and into the YGO database
+
+            // Main application should present options to user
+
+            // 1. Get all ygo cards from api
+                // 1. Fetch get all cards from api 
+                // 2. Save them into the json file in local 
+
+            // 2. Images-  download all images in all sizes. Some cards will have more than 1
+            // 3. Map all images correctly in the DB and save mapped cards into json file
+            // 4. Map Banlist info for all cards and save cards to json file
+
+            // 5. Save {allCards} json file into the database
+        }
+
+        private static async Task SearchApplication()
         {
             Console.BackgroundColor = ConsoleColor.DarkBlue;
 
@@ -89,7 +102,7 @@ namespace YugiohDB
             Console.WriteLine("Welcome");
             Console.WriteLine("This tool will help you locate any card or element allocated in your local YuGiOh DB");
 
-            START:
+        START:
 
             Console.WriteLine("Type your search for a card");
 
@@ -144,7 +157,7 @@ namespace YugiohDB
         /// For mapping correctly the database to a EF object. Database is not all related. 
         /// Maybe this should run only when loading the database and only once. Singleton pattern? 
         /// </summary>
-        public static void MapCardData()
+        private static void MapCardData()
         {
             using (var context = new YGODeckBuilder.Data.YgoContext())
             {
@@ -165,7 +178,7 @@ namespace YugiohDB
                
             }
         }
-        public static void UpdateCardDatabase() 
+        private static void UpdateCardDatabase() 
         {
             // get all cards from ygoprodeck api provider
             // compare our database context against those cards retrieved from API

@@ -1,84 +1,87 @@
-document.addEventListener("DOMContentLoaded", function () {
-    var doughnutChart = document.getElementById("doughnutChart");
-    var allDeckTypes = [
-        // ... (your deck types)
-        "Effect Monster",
-        "Flip Effect Monster",
-        "Flip Tuner Effect Monster",
-        "Gemini Monster",
-        "Normal Monster",
-        "Normal Tuner Monster",
-        "Spirit Monster",
-        "Toon Monster", 
-        "Tuner Monster",
-        "Union Effect Monster",
-        "Pendulum Effect Monster",
-        "Pendulum Effect Ritual Monster",
-        "Pendulum Flip Effect Monster",
-        "Pendulum Normal Monster",
-        "Pendulum Tuner Effect Monster",
-        "Ritual Effect Monster",
-        "Ritual Monster",
-        "Spell Card",
-        "Trap Card",
-        "Fusion Monster",
-        "Link Monster",
-        "Pendulum Effect Fusion Monster",
-        "Synchro Monster",
-        "Synchro Pendulum Effect Monster",
-        "Synchro Tuner Monster",
-        "XYZ Monster",
-        "XYZ Pendulum Effect Monster"
-    ];
-    var typeColors = {
-        "Effect Monster": "#d99100", 
-        "Flip Effect Monster": "#996a0b", 
-        "Flip Tuner Effect Monster": "#946506", 
-        "Gemini Monster": "#d49924", 
-        "Normal Monster": "#f2c729", 
-        "Normal Tuner Monster": "#f5ca31", 
-        "Pendulum Effect Monster": "#e09909", 
-        "Pendulum Effect Ritual Monster": "#e09909", 
-        "Pendulum Flip Effect Monster": "#e09909", 
-        "Pendulum Normal Monster": "#e09909", 
-        "Pendulum Tuner Effect Monster": "#e09909", 
-        "Ritual Effect Monster": "#0b699c", 
-        "Ritual Monster": "#389acf", 
-        "Spell Card": "#0a8c7d",
-        "Spirit Monster": "#f5ca31", 
-        "Toon Monster": "#f5ca31", 
-        "Trap Card": "#b3007a", 
-        "Tuner Monster": "#f5ca31", 
-        "Union Effect Monster": "#FFFFFF", 
-        "Fusion Monster": "#FFFFFF", 
-        "Link Monster": "#084ebf", 
-        "Pendulum Effect Fusion Monster": "#FFFFFF", 
-        "Synchro Monster": "#cfcfcf", 
-        "Synchro Pendulum Effect Monster": "#cfcfcf", 
-        "Synchro Tuner Monster": "#cfcfcf", 
-        "XYZ Monster": "#2b2b2b", 
-        "XYZ Pendulum Effect Monster": "#4a4a4a" 
-    };
+var allDeckTypes = [
+    "Effect Monster",
+    "Flip Effect Monster",
+    "Flip Tuner Effect Monster",
+    "Gemini Monster",
+    "Normal Monster",
+    "Normal Tuner Monster",
+    "Spirit Monster",
+    "Toon Monster",
+    "Tuner Monster",
+    "Union Effect Monster",
+    "Pendulum Effect Monster",
+    "Pendulum Effect Ritual Monster",
+    "Pendulum Flip Effect Monster",
+    "Pendulum Normal Monster",
+    "Pendulum Tuner Effect Monster",
+    "Ritual Effect Monster",
+    "Ritual Monster",
+    "Spell Card",
+    "Trap Card",
+    "Fusion Monster",
+    "Link Monster",
+    "Pendulum Effect Fusion Monster",
+    "Synchro Monster",
+    "Synchro Pendulum Effect Monster",
+    "Synchro Tuner Monster",
+    "XYZ Monster",
+    "XYZ Pendulum Effect Monster"
+];
+var typeColors = {
+    "Effect Monster": "#d99100",
+    "Flip Effect Monster": "#996a0b",
+    "Flip Tuner Effect Monster": "#946506",
+    "Gemini Monster": "#d49924",
+    "Normal Monster": "#f2c729",
+    "Normal Tuner Monster": "#f5ca31",
+    "Pendulum Effect Monster": "#e09909",
+    "Pendulum Effect Ritual Monster": "#e09909",
+    "Pendulum Flip Effect Monster": "#e09909",
+    "Pendulum Normal Monster": "#e09909",
+    "Pendulum Tuner Effect Monster": "#e09909",
+    "Ritual Effect Monster": "#0b699c",
+    "Ritual Monster": "#389acf",
+    "Spell Card": "#0a8c7d",
+    "Spirit Monster": "#f5ca31",
+    "Toon Monster": "#f5ca31",
+    "Trap Card": "#b3007a",
+    "Tuner Monster": "#f5ca31",
+    "Union Effect Monster": "#FFFFFF",
+    "Fusion Monster": "#FFFFFF",
+    "Link Monster": "#084ebf",
+    "Pendulum Effect Fusion Monster": "#FFFFFF",
+    "Synchro Monster": "#cfcfcf",
+    "Synchro Pendulum Effect Monster": "#cfcfcf",
+    "Synchro Tuner Monster": "#cfcfcf",
+    "XYZ Monster": "#2b2b2b",
+    "XYZ Pendulum Effect Monster": "#4a4a4a"
+};
 
-    // Access the deck data from the exposed JavaScript variables
-    var mainDeckData = window.mainDeckData;
-    var extraDeckData = window.extraDeckData;
-    
-    // Continue with your code to count and draw the doughnut chart
+function buildDoughnutChart(doughnutChart, mainDeckData, extraDeckData) {
     var deckCounts = allDeckTypes.map(function (type) {
-        console.log("Type:", type);
-        var mainDeckCount = mainDeckData.filter(c => c.type === type).length;
-        console.log("Main Deck Count for", type, ":", mainDeckCount);
-        var extraDeckCount = extraDeckData.filter(c => c.type === type).length;
-        console.log("Extra Deck Count for", type, ":", extraDeckCount);
+        var mainDeckCount = (mainDeckData || []).filter(c => c.type === type).length;
+        var extraDeckCount = (extraDeckData || []).filter(c => c.type === type).length;
         return {
             title: type,
             value: mainDeckCount + extraDeckCount,
             color: typeColors[type] || getRandomColor()
         };
     });
-
     drawDoughnutChart(doughnutChart, deckCounts);
+}
+
+window.refreshDoughnutChart = function (mainDeckCards, extraDeckCards) {
+    var doughnutChart = document.getElementById("doughnutChart");
+    if (!doughnutChart) return;
+    doughnutChart.innerHTML = '';
+    document.querySelectorAll('.doughnutTip, .doughnutSummary').forEach(function (el) { el.remove(); });
+    buildDoughnutChart(doughnutChart, mainDeckCards, extraDeckCards);
+};
+
+document.addEventListener("DOMContentLoaded", function () {
+    var doughnutChart = document.getElementById("doughnutChart");
+    if (!doughnutChart) return;
+    buildDoughnutChart(doughnutChart, window.mainDeckData, window.extraDeckData);
 });
 function drawDoughnutChart(chart, data) {
     var W = chart.offsetWidth,

@@ -31,9 +31,9 @@ namespace YGODeckBuilder.Pages
 
         }
 
-        public void OnGet()
+        public async Task OnGetAsync()
         {
-            Decks = _deckUtility.LoadDecksPreview();
+            Decks = await Task.Run(() => _deckUtility.LoadDecksPreview());
         }
     }
 }

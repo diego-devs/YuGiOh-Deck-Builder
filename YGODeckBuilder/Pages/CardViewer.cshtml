@@ -33,7 +33,7 @@
             <div class="card-body">
                 <h5 class="card-title text-center">@Model.Card.Name</h5>
                 <p class="card-text">@Model.Card.Desc</p>
-                <p class="card-text"><small class="text-muted">Precio promedio: $@Model.Card.CardPrices[0].TcgPlayer.ToString() USD</small></p>
+                <p class="card-text"><small class="text-muted">Precio promedio: $@(Model.Card.CardPrices != null && Model.Card.CardPrices.Count > 0 ? Model.Card.CardPrices[0].TcgPlayer.ToString() : "N/A") USD</small></p>
 
                 <div class="card">
                     <div class="table-responsive">
