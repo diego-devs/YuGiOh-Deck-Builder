@@ -111,3 +111,4 @@ YGODeckBuilder/obj/YGODeckBuilder.csproj.nuget.g.props
 YugiohDB/obj/project.assets.json
 YugiohDB/obj/project.nuget.cache
 YugiohDB/obj/YugiohDB.csproj.nuget.dgspec.json
+YugiohDB/obj/YugiohDB.csproj.nuget.g.props
