@@ -32,25 +32,12 @@ namespace YGODeckBuilder.API
             _logger = logger;
         }
 
-        private static string SanitizeDeckName(string name)
-        {
-            if (string.IsNullOrWhiteSpace(name)) return null;
-            if (name.Length > 100) return null;
-            if (name.Contains("..") || name.Contains('/') || name.Contains('\\')) return null;
-            foreach (char c in name)
-            {
-                if (!char.IsLetterOrDigit(c) && c != ' ' && c != '-' && c != '_')
-                    return null;
-            }
-            return name;
-        }
-
         [HttpPost("save")]
         public IActionResult SaveDeck([FromBody] Deck deck)
         {
             _logger.LogInformation("Saving deck {DeckName}.ydk", deck.DeckName);
 
-            if (SanitizeDeckName(deck.DeckName) == null)
+            if (DeckUtility.SanitizeDeckName(deck.DeckName) == null)
                 return BadRequest("Invalid deck name.");
 
             if (deck.MainDeck != null)
@@ -86,7 +73,7 @@ namespace YGODeckBuilder.API
                 throw new BadHttpRequestException("File must be a .ydk file");
 
             var deckName = Path.GetFileNameWithoutExtension(path);
-            if (SanitizeDeckName(deckName) == null)
+            if (DeckUtility.SanitizeDeckName(deckName) == null)
                 throw new BadHttpRequestException("Invalid deck name.");
 
             var destinationPath = Path.Combine(_configuration["Paths:DecksFolderPath"], deckName + ".ydk");
@@ -111,13 +98,17 @@ namespace YGODeckBuilder.API
         [HttpPost("duplicate")]
         public IActionResult DuplicateDeck([FromBody] string deckName)
         {
-            if (SanitizeDeckName(deckName) == null)
+            if (DeckUtility.SanitizeDeckName(deckName) == null)
                 return BadRequest("Invalid deck name.");
 
             try
             {
                 string originPath = Path.Combine(_configuration["Paths:DecksFolderPath"], deckName + ".ydk");
                 string destinationPath = Path.Combine(_configuration["Paths:DecksFolderPath"], "Copy_" + deckName + ".ydk");
+
+                if (!DeckUtility.IsPathSafe(_configuration["Paths:DecksFolderPath"], originPath) ||
+                    !DeckUtility.IsPathSafe(_configuration["Paths:DecksFolderPath"], destinationPath))
+                    return BadRequest("Invalid path.");
 
                 if (System.IO.File.Exists(destinationPath))
                 {
@@ -142,13 +133,17 @@ namespace YGODeckBuilder.API
         [HttpPost("rename")]
         public IActionResult RenameDeck([FromBody] RenameDeckRequest request)
         {
-            if (SanitizeDeckName(request.OldDeckName) == null || SanitizeDeckName(request.NewDeckName) == null)
+            if (DeckUtility.SanitizeDeckName(request.OldDeckName) == null || DeckUtility.SanitizeDeckName(request.NewDeckName) == null)
                 return BadRequest("Invalid deck name.");
 
             try
             {
                 string oldDeckFilePath = Path.Combine(_configuration["Paths:DecksFolderPath"], request.OldDeckName + ".ydk");
                 string newDeckFilePath = Path.Combine(_configuration["Paths:DecksFolderPath"], request.NewDeckName + ".ydk");
+
+                if (!DeckUtility.IsPathSafe(_configuration["Paths:DecksFolderPath"], oldDeckFilePath) ||
+                    !DeckUtility.IsPathSafe(_configuration["Paths:DecksFolderPath"], newDeckFilePath))
+                    return BadRequest("Invalid path.");
 
                 System.IO.File.Move(oldDeckFilePath, newDeckFilePath);
 
@@ -166,12 +161,16 @@ namespace YGODeckBuilder.API
         [HttpPost("delete")]
         public IActionResult DeleteDeck([FromBody] string deckName)
         {
-            if (SanitizeDeckName(deckName) == null)
+            if (DeckUtility.SanitizeDeckName(deckName) == null)
                 return BadRequest("Invalid deck name.");
 
             try
             {
                 string deckFilePath = Path.Combine(_configuration["Paths:DecksFolderPath"], deckName + ".ydk");
+
+                if (!DeckUtility.IsPathSafe(_configuration["Paths:DecksFolderPath"], deckFilePath))
+                    return BadRequest("Invalid path.");
+
                 System.IO.File.Delete(deckFilePath);
 
                 _logger.LogInformation("Deck {DeckName}.ydk deleted successfully", deckName);
@@ -188,7 +187,7 @@ namespace YGODeckBuilder.API
         [HttpPost("new")]
         public IActionResult CreateDeck([FromBody] string name)
         {
-            if (SanitizeDeckName(name) == null)
+            if (DeckUtility.SanitizeDeckName(name) == null)
                 return BadRequest("Invalid deck name.");
 
             string deckName = name;
@@ -204,12 +203,7 @@ namespace YGODeckBuilder.API
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to create deck {DeckName}", deckName);
-                return new ContentResult
-                {
-                    Content = $"Failed to create the new deck {ex.Message}",
-                    ContentType = "text/plain",
-                    StatusCode = 500
-                };
+                return StatusCode(500, "Failed to create deck.");
             }
         }
     }

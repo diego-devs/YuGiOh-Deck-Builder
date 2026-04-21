@@ -29,6 +29,26 @@ namespace YGODeckBuilder.Data
             }
         }
 
+        public static string SanitizeDeckName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name)) return null;
+            if (name.Length > 100) return null;
+            if (name.Contains("..") || name.Contains('/') || name.Contains('\\')) return null;
+            foreach (char c in name)
+            {
+                if (!char.IsLetterOrDigit(c) && c != ' ' && c != '-' && c != '_')
+                    return null;
+            }
+            return name;
+        }
+
+        public static bool IsPathSafe(string basePath, string resolvedPath)
+        {
+            var fullBase = Path.GetFullPath(basePath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                          + Path.DirectorySeparatorChar;
+            return Path.GetFullPath(resolvedPath).StartsWith(fullBase, StringComparison.OrdinalIgnoreCase);
+        }
+
         public virtual List<DeckPreview> LoadDecksPreview()
         {
             string[] deckFiles = Directory.GetFiles(_configuration["Paths:DecksFolderPath"], "*.ydk");
@@ -42,9 +62,8 @@ namespace YGODeckBuilder.Data
                     deckPreviews.Add(new DeckPreview { DeckName = Path.GetFileNameWithoutExtension(filePath)
                 });
                 }
-                catch (FileNotFoundException ex)
+                catch (FileNotFoundException)
                 {
-                    Console.WriteLine(ex.Message);
                     return null;
                 }
             }
@@ -128,7 +147,6 @@ namespace YGODeckBuilder.Data
                 writer.WriteLine("!side");
                 foreach (var card in deck.SideDeck)
                     writer.WriteLine(card.KonamiCardId);
-                Console.WriteLine($"Deck {deckName}.ydk exported to {deckFilePath} successfully");
             }
         }
 
@@ -197,10 +215,6 @@ namespace YGODeckBuilder.Data
                     if (card != null)
                     {
                         result.Add(card);
-                    }
-                    else
-                    {
-                        Console.WriteLine($"card with id {konamiCardId} not found in database");
                     }
                 }
             }

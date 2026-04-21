@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net.Http;
 using System.Text.Json;
-using System.Threading;
 using System.Threading.Tasks;
 using YGODeckBuilder.Data.EntityModels;
 
@@ -11,138 +9,64 @@ namespace YGODeckBuilder.DataProviders
 {
     public class YgoAPIProvider : ICardsProvider
     {
+        private const string BaseUrl = "https://db.ygoprodeck.com/api/v7/";
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public YgoAPIProvider(IHttpClientFactory httpClientFactory)
+        {
+            _httpClientFactory = httpClientFactory;
+        }
+
+        private HttpClient CreateClient() => _httpClientFactory.CreateClient("ygoprodeck");
+
         public async Task<ICollection<Card>> GetAllCardsAsync()
         {
-            string url = "https://db.ygoprodeck.com/api/v7/cardinfo.php";
-            var ygoClient = new HttpClient() { BaseAddress = new Uri(url) };
-            try
-            {
-                var request = await ygoClient.GetAsync(ygoClient.BaseAddress);
-                if (request.IsSuccessStatusCode)
-                {
-                    var content = await request.Content.ReadAsStringAsync();
-                    var model = JsonSerializer.Deserialize<Card>(content, new JsonSerializerOptions());
-                    Console.WriteLine("Cards found: " + model.Data.Count);
-                    var data = model.Data;
-
-                    return data;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch
-            {
-                throw new Exception(message: "ërror");
-            }
-
+            var client = CreateClient();
+            var response = await client.GetAsync(BaseUrl + "cardinfo.php");
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+            var model = JsonSerializer.Deserialize<Card>(content, new JsonSerializerOptions());
+            return model?.Data;
         }
+
         public async Task<Card> GetCardAsync(int id)
         {
-            string url = "http://db.ygoprodeck.com/api/v7/cardinfo.php?id=" + id.ToString();
-            var ygoClient= new HttpClient() { BaseAddress = new Uri(url) };
-            try
-            {
-                var request = await ygoClient.GetAsync(url);
-                if (request.IsSuccessStatusCode)
-                {
-                    var content = await request.Content.ReadAsStringAsync();
-                    var model = JsonSerializer.Deserialize<Card>(content, new JsonSerializerOptions());
-                    Console.Write("Card found");
-                    var data = model.Data[0];
-
-                    return data;
-                }
-                else 
-                {
-                    Console.WriteLine("Card not found");
-                    return null;
-                }
-            }
-            catch
-            {
-                throw new Exception(message: "error");
-                
-            }
+            var client = CreateClient();
+            var response = await client.GetAsync(BaseUrl + "cardinfo.php?id=" + id);
+            if (!response.IsSuccessStatusCode) return null;
+            var content = await response.Content.ReadAsStringAsync();
+            var model = JsonSerializer.Deserialize<Card>(content, new JsonSerializerOptions());
+            return model?.Data?[0];
         }
-        async Task<ICollection<Card>> ICardsProvider.GetSearchAsync(string search)
+
+        public async Task<ICollection<Card>> GetSearchAsync(string search)
         {
-            string url = "https://db.ygoprodeck.com/api/v7/cardinfo.php?fname=" + search;
-            var ygoClient = new HttpClient() { BaseAddress = new Uri(url) };
-
-            try
-            {
-                var request = await ygoClient.GetAsync(url);
-                if (request.IsSuccessStatusCode)
-                {
-                    var content = await request.Content.ReadAsStringAsync();
-                    var model = JsonSerializer.Deserialize<Card>(content, new JsonSerializerOptions());
-                    Console.WriteLine("Cards found: " + model.Data.Count);
-                    var data = model.Data;
-
-                    return data;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-
+            var client = CreateClient();
+            var response = await client.GetAsync(BaseUrl + "cardinfo.php?fname=" + Uri.EscapeDataString(search));
+            if (!response.IsSuccessStatusCode) return null;
+            var content = await response.Content.ReadAsStringAsync();
+            var model = JsonSerializer.Deserialize<Card>(content, new JsonSerializerOptions());
+            return model?.Data;
         }
-        public async Task<Card> GetRandomCardAsync() 
-        {
-            
-            string url = "https://db.ygoprodeck.com/api/v7/randomcard.php" ;
-            var ygoClient = new HttpClient() { BaseAddress = new Uri(url) };
-            try
-            {
-                var request = await ygoClient.GetAsync(url);
-                if (request.IsSuccessStatusCode)
-                {
-                    var content = await request.Content.ReadAsStringAsync();
-                    var model = JsonSerializer.Deserialize<Card>(content, new JsonSerializerOptions());
-                    Console.WriteLine("Cards found: " + model.Data.Count);
-                    var data = model.Data[0];
 
-                    return data;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch
-            {
-                throw new Exception(message: "ërror");
-            }
+        public async Task<Card> GetRandomCardAsync()
+        {
+            var client = CreateClient();
+            var response = await client.GetAsync(BaseUrl + "randomcard.php");
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+            // randomcard.php returns a single Card object directly, not wrapped in { data: [] }
+            return JsonSerializer.Deserialize<Card>(content, new JsonSerializerOptions());
         }
-        public async Task<List<string>> GetAllCardsIdsAsync() 
-        {
-            string url = "https://db.ygoprodeck.com/api/v7/cardinfo.php?";
 
-            var ygoClient = new HttpClient() { BaseAddress = new Uri(url) };
-            var request = await ygoClient.GetAsync(url);
-            if (request.IsSuccessStatusCode)
-            {
-                var content = await request.Content.ReadAsStringAsync();
-                var model = JsonSerializer.Deserialize<Card>(content, new JsonSerializerOptions());
-                Console.WriteLine("Cards found: " + model.Data.Count);
-                var idList = new List<string>();
-                foreach (var card in model.Data)
-                {
-                    idList.Add(card.CardId.ToString());
-                }
-                return idList;
-            }
-            else
-            {
-                return null;
-            }
-        }        
+        public async Task<List<string>> GetAllCardsIdsAsync()
+        {
+            var cards = await GetAllCardsAsync();
+            if (cards == null) return null;
+            var ids = new List<string>();
+            foreach (var card in cards)
+                ids.Add(card.CardId.ToString());
+            return ids;
+        }
     }
 }

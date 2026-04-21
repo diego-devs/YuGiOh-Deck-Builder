@@ -23,25 +23,12 @@ namespace YGODeckBuilder.API
             _ygoContext = ygoContext;
             _deckUtility = deckUtility;
         }
-        private static string SanitizeDeckName(string name)
-        {
-            if (string.IsNullOrWhiteSpace(name)) return null;
-            if (name.Length > 100) return null;
-            if (name.Contains("..") || name.Contains('/') || name.Contains('\\')) return null;
-            foreach (char c in name)
-            {
-                if (!char.IsLetterOrDigit(c) && c != ' ' && c != '-' && c != '_')
-                    return null;
-            }
-            return name;
-        }
-
         // Convert deck
         [HttpPost("convert")]
         public async Task<IActionResult> ConvertDeck(string deckPath, bool isYdk)
         {
             var deckFileName = Path.GetFileNameWithoutExtension(deckPath);
-            if (SanitizeDeckName(deckFileName) == null)
+            if (DeckUtility.SanitizeDeckName(deckFileName) == null)
                 return BadRequest("Invalid deck name.");
 
             try
@@ -69,9 +56,9 @@ namespace YGODeckBuilder.API
                     return Ok(ydkDeck);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return BadRequest($"Error converting deck: {ex.Message}");
+                return BadRequest("Error converting deck.");
             }
         }
     }

@@ -28,13 +28,7 @@ namespace YGODeckBuilder.Data
         public DbSet<BanlistInfo> CardsBanlist { get; set; }
         public DbSet<MiscInfo> MiscInfos { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer(@"Server=.\SQLEXPRESS;Database=YgoDB;Encrypt=True;TrustServerCertificate=True;Trusted_Connection=True;");
-            }
-        }
+
         public Card GetCard(int id)
         {
             return Cards.ElementAt(id);

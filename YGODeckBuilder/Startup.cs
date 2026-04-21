@@ -51,6 +51,7 @@ namespace YGODeckBuilder
             _logger.LogInformation("Card IDs File Path: {CardIdsFilePath}", cardIdsFilePath);
             _logger.LogInformation("Connection String configured: {HasConnectionString}", !string.IsNullOrEmpty(connectionString));
 
+            services.AddHttpClient("ygoprodeck");
             services.AddSingleton<ICardsProvider, YgoAPIProvider>();
 
             services.AddDbContext<YgoContext>(options => options.UseSqlServer(connectionString));
