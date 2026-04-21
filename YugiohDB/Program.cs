@@ -1,195 +1,155 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Runtime.CompilerServices;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading;
 using System.Threading.Tasks;
+using YGODeckBuilder.Data;
 using YGODeckBuilder.Data.EntityModels;
 
 namespace YugiohDB
 {
     public class Program
     {
-        public YGODeckBuilder.Data.YgoContext Context;
         public static async Task Main(string[] args)
         {
-            await MainApplication(); // Configure the cards database and locations
-
-            // Access configuration
             var configuration = new ConfigurationBuilder()
-                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory) 
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true) 
-                .Build(); 
+                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
+                .Build();
 
             var connectionString = configuration.GetConnectionString("YGODatabase");
-            var decksFolderPath = configuration.GetValue<string>("Paths:DecksFolderPath");
             var cardsLocalPath = configuration.GetValue<string>("Paths:CardIdsFilePath");
             var imagesLocalPath = configuration.GetValue<string>("Paths:ImagesFolder");
 
-            Console.WriteLine($"Connection String: {connectionString}");
-            Console.WriteLine($"Decks Folder Path: {decksFolderPath}");
+            if (string.IsNullOrWhiteSpace(connectionString) ||
+                string.IsNullOrWhiteSpace(cardsLocalPath) ||
+                string.IsNullOrWhiteSpace(imagesLocalPath))
+            {
+                Console.WriteLine("Missing required configuration (connection string / Paths). Check appsettings.json.");
+                return;
+            }
 
-            // change the paths from appsettings.json
-            
-            Console.WriteLine($"Cards Local Path: {cardsLocalPath}");
-            Console.WriteLine($"Images Local Path: {imagesLocalPath}");
+            Console.WriteLine($"Cards JSON path: {cardsLocalPath}");
+            Console.WriteLine($"Images folder: {imagesLocalPath}");
 
-            // Use this method to save the ydk files in the decks location to the YGO database
+            var dbOptions = new DbContextOptionsBuilder<YgoContext>()
+                .UseSqlServer(connectionString)
+                .Options;
 
-            // Use this Main method to download images and map the correct paths as you need or to test functionality. 
-            // MapCardData();
+            using var httpClient = new HttpClient();
 
-            // 1- Download and save all cards from API
-            //var allcards = await YGOProvider.GetAllCardsAsync();
-            //YgoProDeckTools.SaveCardsFile(allcards, cardsLocalPath);
+            while (true)
+            {
+                Console.WriteLine();
+                Console.WriteLine("==== YugiohDB Tool ====");
+                Console.WriteLine("[1] Download all cards from API → local JSON");
+                Console.WriteLine("[2] Download all card images (small, large, cropped)");
+                Console.WriteLine("[3] Map local image paths + banlist into cards JSON");
+                Console.WriteLine("[4] Push cards JSON into database");
+                Console.WriteLine("[5] Interactive card search");
+                Console.WriteLine("[Q] Quit");
+                Console.Write("> ");
 
-            //// 2- Load all cards from json file
-            //List<Card> localCards = YgoProDeckTools.ReadAllCards(cardsLocalPath);
-
-            //// 3- Download all images and images sizes *** developer todo: some cards have more than 1 image
-            //await YgoProDeckTools.DownloadImagesAsync(localCards, CardImageSize.Big);
-            //await YgoProDeckTools.DownloadImagesAsync(localCards, CardImageSize.Small);
-            //await YgoProDeckTools.DownloadImagesAsync(localCards, CardImageSize.Cropped);
-
-            //// 4- Map images to correct path in local machine
-            //var allCards = YgoProDeckTools.ReadAllCards(cardsLocalPath);
-            //YgoProDeckTools.MapImages(localCards, imagesLocalPath);
-
-            //YgoProDeckTools.SaveCardsFile(localCards, cardsLocalPath);
-
-            //// 5- Map banlist info
-            //var banlists = await YGOProvider.GetAllBanlistAsync();
-            //YgoProDeckTools.MapBanlistInfo(localCards, banlists);
-
-            //// 6- Save and overwrite modified cards to local folder
-            //YgoProDeckTools.SaveCardsFile(localCards, cardsLocalPath); 
-            //Console.WriteLine("All cards and images have been downloaded and mapped to text file in local path. ");
-
-            //// 7- Add all cards to database
-            //await YgoProDeckTools.AddAllCards(cardsLocalPath);
-
+                var choice = Console.ReadLine()?.Trim().ToLowerInvariant();
+                switch (choice)
+                {
+                    case "1":
+                        await DownloadAndSaveCards(cardsLocalPath);
+                        break;
+                    case "2":
+                        await DownloadAllImages(cardsLocalPath, imagesLocalPath, httpClient);
+                        break;
+                    case "3":
+                        await MapImagesAndBanlist(cardsLocalPath, imagesLocalPath);
+                        break;
+                    case "4":
+                        await YgoProDeckTools.AddAllCards(cardsLocalPath, dbOptions);
+                        break;
+                    case "5":
+                        await SearchApplication();
+                        break;
+                    case "q":
+                        Console.WriteLine("See ya!");
+                        return;
+                    default:
+                        Console.WriteLine("Unknown option.");
+                        break;
+                }
+            }
         }
-        private static async Task MainApplication()
+
+        private static async Task DownloadAndSaveCards(string cardsLocalPath)
         {
-            // The objective of this console application is to setup the cards database and correctly link and map all 
-            // images, banlist and any needed card info correctly both into a json file and into the YGO database
+            var allCards = await YGOProvider.GetAllCardsAsync();
+            if (allCards == null)
+            {
+                Console.WriteLine("Failed to fetch cards from API.");
+                return;
+            }
+            YgoProDeckTools.SaveCardsFile(allCards, cardsLocalPath);
+        }
 
-            // Main application should present options to user
+        private static async Task DownloadAllImages(string cardsLocalPath, string imagesLocalPath, HttpClient client)
+        {
+            if (!File.Exists(cardsLocalPath))
+            {
+                Console.WriteLine($"Cards JSON not found at {cardsLocalPath}. Run [1] first.");
+                return;
+            }
+            var localCards = YgoProDeckTools.ReadAllCards(cardsLocalPath);
+            await YgoProDeckTools.DownloadImagesAsync(localCards, CardImageSize.Large, imagesLocalPath, client);
+            await YgoProDeckTools.DownloadImagesAsync(localCards, CardImageSize.Small, imagesLocalPath, client);
+            await YgoProDeckTools.DownloadImagesAsync(localCards, CardImageSize.Cropped, imagesLocalPath, client);
+        }
 
-            // 1. Get all ygo cards from api
-                // 1. Fetch get all cards from api 
-                // 2. Save them into the json file in local 
+        private static async Task MapImagesAndBanlist(string cardsLocalPath, string imagesLocalPath)
+        {
+            if (!File.Exists(cardsLocalPath))
+            {
+                Console.WriteLine($"Cards JSON not found at {cardsLocalPath}. Run [1] first.");
+                return;
+            }
+            var localCards = YgoProDeckTools.ReadAllCards(cardsLocalPath);
+            YgoProDeckTools.MapImages(localCards, imagesLocalPath);
 
-            // 2. Images-  download all images in all sizes. Some cards will have more than 1
-            // 3. Map all images correctly in the DB and save mapped cards into json file
-            // 4. Map Banlist info for all cards and save cards to json file
+            var banlists = await YGOProvider.GetAllBanlistAsync();
+            if (banlists != null)
+                YgoProDeckTools.MapBanlistInfo(localCards, banlists);
 
-            // 5. Save {allCards} json file into the database
+            YgoProDeckTools.SaveCardsFile(localCards, cardsLocalPath);
+            Console.WriteLine("Cards JSON updated with image paths + banlist.");
         }
 
         private static async Task SearchApplication()
         {
-            Console.BackgroundColor = ConsoleColor.DarkBlue;
-
-            Console.WriteLine($"YGO DB CARD SEARCH");
-            Console.WriteLine("Welcome");
-            Console.WriteLine("This tool will help you locate any card or element allocated in your local YuGiOh DB");
-
-        START:
-
-            Console.WriteLine("Type your search for a card");
-
-            var userSearch = Console.ReadLine().ToString();
-            var search = await YGOProvider.SearchAsync(userSearch);
-
-            if (search != null)
+            Console.WriteLine("---- Card Search ----");
+            while (true)
             {
+                Console.Write("Search (empty to quit): ");
+                var userSearch = Console.ReadLine();
+                if (string.IsNullOrWhiteSpace(userSearch)) return;
+
+                var search = await YGOProvider.SearchAsync(userSearch);
+                if (search?.Data == null || !search.Data.Any())
+                {
+                    Console.WriteLine("No results.");
+                    continue;
+                }
+
                 foreach (var c in search.Data)
                 {
-                    Console.WriteLine($"Card found:");
                     Console.WriteLine($"Name: {c.Name}");
                     Console.WriteLine($"Type: {c.Type}");
-                    if (c.MiscInfo != null)
-                    {
-                        Console.WriteLine($"tcg Year: {c.MiscInfo.First().TcgDate}");
-                    }
-                    Console.WriteLine($"Price: {c.CardPrices.First().TcgPlayer.ToString()}");
+                    var tcgDate = c.MiscInfo?.FirstOrDefault()?.TcgDate;
+                    if (tcgDate != null) Console.WriteLine($"TCG Year: {tcgDate}");
+                    var price = c.CardPrices?.FirstOrDefault()?.TcgPlayer;
+                    Console.WriteLine($"Price: {price ?? "N/A"}");
+                    Console.WriteLine();
                 }
             }
-
-            Console.BackgroundColor = ConsoleColor.DarkBlue;
-            Console.WriteLine("Search again? y/n ");
-            Console.WriteLine("Quit program: q/Q");
-            Console.ResetColor();
-
-
-            char r = Console.ReadKey().KeyChar;
-            if (r == 'Y' || r == 'y')
-            {
-                goto START;
-            }
-            else if (r == 'N' || r == 'n')
-            {
-                QuitProgram();
-            }
-            else if (r == 'q' || r == 'Q')
-            {
-                QuitProgram();
-            }
-            else
-            {
-                Console.WriteLine("Incorrect answer");
-            }
         }
-        private static void QuitProgram()
-        {
-            Console.WriteLine("See ya!");
-            Environment.Exit(0);
-        }
-        /// <summary>
-        /// For mapping correctly the database to a EF object. Database is not all related. 
-        /// Maybe this should run only when loading the database and only once. Singleton pattern? 
-        /// </summary>
-        private static void MapCardData()
-        {
-            using (var context = new YGODeckBuilder.Data.YgoContext())
-            {
-                var AllCards = new List<Card>(context.Cards);
-                var AllImages = new List<CardImages>(context.CardImages);
-                var AllSets = new List<CardSet>(context.CardSets);
-                var AllPrices = new List<CardPrices>(context.CardPrices);
-
-                foreach (var Card in AllCards)
-                {
-                    Card.CardImages = new List<CardImages>(AllImages.Where(c => c.CardImageId == Card.KonamiCardId)) { };
-                    Card.CardSets = new List<CardSet>(AllSets.Where(c => c.CardId == Card.CardId));
-                    Card.CardPrices = new List<CardPrices>(AllPrices.Where(c => c.CardId == Card.CardId));
-
-                }
-                context.Cards.UpdateRange(AllCards);
-                context.SaveChanges();
-               
-            }
-        }
-        private static void UpdateCardDatabase() 
-        {
-            // get all cards from ygoprodeck api provider
-            // compare our database context against those cards retrieved from API
-            // identify the new cards and isolate them
-            // get the new images of these new cards
-            // map the new images correctly in local
-            // map the banlist of new cards 
-            // add new cards to context
-            // get all cards from context and compare again against the ygoprodeck file
-        }
-    
     }
-    
 }
