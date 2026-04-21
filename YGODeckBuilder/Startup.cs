@@ -42,7 +42,8 @@ namespace YGODeckBuilder
             services.AddHttpClient("ygoprodeck");
             services.AddSingleton<ICardsProvider, YgoAPIProvider>();
 
-            services.AddDbContext<YgoContext>(options => options.UseSqlServer(connectionString));
+            services.AddDbContext<YgoContext>(options =>
+                options.UseSqlServer(connectionString, sql => sql.MigrationsAssembly("YugiohDB")));
 
             services.AddRazorPages();
            

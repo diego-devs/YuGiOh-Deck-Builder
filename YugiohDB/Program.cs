@@ -53,7 +53,9 @@ namespace YugiohDB
                 Console.WriteLine("[Q] Quit");
                 Console.Write("> ");
 
-                var choice = Console.ReadLine()?.Trim().ToLowerInvariant();
+                var input = Console.ReadLine();
+                if (input == null) return; // stdin closed (e.g. launched by EF tooling)
+                var choice = input.Trim().ToLowerInvariant();
                 switch (choice)
                 {
                     case "1":
