@@ -11,7 +11,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using YGODeckBuilder.Data;
 using YGODeckBuilder.DataProviders;
 using YGODeckBuilder.Interfaces;
@@ -20,12 +19,9 @@ namespace YGODeckBuilder
 {
     public class Startup
     {
-        private readonly ILogger<Startup> _logger;
-
-        public Startup(IConfiguration configuration, ILogger<Startup> logger)
+        public Startup(IConfiguration configuration)
         {
-            Configuration = configuration; // appsettings.json
-            _logger = logger;
+            Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
@@ -41,15 +37,7 @@ namespace YGODeckBuilder
             services.AddHttpContextAccessor();
             services.AddSession();
 
-            // Access configuration values
-            var decksFolderPath = Configuration["Paths:DecksFolderPath"];
-            var cardIdsFilePath = Configuration["Paths:CardIdsFilePath"];
             var connectionString = Configuration["ConnectionStrings:YGODatabase"];
-
-            // Use the configuration values as needed
-            _logger.LogInformation("Decks Folder Path: {DecksFolderPath}", decksFolderPath);
-            _logger.LogInformation("Card IDs File Path: {CardIdsFilePath}", cardIdsFilePath);
-            _logger.LogInformation("Connection String configured: {HasConnectionString}", !string.IsNullOrEmpty(connectionString));
 
             services.AddHttpClient("ygoprodeck");
             services.AddSingleton<ICardsProvider, YgoAPIProvider>();
