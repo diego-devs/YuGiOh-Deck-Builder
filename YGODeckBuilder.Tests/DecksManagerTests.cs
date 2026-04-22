@@ -15,7 +15,7 @@ namespace YGODeckBuilder.Tests
     public class DecksManagerTests
     {
         [Fact]
-        public void OnGet_LoadsDecksPreview()
+        public async Task OnGetAsync_LoadsDecksPreview()
         {
             // Arrange
             var mockContext = new Mock<YgoContext>();
@@ -29,7 +29,7 @@ namespace YGODeckBuilder.Tests
             var decksManager = new DecksManager(mockContext.Object, mockConfig.Object, mockDeckUtility.Object);
 
             // Act
-            decksManager.OnGet();
+            await decksManager.OnGetAsync();
 
             // Assert
             Assert.NotNull(decksManager.Decks);
