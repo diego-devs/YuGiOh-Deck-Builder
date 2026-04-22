@@ -34,44 +34,74 @@ namespace YugiohDB
             Directory.CreateDirectory(localFolder);
 
             int total = cards.Sum(c => c.CardImages?.Count ?? 0);
+            int processed = 0;
             int downloaded = 0;
+            int skipped = 0;
             int failed = 0;
 
-            foreach (var card in cards)
+            try
             {
-                if (card.CardImages == null) continue;
-
-                foreach (var img in card.CardImages)
+                foreach (var card in cards)
                 {
-                    string url = size switch
-                    {
-                        CardImageSize.Small => img.ImageUrlSmall,
-                        CardImageSize.Large => img.ImageUrl,
-                        CardImageSize.Cropped => img.ImageUrlCropped,
-                        _ => null
-                    };
-                    if (string.IsNullOrEmpty(url)) continue;
+                    if (card.CardImages == null) continue;
 
-                    string localPath = Path.Combine(localFolder, $"{card.KonamiCardId}.jpg");
-                    try
+                    foreach (var img in card.CardImages)
                     {
-                        using var response = await client.GetAsync(url);
-                        response.EnsureSuccessStatusCode();
-                        using var contentStream = await response.Content.ReadAsStreamAsync();
-                        using var fileStream = new FileStream(localPath, FileMode.Create);
-                        await contentStream.CopyToAsync(fileStream);
-                        downloaded++;
-                        if (downloaded % 50 == 0)
-                            Console.WriteLine($"[{downloaded}/{total}] {size} images downloaded");
-                    }
-                    catch (Exception ex)
-                    {
-                        failed++;
-                        Console.WriteLine($"Failed {url}: {ex.Message}");
+                        processed++;
+                        string url = size switch
+                        {
+                            CardImageSize.Small => img.ImageUrlSmall,
+                            CardImageSize.Large => img.ImageUrl,
+                            CardImageSize.Cropped => img.ImageUrlCropped,
+                            _ => null
+                        };
+                        if (string.IsNullOrEmpty(url)) continue;
+
+                        // Filename must match MapImages: {CardImageId}.jpg — using card.KonamiCardId
+                        // collapses every alt-art onto the same file.
+                        string localPath = Path.Combine(localFolder, $"{img.CardImageId}.jpg");
+
+                        var existing = new FileInfo(localPath);
+                        if (existing.Exists && existing.Length > 0)
+                        {
+                            skipped++;
+                            continue;
+                        }
+
+                        // Download to .tmp and rename on success so an interrupted run
+                        // doesn't leave a zero-byte or truncated file that looks complete.
+                        string tempPath = localPath + ".tmp";
+                        try
+                        {
+                            using (var response = await client.GetAsync(url))
+                            {
+                                response.EnsureSuccessStatusCode();
+                                using var contentStream = await response.Content.ReadAsStreamAsync();
+                                using var fileStream = new FileStream(tempPath, FileMode.Create, FileAccess.Write, FileShare.None);
+                                await contentStream.CopyToAsync(fileStream);
+                            }
+                            if (File.Exists(localPath)) File.Delete(localPath);
+                            File.Move(tempPath, localPath);
+                            downloaded++;
+                            if (downloaded % 50 == 0)
+                                Console.WriteLine($"[{processed}/{total}] {size} — {downloaded} downloaded, {skipped} skipped, {failed} failed");
+                        }
+                        catch (Exception ex)
+                        {
+                            failed++;
+                            try { if (File.Exists(tempPath)) File.Delete(tempPath); } catch { /* best-effort cleanup */ }
+                            Console.WriteLine($"Failed {url}: {ex.Message}");
+                        }
                     }
                 }
             }
-            Console.WriteLine($"Completed {size}: {downloaded}/{total} downloaded, {failed} failed → {localFolder}");
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Download loop aborted after {processed}/{total}: {ex.GetType().Name}: {ex.Message}");
+                throw;
+            }
+
+            Console.WriteLine($"Completed {size}: {downloaded} downloaded, {skipped} skipped, {failed} failed of {total} → {localFolder}");
         }
 
         public static void SaveCardsFile(List<Card> cards, string path)

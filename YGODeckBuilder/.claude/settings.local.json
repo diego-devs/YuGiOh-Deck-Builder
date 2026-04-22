@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet build *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(powershell -ExecutionPolicy Bypass -File \"C:/Users/Diego/Documents/GitHub/YuGiOh-Deck-Builder/setup-database.ps1\")",
+      "Bash(dotnet ef *)",
+      "Bash(powershell *)"
+    ]
+  }
+}
