@@ -35,7 +35,7 @@ namespace YGODeckBuilder.Pages
                 Card = card;
                 return Page();
             }
-            return RedirectToPage("Index");
+            return RedirectToPage("MainPage");
         }
         
 

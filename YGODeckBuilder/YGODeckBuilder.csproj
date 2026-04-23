@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="API\Handlers\" />
     <Folder Include="Data\SharedData\" />
   </ItemGroup>
 

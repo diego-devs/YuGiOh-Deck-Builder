@@ -266,7 +266,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const cardCopies = getCardCopiesInDeck(droppedCard.id);
                 const maxAllowedCopies = 3; 
                 if (cardCopies >= maxAllowedCopies) {
-                    window.alert(`Invalid drop: You can't add more than ${maxAllowedCopies} copies of "${droppedCard.name}" to the ${dropDeckType}.`);
+                    showToast(`Invalid drop: You can't add more than ${maxAllowedCopies} copies of "${droppedCard.name}" to the ${dropDeckType}.`, 'error');
                     return;
 
                 }
@@ -281,7 +281,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             });
                         } else {
                             // Display an error message or prevent the card from being added to Main Deck
-                            window.alert('Invalid drop: Card Type: ' + cardType + ' cannot be added to Main Deck.');
+                            showToast('Invalid drop: Card Type: ' + cardType + ' cannot be added to Main Deck.', 'error');
                         }
                         break;
                     case 'ExtraDeck':
@@ -293,7 +293,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             });          
                         } else {
                             // Display an error message or prevent the card from being added to Extra Deck
-                            window.alert('Invalid drop: Card Type: ' + cardType + ' cannot be added to Extra Deck.');
+                            showToast('Invalid drop: Card Type: ' + cardType + ' cannot be added to Extra Deck.', 'error');
                         }
                         break;
                     case 'SideDeck':
@@ -306,7 +306,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         } 
                         else {
                             // Display an error message or prevent the card from being added to Side Deck
-                            window.alert('Invalid drop: Card Type: ' + cardType + ' cannot be added to Side Deck.');
+                            showToast('Invalid drop: Card Type: ' + cardType + ' cannot be added to Side Deck.', 'error');
                         }
                         break;
                     default:
@@ -418,10 +418,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     function dragOver(event) {
         event.preventDefault();
-        console.log("card:" + event.srcElement.id);
-        console.log("draggin over: " + event.target.id);
-        // // Add the 'dragover' class to the container when dragging over it
-        // event.currentTarget.classList.add('dragover');
+        event.currentTarget.classList.add('dragover');
     }
     function dragLeave(event) {
         // Remove the 'dragover' class from the container when leaving
@@ -488,20 +485,12 @@ document.addEventListener('DOMContentLoaded', function () {
     // Saving deck. Making call to C# server
     // AJAX Call to our C# API to save the deck correctly 
     function saveDeckToApi() {
-        // Get the current deck data
-        //const mainDeckData = JSON.stringify(deck.getMainDeck());
-        //const extraDeckData = JSON.stringify(deck.getExtraDeck());
-        //const sideDeckData = JSON.stringify(deck.getSideDeck());
+        const saveBtn = document.getElementById('saveDeckButton');
+        if (saveBtn) {
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+        }
 
-        // Create an object to hold the deck data
-        const deckData = {
-            deck_name: deck.deck_name,
-            main_deck: deck.getMainDeck(),
-            extra_deck: deck.getExtraDeck(),
-            side_deck: deck.getSideDeck(),
-        };
-
-        // Send the deck data to the server
         fetch('/api/decks/save', {
             method: 'POST',
             headers: {
@@ -511,18 +500,19 @@ document.addEventListener('DOMContentLoaded', function () {
         })
             .then(response => {
                 if (response.ok) {
-                    // Handle success (e.g., show a success message)
-                    console.log('Deck saved successfully');
-                    // Reload the page
-                    location.reload();
+                    showToast('Deck saved successfully.', 'success');
                 } else {
-                    // Handle errors (e.g., show an error message)
-                    console.error('Failed response from the server. The deck was not saved.');
+                    showToast('Failed to save the deck. Please try again.', 'error');
                 }
             })
             .catch(error => {
-                // Handle network errors
-                console.error('Network error:', error);
+                showToast('Network error while saving deck.', 'error');
+            })
+            .finally(() => {
+                if (saveBtn) {
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = 'Save';
+                }
             });
     }
     function addListenersToButtons() {

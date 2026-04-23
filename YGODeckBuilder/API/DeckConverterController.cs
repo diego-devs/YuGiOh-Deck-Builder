@@ -27,10 +27,14 @@ namespace YGODeckBuilder.API
         [HttpPost("convert")]
         public async Task<IActionResult> ConvertDeck(string deckPath, bool isYdk)
         {
+            var deckFileName = Path.GetFileNameWithoutExtension(deckPath);
+            if (DeckUtility.SanitizeDeckName(deckFileName) == null)
+                return BadRequest("Invalid deck name.");
+
             try
             {
-                string outputPath = Path.Combine(_configuration["Paths:DecksFolderPath"], 
-                    Path.GetFileNameWithoutExtension(deckPath));
+                string outputPath = Path.Combine(_configuration["Paths:DecksFolderPath"],
+                    deckFileName);
 
                 if (isYdk) // convert YDK to JSON
                 {
@@ -52,9 +56,9 @@ namespace YGODeckBuilder.API
                     return Ok(ydkDeck);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return BadRequest($"Error converting deck: {ex.Message}");
+                return BadRequest("Error converting deck.");
             }
         }
     }

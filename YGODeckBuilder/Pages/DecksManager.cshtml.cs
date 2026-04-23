@@ -28,11 +28,12 @@ namespace YGODeckBuilder.Pages
             _configuration = configuration;
             Decks = new List<DeckPreview>();
             _deckUtility = deckUtility;
+
         }
 
-        public void OnGet()
+        public async Task OnGetAsync()
         {
-            Decks = _deckUtility.LoadDecksPreview();
+            Decks = await Task.Run(() => _deckUtility.LoadDecksPreview());
         }
     }
 }

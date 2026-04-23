@@ -1,143 +1,208 @@
+// ---- DOM helpers ----
+function createDeckItemHtml(deckName) {
+    var escaped = deckName.replace(/'/g, "\\'");
+    var encoded = encodeURIComponent(deckName);
+    return '<div class="list-group-item d-flex justify-content-between align-items-center bg-dark border-light" data-deck-name="' + deckName + '">' +
+        '<a href="/DeckBuilder?DeckFileName=' + encoded + '" class="text-white text-uppercase">' + deckName + '</a>' +
+        '<div class="btn-group" role="group" aria-label="Deck Actions">' +
+        '<a class="btn btn-primary mr-1" href="/DeckBuilder?DeckFileName=' + encoded + '">Edit</a>' +
+        '<button type="button" class="btn btn-success mr-1" onclick="duplicateDeck(\'' + escaped + '\')">Duplicate</button>' +
+        '<button type="button" class="btn btn-warning mr-1" onclick="showRenameModal(\'' + escaped + '\')">Rename</button>' +
+        '<button type="button" class="btn btn-danger" onclick="showDeleteConfirm(\'' + escaped + '\')">Delete</button>' +
+        '</div></div>';
+}
+
+function getDeckList() { return document.getElementById('deckList'); }
+function getEmptyMsg() { return document.getElementById('emptyDeckMessage'); }
+
+function syncEmptyState() {
+    var list = getDeckList();
+    var empty = getEmptyMsg();
+    if (!list || !empty) return;
+    var hasItems = list.querySelectorAll('[data-deck-name]').length > 0;
+    list.style.display = hasItems ? '' : 'none';
+    empty.style.display = hasItems ? 'none' : '';
+}
+
+// ---- Deck actions ----
 function duplicateDeck(deckName) {
     fetch('/api/decks/duplicate', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(deckName)
     })
-        .then(response => {
+        .then(function (response) {
             if (response.ok) {
-                console.log('Deck saved successfully');
-                location.reload();
+                var copyName = 'Copy_' + deckName;
+                var list = getDeckList();
+                if (list) {
+                    list.insertAdjacentHTML('beforeend', createDeckItemHtml(copyName));
+                }
+                syncEmptyState();
+                showToast('Deck duplicated successfully.', 'success');
             } else {
-                console.error('Failed response from the server. The deck was not saved.');
+                showToast('Failed to duplicate deck.', 'error');
             }
         })
-        .catch(error => {
-            console.error('Error:', error);
-            // Handle network errors
-            console.error('Network error:', error);
-            alert('Error duplicating deck.');
+        .catch(function (error) {
+            showToast('Error duplicating deck.', 'error');
         });
 }
+
 function showLoadInput() {
-    // Simulate clicking the hidden file input
     document.getElementById('deckFileInput').click();
 }
+
 function loadDeck(event) {
-    const file = event.target.files[0];
+    var file = event.target.files[0];
     if (!file) {
-        alert('No file selected.');
+        showToast('No file selected.', 'error');
         return;
     }
     if (!file.name.endsWith('.ydk')) {
-        alert('Invalid file type. Please select a .ydk file.');
+        showToast('Invalid file type. Please select a .ydk file.', 'error');
         return;
     }
 
-    const reader = new FileReader();
+    var reader = new FileReader();
     reader.onload = function (e) {
-        const fileContent = e.target.result; // File content
-        const fileName = file.name; // File name (e.g., "myDeck.ydk")
+        var fileContent = e.target.result;
+        var fileName = file.name;
 
         fetch('/api/decks/load', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                DeckName: fileName,
-                DeckContent: fileContent,
-            }),
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ DeckName: fileName, DeckContent: fileContent }),
         })
-            .then(response => {
+            .then(function (response) {
                 if (response.ok) {
-                    alert('Deck loaded successfully!');
+                    showToast('Deck loaded successfully!', 'success');
                     location.reload();
                 } else {
-                    alert('Failed to load the deck.');
+                    showToast('Failed to load the deck.', 'error');
                 }
             })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while loading the deck.');
+            .catch(function (error) {
+                showToast('An error occurred while loading the deck.', 'error');
             });
     };
-
     reader.readAsText(file);
 }
-function showRenameInput(deckName) {
-    const newDeckName = prompt("Enter new deck name:", deckName);
-    if (newDeckName !== null) { // Check if the user clicked Cancel
-        renameDeck(deckName, newDeckName);
-    }
+
+// ---- Rename (modal-based) ----
+var _renamingDeckName = null;
+
+function showRenameModal(deckName) {
+    _renamingDeckName = deckName;
+    var input = document.getElementById('renameInput');
+    if (input) input.value = deckName;
+    $('#renameModal').modal('show');
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    var confirmRenameBtn = document.getElementById('confirmRenameBtn');
+    if (confirmRenameBtn) {
+        confirmRenameBtn.addEventListener('click', function () {
+            var newName = document.getElementById('renameInput').value.trim();
+            if (newName && _renamingDeckName) {
+                $('#renameModal').modal('hide');
+                renameDeck(_renamingDeckName, newName);
+            }
+        });
+    }
+
+    var confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener('click', function () {
+            $('#deleteModal').modal('hide');
+            if (_deletingDeckName) {
+                deleteDeckConfirmed(_deletingDeckName);
+            }
+        });
+    }
+});
+
 function renameDeck(oldDeckName, newDeckName) {
-    const requestData = { oldDeckName: oldDeckName, newDeckName: newDeckName };
-    fetch('/api/DecksManager/rename', {
+    var requestData = { oldDeckName: oldDeckName, newDeckName: newDeckName };
+    fetch('/api/decks/rename', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestData)
     })
-        .then(response => {
+        .then(function (response) {
             if (response.ok) {
-                location.reload(); // Refresh the page on success
+                var item = document.querySelector('[data-deck-name="' + oldDeckName + '"]');
+                if (item) {
+                    item.outerHTML = createDeckItemHtml(newDeckName);
+                }
+                showToast('Deck renamed successfully.', 'success');
             } else {
-                alert('Error renaming deck.');
+                showToast('Error renaming deck.', 'error');
             }
         })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error renaming deck.');
+        .catch(function (error) {
+            showToast('Error renaming deck.', 'error');
         });
 }
-function deleteDeck(deckName) {
+
+// ---- Delete (modal-based) ----
+var _deletingDeckName = null;
+
+function showDeleteConfirm(deckName) {
+    _deletingDeckName = deckName;
+    var display = document.getElementById('deleteDeckNameDisplay');
+    if (display) display.textContent = deckName;
+    $('#deleteModal').modal('show');
+}
+
+function deleteDeckConfirmed(deckName) {
     fetch('/api/decks/delete', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(deckName)
     })
-        .then(response => {
+        .then(function (response) {
             if (response.ok) {
-                location.reload(); 
+                var item = document.querySelector('[data-deck-name="' + deckName + '"]');
+                if (item) item.remove();
+                syncEmptyState();
+                showToast('Deck deleted.', 'success');
             } else {
-                alert('Error deleting deck.');
+                showToast('Error deleting deck.', 'error');
             }
         })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error deleting deck.');
+        .catch(function (error) {
+            showToast('Error deleting deck.', 'error');
         });
 }
+
+// ---- New deck ----
 function showNewDeckInput(deckName) {
-    const newDeckName = prompt("Enter new deck name:", deckName);
-    if (newDeckName !== null) { // Check if the user clicked Cancel
+    var newDeckName = prompt("Enter new deck name:", deckName);
+    if (newDeckName !== null) {
         newDeck(newDeckName);
     }
 }
+
 function newDeck(newDeckName) {
-    console.log('test');
     fetch('/api/decks/new', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newDeckName)
     })
-        .then(response => {
+        .then(function (response) {
             if (response.ok) {
-                location.reload();
+                var list = getDeckList();
+                if (list) {
+                    list.insertAdjacentHTML('beforeend', createDeckItemHtml(newDeckName));
+                }
+                syncEmptyState();
+                showToast('Deck created successfully.', 'success');
             } else {
-                alert('Error creating new deck.');
+                showToast('Error creating new deck.', 'error');
             }
         })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error creating new deck.');
+        .catch(function (error) {
+            showToast('Error creating new deck.', 'error');
         });
 }

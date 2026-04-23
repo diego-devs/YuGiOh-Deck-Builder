@@ -1,15 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Runtime.CompilerServices;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading;
 using System.Threading.Tasks;
 using YGODeckBuilder.Data;
 using YGODeckBuilder.Data.EntityModels;
@@ -18,306 +13,145 @@ namespace YugiohDB
 {
     public class Program
     {
-        public YGODeckBuilder.Data.YgoContext Context;
         public static async Task Main(string[] args)
         {
-            string option = DisplayWelcomeScreen();
-            bool exitRequested = false;
-
-            while (!exitRequested)
-            {
-                switch (option)
-                {
-                    case "1":
-                        await MainApplication();
-                        break;
-
-                    case "2":
-                        await HandleConfigurationOptions();
-                        break;
-
-                    case "q":
-                    case "Q":
-                        exitRequested = true;
-                        Console.WriteLine("Exiting the program...");
-                        break;
-
-                    default:
-                        Console.WriteLine("Invalid option selected. Try again.");
-                        break;
-                }
-            }
-        }
-        private static async Task HandleConfigurationOptions()
-        {
-            var _configuration = SetupConfiguration();
-            bool returnToMain = false;
-
-            while (!returnToMain)
-            {
-                string configOption = DisplayConfigurationOptions();
-
-                switch (configOption)
-                {
-                    case "1":
-                        Console.WriteLine("Downloading and saving all cards...");
-                        var allCards = await YGOProvider.GetAllCardsAsync();
-                        ApiDatabaseHelper.SaveCardsFile(allCards, _configuration.CardsLocalPath);
-                        Console.WriteLine("✅ Cards saved successfully.");
-                        break;
-
-                    case "2":
-                        Console.WriteLine("Downloading and mapping card images...");
-                        var localCards = ApiDatabaseHelper.ReadAllCards(_configuration.CardsLocalPath);
-                        await ApiDatabaseHelper.DownloadImagesAsync(localCards, CardImageSize.Big, _configuration.ImagesLocalPath);
-                        await ApiDatabaseHelper.DownloadImagesAsync(localCards, CardImageSize.Small, _configuration.ImagesSmall);
-                        await ApiDatabaseHelper.DownloadImagesAsync(localCards, CardImageSize.Cropped, _configuration.ImagesCropped);
-                        ApiDatabaseHelper.MapImages(localCards, _configuration.ImagesLocalPath);
-                        Console.WriteLine("✅ Images mapped successfully.");
-                        break;
-
-                    case "3":
-                        Console.WriteLine("Mapping banlist information...");
-                        var cards = ApiDatabaseHelper.ReadAllCards(_configuration.CardsLocalPath);
-                        var banlists = await YGOProvider.GetAllBanlistAsync();
-                        ApiDatabaseHelper.MapBanlistInfo(cards, banlists);
-                        ApiDatabaseHelper.SaveCardsFile(cards, _configuration.CardsLocalPath);
-                        Console.WriteLine("✅ Banlist info mapped successfully.");
-                        break;
-
-                    case "4":
-                        Console.WriteLine("Mapping card data...");
-                        ApiDatabaseHelper.MapCardData();
-                        Console.WriteLine("✅ Card data mapped successfully.");
-                        break;
-
-                    case "5":
-                        Console.WriteLine("Saving cards to database...");
-                        var cardsToSave = ApiDatabaseHelper.ReadAllCards(_configuration.CardsLocalPath);
-                        await ApiDatabaseHelper.AddCardsToDatabaseAsync(_configuration.CardsLocalPath);
-                        using (var context = new YgoContext())
-                        {
-                            await context.Database.EnsureCreatedAsync();
-                            await context.Cards.AddRangeAsync(cardsToSave);
-                            await context.SaveChangesAsync();
-                        }
-                        Console.WriteLine("✅ Cards saved to DB successfully.");
-                        break;
-
-                    case "b":
-                    case "B":
-                        returnToMain = true;
-                        break;
-
-                    default:
-                        Console.WriteLine("❌ Invalid option. Please try again.");
-                        break;
-                }
-
-                if (!returnToMain)
-                {
-                    Console.WriteLine("\nPress Enter to return to Configuration Options...");
-                    Console.ReadLine();
-                }
-            }
-        }
-
-        private static async Task RunDevelopmentTasks(ConfigurationStructure _configuration)
-        {
-            // Legacy development tasks> 
-            // 1- Download and save all cards from API
-            //var allcards = await YGOProvider.GetAllCardsAsync();
-            //YgoProDeckTools.SaveCardsFile(allcards, cardsLocalPath);
-
-            //// 2- Load all cards from json file
-            //List<Card> localCards = YgoProDeckTools.ReadAllCards(cardsLocalPath);
-
-            //// 3- Download all images and images sizes *** developer todo: some cards have more than 1 image
-            //await YgoProDeckTools.DownloadImagesAsync(localCards, CardImageSize.Big);
-            //await YgoProDeckTools.DownloadImagesAsync(localCards, CardImageSize.Small);
-            //await YgoProDeckTools.DownloadImagesAsync(localCards, CardImageSize.Cropped);
-
-            //// 4- Map images to correct path in local machine
-            //var allCards = YgoProDeckTools.ReadAllCards(cardsLocalPath);
-            //YgoProDeckTools.MapImages(localCards, imagesLocalPath);
-
-            //YgoProDeckTools.SaveCardsFile(localCards, cardsLocalPath);
-            //// 5- Map banlist info
-            //var banlists = await YGOProvider.GetAllBanlistAsync();
-            //YgoProDeckTools.MapBanlistInfo(localCards, banlists);
-             //// 6- Save and overwrite modified cards to local folder
-            //YgoProDeckTools.SaveCardsFile(localCards, cardsLocalPath); 
-            //Console.WriteLine("All cards and images have been downloaded and mapped to text file in local path. ");
-            var allcards = await YGOProvider.GetAllCardsAsync();
-            ApiDatabaseHelper.SaveCardsFile(allcards, _configuration.CardsLocalPath);
-            
-            List<Card> localCards = ApiDatabaseHelper.ReadAllCards(_configuration.CardsLocalPath);
-
-            await ApiDatabaseHelper.DownloadImagesAsync(localCards, CardImageSize.Big, _configuration.CardsLocalPath);
-            await ApiDatabaseHelper.DownloadImagesAsync(localCards, CardImageSize.Small, _configuration.CardsLocalPath);
-            await ApiDatabaseHelper.DownloadImagesAsync(localCards, CardImageSize.Cropped, _configuration.CardsLocalPath);
-
-            ApiDatabaseHelper.MapCardData();
-        }
-
-        private static ConfigurationStructure SetupConfiguration()
-        {
-            // Access configuration
-            var config = new ConfigurationBuilder()
+            var configuration = new ConfigurationBuilder()
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
                 .Build();
 
-            var connectionString = config.GetConnectionString("YGODatabase");
-            var decksFolderPath = config.GetValue<string>("Paths:DecksFolderPath");
-            var cardsLocalPath = config.GetValue<string>("Paths:CardIdsFilePath");
-            var imagesLocalPath = config.GetValue<string>("Paths:ImagesFolder");
-            var imagesSmall = config.GetValue<string>("Paths:ImagesSmall");
-            var imagesCropped = config.GetValue<string>("Paths:ImagesCropped");
+            var connectionString = configuration.GetConnectionString("YGODatabase");
+            var cardsLocalPath = configuration.GetValue<string>("Paths:CardIdsFilePath");
+            var imagesLocalPath = configuration.GetValue<string>("Paths:ImagesFolder");
 
-            var configuration = new ConfigurationStructure(connectionString, decksFolderPath, cardsLocalPath, imagesLocalPath, imagesSmall, imagesCropped);
-            // To do: Use dotnet ILogger instead
-            LogConfiguration(connectionString, decksFolderPath, cardsLocalPath, imagesLocalPath, imagesSmall, imagesCropped);
-
-            return configuration;
-
-            static void LogConfiguration(string connectionString, string decksFolderPath, string cardsLocalPath, string imagesLocalPath, string imagesSmall, string imagesCropped)
+            if (string.IsNullOrWhiteSpace(connectionString) ||
+                string.IsNullOrWhiteSpace(cardsLocalPath) ||
+                string.IsNullOrWhiteSpace(imagesLocalPath))
             {
-                Console.WriteLine($"Connection String: {connectionString}");
-                Console.WriteLine($"Decks Folder Path: {decksFolderPath}");
-                Console.WriteLine($"Cards Local Path: {cardsLocalPath}");
-                Console.WriteLine($"Images Local Path: {imagesLocalPath}");
+                Console.WriteLine("Missing required configuration (connection string / Paths). Check appsettings.json.");
+                return;
             }
-        }
-        private static async Task MainApplication()
-        {
-            Console.BackgroundColor = ConsoleColor.DarkBlue;
 
-            Console.WriteLine($"YGO DB CARD SEARCH");
-            Console.WriteLine("Welcome");
-            Console.WriteLine("This tool will help you locate data for any card or element allocated in your local YuGiOh Database");
+            Console.WriteLine($"Cards JSON path: {cardsLocalPath}");
+            Console.WriteLine($"Images folder: {imagesLocalPath}");
 
-            START:
+            var dbOptions = new DbContextOptionsBuilder<YgoContext>()
+                .UseSqlServer(connectionString)
+                .Options;
 
-            Console.WriteLine("Type your search for a card");
+            using var httpClient = new HttpClient();
 
-            var userSearch = Console.ReadLine().ToString();
-            var search = await YGOProvider.SearchAsync(userSearch);
-
-            if (search != null)
+            while (true)
             {
-                foreach (var c in search.Data)
+                Console.WriteLine();
+                Console.WriteLine("==== YugiohDB Tool ====");
+                Console.WriteLine("[1] Download all cards from API → local JSON");
+                Console.WriteLine("[2] Download all card images (small, large, cropped)");
+                Console.WriteLine("[3] Map local image paths + banlist into cards JSON");
+                Console.WriteLine("[4] Push cards JSON into database");
+                Console.WriteLine("[5] Interactive card search");
+                Console.WriteLine("[Q] Quit");
+                Console.Write("> ");
+
+                var input = Console.ReadLine();
+                if (input == null) return; // stdin closed (e.g. launched by EF tooling)
+                var choice = input.Trim().ToLowerInvariant();
+                switch (choice)
                 {
-                    Console.WriteLine($"Card found:");
-                    Console.WriteLine($"Name: {c.Name}");
-                    Console.WriteLine($"Type: {c.Type}");
-                    if (c.MiscInfo != null)
-                    {
-                        Console.WriteLine($"tcg Year: {c.MiscInfo.First().TcgDate}");
-                    }
-                    Console.WriteLine($"Price: {c.CardPrices.First().TcgPlayer.ToString()}");
+                    case "1":
+                        await DownloadAndSaveCards(cardsLocalPath);
+                        break;
+                    case "2":
+                        await DownloadAllImages(cardsLocalPath, imagesLocalPath, httpClient);
+                        break;
+                    case "3":
+                        await MapImagesAndBanlist(cardsLocalPath, imagesLocalPath);
+                        break;
+                    case "4":
+                        await YgoProDeckTools.AddAllCards(cardsLocalPath, dbOptions);
+                        break;
+                    case "5":
+                        await SearchApplication();
+                        break;
+                    case "q":
+                        Console.WriteLine("See ya!");
+                        return;
+                    default:
+                        Console.WriteLine("Unknown option.");
+                        break;
                 }
             }
+        }
 
-            Console.BackgroundColor = ConsoleColor.DarkBlue;
-            Console.WriteLine("Search again? y/n ");
-            Console.WriteLine("Quit program: q/Q");
-            Console.ResetColor();
-
-
-            char r = Console.ReadKey().KeyChar;
-            if (r == 'Y' || r == 'y')
+        private static async Task DownloadAndSaveCards(string cardsLocalPath)
+        {
+            var allCards = await YGOProvider.GetAllCardsAsync();
+            if (allCards == null)
             {
-                goto START;
+                Console.WriteLine("Failed to fetch cards from API.");
+                return;
             }
-            else if (r == 'N' || r == 'n')
-            {
-                QuitProgram();
-            }
-            else if (r == 'q' || r == 'Q')
-            {
-                QuitProgram();
-            }
-            else
-            {
-                Console.WriteLine("Incorrect answer");
-            }
+            YgoProDeckTools.SaveCardsFile(allCards, cardsLocalPath);
         }
-        private static void QuitProgram()
-        {
-            Console.WriteLine("See ya!");
-            Environment.Exit(0);
-        }
-        public static void UpdateCardDatabase() 
-        {
-            // get all cards from ygoprodeck api provider
-            // compare our database context against those cards retrieved from API
-            // identify the new cards and isolate them
-            // get the new images of these new cards
-            // map the new images correctly in local
-            // map the banlist of new cards 
-            // add new cards to context
-            // get all cards from context and compare again against the ygoprodeck file
-        }
-        private static string DisplayWelcomeScreen()
-        {
-            Console.BackgroundColor = ConsoleColor.DarkBlue;
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine(@"
-    ██╗   ██╗██╗   ██╗ ██████╗ ██╗ ██████╗ ██╗  ██╗
-    ╚██╗ ██╔╝██║   ██║██╔════╝ ██║██╔═══██╗██║  ██║
-     ╚████╔╝ ██║   ██║██║  ███╗██║██║   ██║███████║
-      ╚██╔╝  ██║   ██║██║   ██║██║██║   ██║██╔══██║
-       ██║   ╚██████╔╝╚██████╔╝██║╚██████╔╝██║  ██║
-       ╚═╝    ╚═════╝  ╚═════╝ ╚═╝ ╚═════╝ ╚═╝  ╚═╝
-    ██████╗ ███████╗ ██████╗ ██╗  ██╗    ██████╗ ╗██╗   ██╗██╗██╗     ██████╗ ███████╗██████╗ 
-    ██╔══██╗██╔════╝██╔════╝ ██║ ██╔╝    ██╔══██╗║██║   ██║██║██║     ██╔══██╗██╔════╝██╔══██╗
-    ██║  ██║█████╗  ██║     ╗█████╔╝     ██████╔╝║██║   ██║██║██║     ██   ██╔█████╗  ███████╔╝
-    ██║  ██║██╔══╝  ██║     ║██╔═██╗     ██╔══██╗║██║   ██║██║██║     ██╔══██╗██╔══╝  ██╔═██╗
-    ██████╔╝███████╗╚██████╔╝██║  ██╗    ██████╔╝║╚██████╔╝██║███████╗██████╔╝███████╗██║  ███║
-    ╚═════╝ ╚══════╝ ╚═════╝ ╚═╝  ╚═╝    ╚═════╝ ╚═╝ ╚═════╝ ╚═╝╚══════╝╚═════╝ ╚══════╝╚═╝  ╚═╝");
-            Console.ResetColor();
-            Console.WriteLine("\nPlease select an option:");
-            Console.WriteLine("1. Search Cards");
-            Console.WriteLine("2. Download/Update Card Database");
-            Console.ResetColor();
 
-            var option = Console.ReadLine();
-            return option;
-        }
-        private static string DisplayConfigurationOptions()
+        private static async Task DownloadAllImages(string cardsLocalPath, string imagesLocalPath, HttpClient client)
         {
-            Console.WriteLine("\nYGO Database Configuration Options:");
-            Console.WriteLine("1. Download latest cards from YGOProDeck API to local path");
-            Console.WriteLine("2. Download and map card images to local path");
-            Console.WriteLine("3. Map banlist information");
-            Console.WriteLine("4. Map card data");
-            Console.WriteLine("5. Save local cards to database");
-            //Console.WriteLine("5. Run all development tasks (legacy)");
-            Console.Write("\nSelect an option (1-4): ");
-
-            var configOption = Console.ReadLine();
-            return configOption;
-        }
-        public class ConfigurationStructure
-        {
-            public string ConnectionString { get; set; }
-            public string DecksFolderPath { get; set; }
-            public string CardsLocalPath { get; set; }
-            public string ImagesLocalPath { get; set; }
-            public string ImagesSmall { get; set; }
-            public string ImagesCropped { get; set; }
-
-            public ConfigurationStructure(string connectionString, string decksFolderPath, string cardsLocalPath, string imagesLocalPath, string imagesSmall, string imagesCropped)
+            if (!File.Exists(cardsLocalPath))
             {
-                ConnectionString = connectionString;
-                DecksFolderPath = decksFolderPath;
-                CardsLocalPath = cardsLocalPath;
-                ImagesLocalPath = imagesLocalPath;
-                ImagesSmall = imagesSmall;
-                ImagesCropped = imagesCropped;
+                Console.WriteLine($"Cards JSON not found at {cardsLocalPath}. Run [1] first.");
+                return;
+            }
+            var localCards = YgoProDeckTools.ReadAllCards(cardsLocalPath);
+            await YgoProDeckTools.DownloadImagesAsync(localCards, CardImageSize.Large, imagesLocalPath, client);
+            await YgoProDeckTools.DownloadImagesAsync(localCards, CardImageSize.Small, imagesLocalPath, client);
+            await YgoProDeckTools.DownloadImagesAsync(localCards, CardImageSize.Cropped, imagesLocalPath, client);
+        }
+
+        private static async Task MapImagesAndBanlist(string cardsLocalPath, string imagesLocalPath)
+        {
+            if (!File.Exists(cardsLocalPath))
+            {
+                Console.WriteLine($"Cards JSON not found at {cardsLocalPath}. Run [1] first.");
+                return;
+            }
+            var localCards = YgoProDeckTools.ReadAllCards(cardsLocalPath);
+            YgoProDeckTools.MapImages(localCards, imagesLocalPath);
+
+            var banlists = await YGOProvider.GetAllBanlistAsync();
+            if (banlists != null)
+                YgoProDeckTools.MapBanlistInfo(localCards, banlists);
+
+            YgoProDeckTools.SaveCardsFile(localCards, cardsLocalPath);
+            Console.WriteLine("Cards JSON updated with image paths + banlist.");
+        }
+
+        private static async Task SearchApplication()
+        {
+            Console.WriteLine("---- Card Search ----");
+            while (true)
+            {
+                Console.Write("Search (empty to quit): ");
+                var userSearch = Console.ReadLine();
+                if (string.IsNullOrWhiteSpace(userSearch)) return;
+
+                var search = await YGOProvider.SearchAsync(userSearch);
+                if (search?.Data == null || !search.Data.Any())
+                {
+                    Console.WriteLine("No results.");
+                    continue;
+                }
+
+                foreach (var c in search.Data)
+                {
+                    Console.WriteLine($"Name: {c.Name}");
+                    Console.WriteLine($"Type: {c.Type}");
+                    var tcgDate = c.MiscInfo?.FirstOrDefault()?.TcgDate;
+                    if (tcgDate != null) Console.WriteLine($"TCG Year: {tcgDate}");
+                    var price = c.CardPrices?.FirstOrDefault()?.TcgPlayer;
+                    Console.WriteLine($"Price: {price ?? "N/A"}");
+                    Console.WriteLine();
+                }
             }
         }
     }
-    
 }

@@ -21,7 +21,7 @@ namespace YGODeckBuilder
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration; // appsettings.json
+            Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
@@ -37,19 +37,13 @@ namespace YGODeckBuilder
             services.AddHttpContextAccessor();
             services.AddSession();
 
-            // Access configuration values
-            var decksFolderPath = Configuration["Paths:DecksFolderPath"];
-            var cardIdsFilePath = Configuration["Paths:CardIdsFilePath"];
             var connectionString = Configuration["ConnectionStrings:YGODatabase"];
 
-            // Use the configuration values as needed
-            Console.WriteLine($"Decks Folder Path: {decksFolderPath}");
-            Console.WriteLine($"Card IDs File Path: {cardIdsFilePath}");
-            Console.WriteLine($"Connetion String Path: {connectionString}");
-
+            services.AddHttpClient("ygoprodeck");
             services.AddSingleton<ICardsProvider, YgoAPIProvider>();
 
-            services.AddDbContext<YgoContext>(options => options.UseSqlServer(connectionString));
+            services.AddDbContext<YgoContext>(options =>
+                options.UseSqlServer(connectionString, sql => sql.MigrationsAssembly("YugiohDB")));
 
             services.AddRazorPages();
            
