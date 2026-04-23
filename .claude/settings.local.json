@@ -6,7 +6,13 @@
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
       "Bash(git push *)",
-      "Bash(git fetch *)"
+      "Bash(git fetch *)",
+      "Bash(git pull *)",
+      "Bash(git merge *)",
+      "Bash(git log *)",
+      "Bash(git ls-tree *)",
+      "Bash(git -C C:/Users/Diego/Documents/GitHub/YuGiOh-Deck-Builder ls-files YGODeckBuilder/wwwroot/images/)",
+      "Bash(git *)"
     ]
   }
 }

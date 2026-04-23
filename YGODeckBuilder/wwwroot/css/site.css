@@ -3,7 +3,13 @@
 }
 
 body {
-    background: linear-gradient(135deg, #0a0e27 0%, #1a1a3e 35%, #3d1a5e 70%, #0a0e27 100%);
+    background-color: #0a0e27;
+    background-image:
+        linear-gradient(135deg, rgba(10, 14, 39, 0.88) 0%, rgba(26, 26, 62, 0.85) 35%, rgba(61, 26, 94, 0.82) 70%, rgba(10, 14, 39, 0.9) 100%),
+        url('/images/background-image-1.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
     background-attachment: fixed;
     margin-bottom: 30px;
     font-family: 'Rajdhani', 'Segoe UI', sans-serif;
@@ -41,7 +47,18 @@ a.navbar-brand {
     white-space: normal;
     text-align: center;
     word-break: break-all;
-    
+}
+
+.navbar-logo {
+    height: 40px;
+    width: auto;
+    margin-right: 10px;
+    display: block;
+    mix-blend-mode: screen;
+}
+
+.navbar-brand-text {
+    vertical-align: middle;
 }
 
 /* Links */
