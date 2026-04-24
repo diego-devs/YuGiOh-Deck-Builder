@@ -5,11 +5,14 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Bson;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using YGODeckBuilder.Data;
+using YGODeckBuilder.Data.EntityModels;
 using YGODeckBuilder.Interfaces;
 using YGODeckBuilder.Pages;
 
@@ -50,7 +53,7 @@ namespace YGODeckBuilder.API
                 catch (Exception e)
                 {
                     _logger.LogError(e, "Error saving deck {DeckName}", deck.DeckName);
-                    return new BadRequestResult();
+                    return BadRequest(e.Message);
                 }
                 return new OkResult();
             }
@@ -59,7 +62,13 @@ namespace YGODeckBuilder.API
 
         private void RecordDeck(Deck deck)
         {
-            _ygoContext.Decks.Add(deck);
+            // Only persist deck metadata — the .ydk file is the source of truth for card contents.
+            // The DB schema stores deck-card links via FKs on the Cards table (one-to-many),
+            // which conflicts with cards being a shared card database used across all decks.
+            var existing = _ygoContext.Decks.FirstOrDefault(d => d.DeckName == deck.DeckName);
+            if (existing == null)
+                _ygoContext.Decks.Add(new Deck { DeckName = deck.DeckName });
+
             _ygoContext.SaveChanges();
         }
 

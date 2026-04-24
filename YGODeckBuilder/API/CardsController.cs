@@ -51,8 +51,19 @@ namespace YGODeckBuilder.API
             return Ok(cards);
         }
 
-        // GET: search of cards
-        // GET: search of cards with filters
+        // GET: api/cards/search?q=dragon
+        [HttpGet("search")]
+        public ActionResult<IEnumerable<Card>> SearchCards([FromQuery] string q)
+        {
+            if (string.IsNullOrWhiteSpace(q))
+                return BadRequest("Query parameter 'q' is required.");
+
+            var results = _ygoContext.GetSearch(q)
+                .Take(60)
+                .ToList();
+
+            return Ok(results);
+        }
 
     }
 }

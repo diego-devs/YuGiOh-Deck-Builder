@@ -31,7 +31,10 @@ namespace YGODeckBuilder
         {
             // Register the configuration
             services.Configure<AppSettingsReader>(Configuration);
-            services.AddControllers();
+            services.AddControllers()
+                .AddJsonOptions(opt =>
+                    opt.JsonSerializerOptions.ReferenceHandler =
+                        System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles);
             // Register IDeckUtility and its implementation
             services.AddScoped<IDeckUtility, DeckUtility>();
             services.AddHttpContextAccessor();

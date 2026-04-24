@@ -17,6 +17,7 @@ namespace YGODeckBuilder.Data
         public int DeckId { get; set; }
         [JsonPropertyName("deck_name")]
         public string DeckName { get; set; }
+        [NotMapped]
         [JsonPropertyName("file")]
         public string File { get; set;}
 
@@ -29,6 +30,7 @@ namespace YGODeckBuilder.Data
         [JsonPropertyName("total_cards")]
         public int TotalCards => MainDeck.Count + ExtraDeck.Count + SideDeck.Count;
 
+        [NotMapped]
         [JsonPropertyName("deck_file_path")]
         public string DeckFilePath { get; set; }
 

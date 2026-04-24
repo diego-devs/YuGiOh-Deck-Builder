@@ -1,71 +1,189 @@
-﻿@page
+@page
 @model YGODeckBuilder.Pages.CardViewerModel
 @{
     ViewData["Title"] = "CardViewer";
-    var Image = Model.Card.KonamiCardId.ToString() + ".jpg";
 }
 <style>
-    .bg-image {
-    /* The image used */
-    background-image: url("photographer.jpg");
-    /* Add the blur effect */
-    filter: blur(8px);
-    -webkit-filter: blur(8px);
-    /* Full height */
-    height: 100%;
-    /* Center and scale the image nicely */
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-}
+    .card-viewer-panel {
+        background: linear-gradient(135deg,
+            rgba(12, 8, 35, 0.97) 0%,
+            rgba(28, 16, 58, 0.97) 45%,
+            rgba(18, 10, 42, 0.97) 100%);
+        border: 1px solid rgba(125, 90, 255, 0.3);
+        box-shadow: 0 0 32px rgba(100, 60, 200, 0.22);
+        color: #e8e8f0;
+    }
+
+    .card-viewer-panel .card-body {
+        background: transparent;
+        color: #e8e8f0;
+    }
+
+    .card-viewer-panel .card-title {
+        color: #fff;
+        text-shadow: 0 0 10px rgba(125, 90, 255, 0.4);
+    }
+
+    .card-viewer-panel .card-text {
+        color: #c8c8d8;
+        line-height: 1.6;
+    }
+
+    .card-viewer-panel .text-muted {
+        color: #9090b8 !important;
+    }
+
+    .card-viewer-footer {
+        background: rgba(0, 0, 0, 0.3);
+        color: #8080a8;
+        border-top: 1px solid rgba(125, 90, 255, 0.2);
+        padding: 0.5rem 1.25rem;
+        font-size: 0.82rem;
+        border-radius: 0 0 4px 0;
+    }
+
+    /* Sortable table */
+    .sortable th {
+        cursor: pointer;
+        user-select: none;
+        white-space: nowrap;
+    }
+
+    .sortable th:hover {
+        background-color: rgba(125, 90, 255, 0.2);
+    }
+
+    .sort-icon {
+        margin-left: 5px;
+        font-size: 0.7em;
+        opacity: 0.45;
+    }
+
+    .sortable th.asc  .sort-icon::after { content: '▲'; opacity: 1; }
+    .sortable th.desc .sort-icon::after { content: '▼'; opacity: 1; }
+    .sortable th:not(.asc):not(.desc) .sort-icon::after { content: '⇅'; }
+
+    /* Star favorite button */
+    .btn-favorite {
+        background: transparent;
+        border: none;
+        color: #555577;
+        font-size: 1.8rem;
+        line-height: 1;
+        cursor: pointer;
+        padding: 0 0.2rem;
+        transition: color 0.2s, text-shadow 0.2s;
+        flex-shrink: 0;
+    }
+
+    .btn-favorite:hover {
+        color: #f5c518;
+        text-shadow: 0 0 12px rgba(245, 197, 24, 0.55);
+    }
+
+    .btn-favorite.active {
+        color: #f5c518;
+        text-shadow: 0 0 12px rgba(245, 197, 24, 0.55);
+    }
 </style>
 
-<div class="bg-image"></div>
-<div class="card mb-3" style="max-width: auto;">
+<div class="card mb-3 card-viewer-panel">
     <div class="row no-gutters">
         <div class="col-md-4">
             <div class="inner">
-                @*<img src="~/images/@Image" class="card-img" alt="imagehere"/>*@
-                <img src="@Model.Card.CardImages.FirstOrDefault().ImageUrl" class="card-img" alt="imagehere" />
+                <img src="@Model.Card.CardImages.FirstOrDefault().ImageUrl" class="card-img" alt="@Model.Card.Name" />
             </div>
         </div>
         <div class="col-md-8">
             <div class="card-body">
-                <h5 class="card-title text-center">@Model.Card.Name</h5>
-                <p class="card-text">@Model.Card.Desc</p>
-                <p class="card-text"><small class="text-muted">Precio promedio: $@(Model.Card.CardPrices != null && Model.Card.CardPrices.Count > 0 ? Model.Card.CardPrices[0].TcgPlayer.ToString() : "N/A") USD</small></p>
 
-                <div class="card">
-                    <div class="table-responsive">
-                        <table class="table table-dark table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Set name</th>
-                                    <th>Code</th>
-                                    <th>Rarity</th>
-                                    <th>Rarity code</th>
-                                    <th>Price</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var set in Model.Card.CardSets)
-                                {
-                                    <tr>
-                                        <td>@set.Name</td>
-                                        <td>@set.Code</td>
-                                        <td>@set.Rarity</td>
-                                        <td>@set.RarityCode</td>
-                                        <td>$@set.Price</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <h5 class="card-title mb-0">@Model.Card.Name</h5>
+                    <button class="btn-favorite" id="btnFavorite" title="Add to favorites" onclick="toggleFavorite(this)">★</button>
                 </div>
 
-                <div class="card card-footer">Card Id: @Model.Card.KonamiCardId</div>
+                <p class="card-text">@Model.Card.Desc</p>
+                <p class="card-text">
+                    <small class="text-muted">
+                        Average price: $@(Model.Card.CardPrices != null && Model.Card.CardPrices.Count > 0
+                            ? Model.Card.CardPrices[0].TcgPlayer
+                            : "N/A") USD
+                    </small>
+                </p>
+
+                <div class="table-responsive">
+                    <table class="table table-dark table-bordered table-hover sortable mb-0" id="setsTable">
+                        <thead>
+                            <tr>
+                                <th data-col="0">Set name <span class="sort-icon"></span></th>
+                                <th data-col="1">Code <span class="sort-icon"></span></th>
+                                <th data-col="2">Rarity <span class="sort-icon"></span></th>
+                                <th data-col="3">Rarity code <span class="sort-icon"></span></th>
+                                <th data-col="4">Price <span class="sort-icon"></span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var set in Model.Card.CardSets)
+                            {
+                                <tr>
+                                    <td>@set.Name</td>
+                                    <td>@set.Code</td>
+                                    <td>@set.Rarity</td>
+                                    <td>@set.RarityCode</td>
+                                    <td>$@set.Price</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card-viewer-footer">Card Id: @Model.Card.KonamiCardId</div>
             </div>
         </div>
     </div>
 </div>
 
+@section Scripts {
+<script>
+    (function () {
+        const table = document.getElementById('setsTable');
+        if (!table) return;
+        const headers = table.querySelectorAll('thead th');
+        let lastCol = -1, ascending = true;
+
+        headers.forEach(th => {
+            th.addEventListener('click', () => {
+                const col = parseInt(th.dataset.col);
+                ascending = (col === lastCol) ? !ascending : true;
+                lastCol = col;
+
+                headers.forEach(h => h.classList.remove('asc', 'desc'));
+                th.classList.add(ascending ? 'asc' : 'desc');
+
+                const tbody = table.querySelector('tbody');
+                const rows = Array.from(tbody.querySelectorAll('tr'));
+
+                rows.sort((a, b) => {
+                    let aVal = a.cells[col].textContent.trim();
+                    let bVal = b.cells[col].textContent.trim();
+                    if (col === 4) {
+                        aVal = parseFloat(aVal.replace(/[^0-9.]/g, '')) || 0;
+                        bVal = parseFloat(bVal.replace(/[^0-9.]/g, '')) || 0;
+                        return ascending ? aVal - bVal : bVal - aVal;
+                    }
+                    return ascending
+                        ? aVal.localeCompare(bVal)
+                        : bVal.localeCompare(aVal);
+                });
+
+                rows.forEach(r => tbody.appendChild(r));
+            });
+        });
+    })();
+
+    function toggleFavorite(btn) {
+        // Placeholder — favorites not yet implemented
+        btn.classList.toggle('active');
+    }
+</script>
+}

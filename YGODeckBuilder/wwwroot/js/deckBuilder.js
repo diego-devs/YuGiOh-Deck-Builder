@@ -16,6 +16,38 @@ document.addEventListener('DOMContentLoaded', function () {
     addDropEventListenersToTargets();
     addDragStartListenerToCards();
     addListenersToButtons();
+    addSearchListener();
+
+    // AJAX search — intercept form submit, fetch from local API, re-render without page reload
+    function addSearchListener() {
+        const form = document.getElementById('searchForm');
+        const input = document.getElementById('searchInput');
+        if (!form || !input) return;
+
+        form.addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const query = input.value.trim();
+            if (!query) return;
+
+            const container = document.querySelector('.DeckBuilder_CardSearch_JS');
+            if (container) container.innerHTML = '<p>Searching...</p>';
+
+            try {
+                const response = await fetch(`/api/cards/search?q=${encodeURIComponent(query)}`);
+                if (!response.ok) throw new Error('Search failed: ' + response.status);
+
+                const data = await response.json();
+
+                window.searchedCards = data;
+                renderSearch(data);
+                addDragStartListenerToCards();
+            } catch (err) {
+                console.error(err);
+                if (container) container.innerHTML = '<p>Search error. Please try again.</p>';
+            }
+        });
+    }
 
     // This is for the left big card image details
     function addHoverListenerToCards() { 
@@ -61,6 +93,9 @@ document.addEventListener('DOMContentLoaded', function () {
         cardElements.forEach(function (cardElement) {
             cardElement.draggable = true;
             cardElement.addEventListener('dragstart', dragStart);
+            // Anchors with href are draggable by default and would hijack the drag as a URL-drag,
+            // making event.target the anchor (no id / no fromDeckType) — disable them here.
+            cardElement.querySelectorAll('a').forEach(function (a) { a.draggable = false; });
         });
     }
     // Add Drop event listener to all deck types targets
@@ -323,9 +358,17 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     // Drag interaction
     function dragStart(event) {
-        const cardId = event.target.id; // Get the card ID from the dragged element's ID
+        // Resolve the actual card-bearing element: the IMG carries id + dataset.fromDeckType.
+        // event.target may be the anchor or a wrapper; fall back to the img inside currentTarget.
+        let source = event.target;
+        if (!source.dataset || !source.dataset.fromDeckType) {
+            const img = event.currentTarget.querySelector('img[data-from-deck-type]');
+            if (img) source = img;
+        }
+
+        const cardId = source.id; // Get the card ID from the dragged element's ID
         const cardIntId = parseInt(cardId, 10);
-        let fromDeckType = event.target.dataset.fromDeckType; // Where this comes frome
+        let fromDeckType = source.dataset.fromDeckType; // Where this comes frome
         let draggedCard;
 
         switch (fromDeckType) {
@@ -411,10 +454,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.log('Card not found');
                 break;
         }
+        // Bail out if we couldn't resolve the card — without this, the next line crashes and
+        // dataTransfer is never populated, so drop() can't identify the card.
+        if (!draggedCard) return;
         // Set the data as attributes on the dragged element
-        event.target.setAttribute('data-card-id', cardId);
-        event.target.setAttribute('data-card-type', draggedCard.type);
-        event.target.setAttribute('data-from-deck-type', fromDeckType);
+        source.setAttribute('data-card-id', cardId);
+        source.setAttribute('data-card-type', draggedCard.type);
+        source.setAttribute('data-from-deck-type', fromDeckType);
     }
     function dragOver(event) {
         event.preventDefault();
@@ -498,11 +544,14 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             body: JSON.stringify(deck),
         })
-            .then(response => {
+            .then(async response => {
                 if (response.ok) {
                     showToast('Deck saved successfully.', 'success');
                 } else {
-                    showToast('Failed to save the deck. Please try again.', 'error');
+                    const detail = await response.text().catch(() => '');
+                    const msg = detail ? `Failed to save: ${detail}` : 'Failed to save the deck. Please try again.';
+                    showToast(msg, 'error');
+                    console.error('Save failed', response.status, detail);
                 }
             })
             .catch(error => {
