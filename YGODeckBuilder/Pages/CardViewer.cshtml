@@ -99,7 +99,9 @@
 
                 <div class="d-flex align-items-center justify-content-between mb-2">
                     <h5 class="card-title mb-0">@Model.Card.Name</h5>
-                    <button class="btn-favorite" id="btnFavorite" title="Add to favorites" onclick="toggleFavorite(this)">★</button>
+                    <button class="btn-favorite" id="btnFavorite"
+                            data-konami-id="@Model.Card.KonamiCardId"
+                            title="Add to favorites">★</button>
                 </div>
 
                 <p class="card-text">@Model.Card.Desc</p>
@@ -181,9 +183,50 @@
         });
     })();
 
-    function toggleFavorite(btn) {
-        // Placeholder — favorites not yet implemented
-        btn.classList.toggle('active');
-    }
+    // Favorites
+    (function () {
+        const btn = document.getElementById('btnFavorite');
+        if (!btn) return;
+        const konamiId = btn.dataset.konamiId;
+
+        // Initialize star state from the server
+        fetch(`/api/favorites/${konamiId}/status`)
+            .then(r => r.json())
+            .then(data => setStarState(btn, data.isFavorited))
+            .catch(() => {});
+
+        btn.addEventListener('click', async () => {
+            btn.disabled = true;
+            const isActive = btn.classList.contains('active');
+            try {
+                let response;
+                if (isActive) {
+                    response = await fetch(`/api/favorites/${konamiId}`, { method: 'DELETE' });
+                } else {
+                    response = await fetch('/api/favorites', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ konamiCardId: parseInt(konamiId) })
+                    });
+                }
+                if (response.ok) {
+                    const data = await response.json();
+                    setStarState(btn, data.isFavorited);
+                    showToast(data.isFavorited ? 'Added to favorites.' : 'Removed from favorites.', 'success');
+                } else {
+                    showToast('Could not update favorites.', 'error');
+                }
+            } catch {
+                showToast('Network error.', 'error');
+            } finally {
+                btn.disabled = false;
+            }
+        });
+
+        function setStarState(btn, isFavorited) {
+            btn.classList.toggle('active', isFavorited);
+            btn.title = isFavorited ? 'Remove from favorites' : 'Add to favorites';
+        }
+    })();
 </script>
 }
