@@ -34,6 +34,9 @@ namespace YGODeckBuilder.Data
         [JsonPropertyName("deck_file_path")]
         public string DeckFilePath { get; set; }
 
+        // null = community deck (shared); non-null = owned by a specific user
+        public int? UserId { get; set; }
+
         public Deck(string deckName, ICollection<Card> mainDeck, ICollection<Card> extraDeck, ICollection<Card> sideDeck, string deckFilePath)
         {
             DeckName = deckName;

@@ -16,10 +16,11 @@ namespace YGODeckBuilder.Data.EntityModels
         [ForeignKey("CardId")]
         public Card Card { get; set; }
 
-        // Anonymous GUID cookie for now; replace with real UserId when auth is added.
         [Required]
-        [MaxLength(128)]
-        public string UserId { get; set; }
+        public int UserId { get; set; }
+
+        [ForeignKey("UserId")]
+        public UserAccount User { get; set; }
 
         public DateTime AddedAt { get; set; } = DateTime.UtcNow;
     }

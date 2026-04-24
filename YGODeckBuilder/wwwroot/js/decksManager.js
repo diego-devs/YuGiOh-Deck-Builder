@@ -176,6 +176,25 @@ function deleteDeckConfirmed(deckName) {
         });
 }
 
+// ---- Fork community deck ----
+function forkDeck(deckName) {
+    fetch('/api/decks/fork', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(deckName)
+    })
+        .then(async function (response) {
+            if (response.ok) {
+                const data = await response.json();
+                showToast('Deck "' + data.deckName + '" added to your decks.', 'success');
+                setTimeout(() => location.reload(), 800);
+            } else {
+                showToast('Failed to fork deck.', 'error');
+            }
+        })
+        .catch(function () { showToast('Error forking deck.', 'error'); });
+}
+
 // ---- New deck ----
 function showNewDeckInput(deckName) {
     var newDeckName = prompt("Enter new deck name:", deckName);

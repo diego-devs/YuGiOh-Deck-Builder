@@ -14,44 +14,86 @@
 <h2 class="mb-4">Decks Manager</h2>
 
 <div class="container">
-    <div class="deck-menu">
-        <div class="list-group-item d-flex justify-content-between align-items-center bg-dark border-light">
-            <div class="btn-group" role="group" aria-label="Decks Menu">
-                <button type="button" class="btn btn-success mr-1" id="btnNewDeck" onclick="showNewDeckInput('@defaultNewDeckName')">New</button>
-                <button type="button" class="btn btn-success mr-1" id="btnLoadDeck" onclick="showLoadInput()">Load</button>
-                <input type="file" id="deckFileInput" accept=".ydk" style="display:none" onchange="loadDeck(event)" />
-                <a class="btn btn-primary mr-1" href="https://ygoprodeck.com/tournaments/top-archetypes/">Browse</a>
-            </div>
-        </div>
-    </div>
 
-    @if (Model.Decks.Any())
+    @* ── PERSONAL DECKS (logged-in users only) ── *@
+    @if (Model.IsAuthenticated)
     {
-        <div id="deckList" class="list-group bg-dark text-light">
-            @foreach (var deck in Model.Decks)
+        <div class="deck-section mb-4">
+            <div class="deck-section-header d-flex justify-content-between align-items-center mb-2">
+                <h5 class="deck-section-title">Your Decks</h5>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-success btn-sm mr-1" id="btnNewDeck" onclick="showNewDeckInput('@defaultNewDeckName')">+ New</button>
+                    <button type="button" class="btn btn-success btn-sm mr-1" id="btnLoadDeck" onclick="showLoadInput()">Load .ydk</button>
+                    <input type="file" id="deckFileInput" accept=".ydk" style="display:none" onchange="loadDeck(event)" />
+                </div>
+            </div>
+
+            @if (Model.PersonalDecks.Any())
             {
-                <div class="list-group-item d-flex justify-content-between align-items-center bg-dark border-light" data-deck-name="@deck.DeckName">
-                    <a href="/DeckBuilder?DeckFileName=@deck.DeckName" class="text-white text-uppercase">@deck.DeckName</a>
-                    <div class="btn-group" role="group" aria-label="Deck Actions">
-                        <a class="btn btn-primary mr-1" href="/DeckBuilder?DeckFileName=@deck.DeckName">Edit</a>
-                        <button type="button" class="btn btn-success mr-1" onclick="duplicateDeck('@deck.DeckName')">Duplicate</button>
-                        <button type="button" class="btn btn-warning mr-1" onclick="showRenameModal('@deck.DeckName')">Rename</button>
-                        <button type="button" class="btn btn-danger" onclick="showDeleteConfirm('@deck.DeckName')">Delete</button>
-                    </div>
+                <div id="personalDeckList" class="list-group">
+                    @foreach (var deck in Model.PersonalDecks)
+                    {
+                        <div class="list-group-item d-flex justify-content-between align-items-center bg-dark border-light" data-deck-name="@deck.DeckName">
+                            <a href="/DeckBuilder?DeckFileName=@deck.DeckName&personal=true" class="text-white text-uppercase">@deck.DeckName</a>
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-primary btn-sm mr-1" href="/DeckBuilder?DeckFileName=@deck.DeckName&personal=true">Edit</a>
+                                <button type="button" class="btn btn-success btn-sm mr-1" onclick="duplicateDeck('@deck.DeckName')">Duplicate</button>
+                                <button type="button" class="btn btn-warning btn-sm mr-1" onclick="showRenameModal('@deck.DeckName')">Rename</button>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="showDeleteConfirm('@deck.DeckName')">Delete</button>
+                            </div>
+                        </div>
+                    }
                 </div>
             }
-        </div>
-        <div id="emptyDeckMessage" class="alert alert-warning" role="alert" style="display:none">
-            No decks found. Please create a new deck.
+            else
+            {
+                <p class="text-muted small">No personal decks yet. Create one or fork a community deck below.</p>
+            }
         </div>
     }
     else
     {
-        <div id="deckList" class="list-group bg-dark text-light" style="display:none"></div>
-        <div id="emptyDeckMessage" class="alert alert-warning" role="alert">
-            No decks found. Please create a new deck.
+        <div class="alert alert-secondary mb-4" style="background:rgba(255,255,255,0.05);border:1px solid rgba(125,90,255,0.25);color:#a0a0c8;">
+            <a asp-page="/Account/Login" style="color:#9090d8;">Log in</a> to create and manage your own decks.
         </div>
     }
+
+    @* ── COMMUNITY DECKS (visible to all) ── *@
+    <div class="deck-section">
+        <div class="deck-section-header mb-2">
+            <h5 class="deck-section-title">Community Decks</h5>
+        </div>
+
+        @if (Model.CommunityDecks.Any())
+        {
+            <div id="communityDeckList" class="list-group">
+                @foreach (var deck in Model.CommunityDecks)
+                {
+                    <div class="list-group-item d-flex justify-content-between align-items-center bg-dark border-light">
+                        <span class="text-white text-uppercase">@deck.DeckName</span>
+                        <div class="btn-group" role="group">
+                            @if (Model.IsAuthenticated)
+                            {
+                                <button type="button" class="btn btn-outline-info btn-sm" onclick="forkDeck('@deck.DeckName')">Fork to My Decks</button>
+                            }
+                            else
+                            {
+                                <a class="btn btn-outline-secondary btn-sm" asp-page="/Account/Login">Login to Fork</a>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="text-muted small">No community decks found.</p>
+        }
+    </div>
+
+    @* hidden list for decksManager.js compatibility *@
+    <div id="deckList" style="display:none"></div>
+    <div id="emptyDeckMessage" style="display:none"></div>
 </div>
 
 <!-- Rename Modal -->

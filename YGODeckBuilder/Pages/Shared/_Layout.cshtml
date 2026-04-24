@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -14,7 +14,49 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    
+    <style>
+        .nav-user-chip {
+            color: #c0c0e8;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.95rem;
+            padding: 0.3rem 0.75rem;
+            background: rgba(125,90,255,0.15);
+            border: 1px solid rgba(125,90,255,0.3);
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+        .btn-nav-login {
+            color: #c0c0e8;
+            border: 1px solid rgba(125,90,255,0.45);
+            border-radius: 4px;
+            padding: 0.25rem 0.9rem;
+            font-size: 0.88rem;
+            background: transparent;
+            transition: background 0.2s;
+        }
+        .btn-nav-login:hover { background: rgba(125,90,255,0.18); color:#fff; text-decoration:none; }
+        .btn-nav-register {
+            color: #fff;
+            border: 1px solid rgba(125,90,255,0.7);
+            border-radius: 4px;
+            padding: 0.25rem 0.9rem;
+            font-size: 0.88rem;
+            background: rgba(91,48,200,0.5);
+            transition: background 0.2s;
+        }
+        .btn-nav-register:hover { background: rgba(91,48,200,0.8); color:#fff; text-decoration:none; }
+        .btn-nav-logout {
+            color: #a0a0c8;
+            border: 1px solid rgba(125,90,255,0.25);
+            border-radius: 4px;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.85rem;
+            background: transparent;
+            cursor: pointer;
+            transition: color 0.2s, border-color 0.2s;
+        }
+        .btn-nav-logout:hover { color:#e07070; border-color:rgba(200,80,80,0.5); }
+    </style>
 </head>
 <body>
     <header>
@@ -30,21 +72,38 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-
-                        @*<li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-route-id="@CardViewerModel.GenerateRandomId()" asp-page="CardViewer">Random Card</a>
-                        </li>*@
                         <li class="nav-item">
                             <a class="nav-link text-light" asp-area="" asp-page="DecksManager">Decks</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-light" asp-area="" asp-page="Favorites">★ Favorites</a>
                         </li>
-                         
                         <li class="nav-item">
                             <a class="nav-link text-light" href="https://github.com/diego-devs/YuGiOhTCG">GitHub</a>
                         </li>
+                    </ul>
 
+                    <ul class="navbar-nav ml-auto align-items-center">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item mr-2">
+                                <span class="nav-user-chip">👤 @User.Identity.Name</span>
+                            </li>
+                            <li class="nav-item">
+                                <form asp-page="/Account/Logout" method="post" class="d-inline">
+                                    <button type="submit" class="btn-nav-logout">Logout</button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item mr-1">
+                                <a class="btn-nav-register" asp-page="/Account/Register">Register</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn-nav-login" asp-page="/Account/Login">Login</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>
@@ -56,12 +115,6 @@
             @RenderBody()
         </main>
     </div>
-
-    @* <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2022 - YGOCardSearch - <a asp-area="" asp-page="/Privacy">Privacy</a>
-        </div>
-    </footer> *@
 
     <!-- Toast notification container -->
     <div aria-live="polite" aria-atomic="true" style="position:fixed;bottom:1rem;right:1rem;z-index:9999;min-width:250px;">
@@ -97,12 +150,5 @@
     </script>
 
     @await RenderSectionAsync("Scripts", required: false)
-
-    @*<script>
-        window.addEventListener("scroll", function () {
-            let yOffset = -window.pageYOffset * 0.5;
-            document.body.style.backgroundPositionY = yOffset + "px";
-        });
-    </script>*@
 </body>
 </html>

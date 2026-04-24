@@ -1,9 +1,10 @@
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using YGODeckBuilder.Data;
@@ -13,10 +14,9 @@ namespace YGODeckBuilder.API
 {
     [Route("api/favorites")]
     [ApiController]
+    [Authorize]
     public class FavoritesController : ControllerBase
     {
-        private const string UserCookie = "_yfav";
-
         private readonly YgoContext _db;
         private readonly ILogger<FavoritesController> _logger;
 
@@ -30,7 +30,7 @@ namespace YGODeckBuilder.API
         [HttpGet]
         public async Task<IActionResult> GetFavorites()
         {
-            var userId = GetOrCreateUserId();
+            var userId = GetUserId();
 
             var favorites = await _db.FavoriteCards
                 .Where(f => f.UserId == userId)
@@ -65,7 +65,7 @@ namespace YGODeckBuilder.API
         [HttpGet("{konamiCardId}/status")]
         public async Task<IActionResult> GetStatus(int konamiCardId)
         {
-            var userId = GetOrCreateUserId();
+            var userId = GetUserId();
 
             var isFavorited = await _db.FavoriteCards
                 .AnyAsync(f => f.UserId == userId && f.Card.KonamiCardId == konamiCardId);
@@ -77,7 +77,7 @@ namespace YGODeckBuilder.API
         [HttpPost]
         public async Task<IActionResult> AddFavorite([FromBody] FavoriteRequest request)
         {
-            var userId = GetOrCreateUserId();
+            var userId = GetUserId();
 
             var card = await _db.Cards.FirstOrDefaultAsync(c => c.KonamiCardId == request.KonamiCardId);
             if (card == null)
@@ -106,7 +106,7 @@ namespace YGODeckBuilder.API
         [HttpDelete("{konamiCardId}")]
         public async Task<IActionResult> RemoveFavorite(int konamiCardId)
         {
-            var userId = GetOrCreateUserId();
+            var userId = GetUserId();
 
             var favorite = await _db.FavoriteCards
                 .FirstOrDefaultAsync(f => f.UserId == userId && f.Card.KonamiCardId == konamiCardId);
@@ -123,21 +123,8 @@ namespace YGODeckBuilder.API
 
         // -------------------------------------------------------------------------
 
-        private string GetOrCreateUserId()
-        {
-            if (Request.Cookies.TryGetValue(UserCookie, out var existing) && !string.IsNullOrEmpty(existing))
-                return existing;
-
-            var newId = Guid.NewGuid().ToString("N");
-            Response.Cookies.Append(UserCookie, newId, new CookieOptions
-            {
-                HttpOnly  = true,
-                Secure    = true,
-                SameSite  = SameSiteMode.Lax,
-                Expires   = DateTimeOffset.UtcNow.AddYears(2)
-            });
-            return newId;
-        }
+        private int GetUserId() =>
+            int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
     }
 
     public class FavoriteRequest

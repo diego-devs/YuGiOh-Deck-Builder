@@ -49,25 +49,40 @@ namespace YGODeckBuilder.Data
             return Path.GetFullPath(resolvedPath).StartsWith(fullBase, StringComparison.OrdinalIgnoreCase);
         }
 
-        public virtual List<DeckPreview> LoadDecksPreview()
+        public string GetUserDecksFolderPath(int userId)
         {
-            string[] deckFiles = Directory.GetFiles(_configuration["Paths:DecksFolderPath"], "*.ydk");
-            List<DeckPreview> deckPreviews = new List<DeckPreview>();
+            var path = Path.Combine(_decksFolderPath, "users", userId.ToString());
+            Directory.CreateDirectory(path);
+            return path;
+        }
 
-            foreach (var filePath in deckFiles)
+        public virtual DecksPreviewResult LoadDecksPreview(int? userId = null)
+        {
+            var result = new DecksPreviewResult();
+
+            // Community decks — shared folder (top-level .ydk files only)
+            foreach (var filePath in Directory.GetFiles(_decksFolderPath, "*.ydk"))
             {
-                try
+                result.CommunityDecks.Add(new DeckPreview
                 {
-                    //var deck = LoadDeck(filePath); // Assuming LoadDeck is adjusted to not load from a single file
-                    deckPreviews.Add(new DeckPreview { DeckName = Path.GetFileNameWithoutExtension(filePath)
+                    DeckName = Path.GetFileNameWithoutExtension(filePath)
                 });
-                }
-                catch (FileNotFoundException)
+            }
+
+            // Personal decks — user-specific subfolder
+            if (userId.HasValue)
+            {
+                var userFolder = GetUserDecksFolderPath(userId.Value);
+                foreach (var filePath in Directory.GetFiles(userFolder, "*.ydk"))
                 {
-                    return null;
+                    result.PersonalDecks.Add(new DeckPreview
+                    {
+                        DeckName = Path.GetFileNameWithoutExtension(filePath)
+                    });
                 }
             }
-            return deckPreviews;
+
+            return result;
         }
         /// <summary>
         /// Loads a Deck from a .ydk file, extracting the main deck, extra deck, and side deck card lists.
@@ -271,7 +286,12 @@ namespace YGODeckBuilder.Data
     {
         public int DeckId { get; set; }
         public string DeckName { get; set; }
-        // Add other properties as needed for the display
         public int CardsCount { get; set; }
+    }
+
+    public class DecksPreviewResult
+    {
+        public List<DeckPreview> PersonalDecks  { get; set; } = new();
+        public List<DeckPreview> CommunityDecks { get; set; } = new();
     }
 }

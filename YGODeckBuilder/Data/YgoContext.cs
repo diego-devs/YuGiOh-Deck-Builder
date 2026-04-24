@@ -28,10 +28,15 @@ namespace YGODeckBuilder.Data
         public DbSet<BanlistInfo> CardsBanlist { get; set; }
         public DbSet<MiscInfo> MiscInfos { get; set; }
         public DbSet<FavoriteCard> FavoriteCards { get; set; }
+        public DbSet<UserAccount> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<UserAccount>()
+                .HasIndex(u => u.Username)
+                .IsUnique();
 
             // A user can only favorite a given card once.
             modelBuilder.Entity<FavoriteCard>()

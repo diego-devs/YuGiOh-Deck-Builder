@@ -1,0 +1,69 @@
+@page
+@model YGODeckBuilder.Pages.Account.RegisterModel
+@{ ViewData["Title"] = "Register"; }
+
+<style>
+    .auth-panel {
+        max-width: 420px;
+        margin: 3rem auto;
+        background: linear-gradient(135deg, rgba(12,8,35,0.97), rgba(28,16,58,0.97));
+        border: 1px solid rgba(125,90,255,0.3);
+        border-radius: 10px;
+        padding: 2rem 2.5rem;
+        box-shadow: 0 0 32px rgba(100,60,200,0.2);
+    }
+    .auth-panel h2 { color:#fff; margin-bottom:1.5rem; text-align:center; }
+    .auth-panel .form-control {
+        background: rgba(255,255,255,0.07);
+        border: 1px solid rgba(125,90,255,0.25);
+        color: #e8e8f0;
+    }
+    .auth-panel .form-control:focus {
+        background: rgba(255,255,255,0.1);
+        border-color: rgba(125,90,255,0.6);
+        color: #fff;
+        box-shadow: 0 0 0 0.2rem rgba(125,90,255,0.25);
+    }
+    .auth-panel label { color: #a0a0c8; font-size:0.9rem; }
+    .auth-panel .btn-primary {
+        background: linear-gradient(90deg, #5b30c8, #7b4de8);
+        border: none;
+        width: 100%;
+        padding: 0.6rem;
+        font-size: 1rem;
+        letter-spacing: 0.04em;
+        margin-top: 0.5rem;
+    }
+    .auth-panel .btn-primary:hover { background: linear-gradient(90deg, #6b40d8, #8b5ef8); }
+    .auth-footer { text-align:center; margin-top:1.25rem; color:#7070a0; font-size:0.88rem; }
+    .auth-footer a { color:#9090d8; }
+</style>
+
+<div class="auth-panel">
+    <h2>Create Account</h2>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger py-2">@Model.ErrorMessage</div>
+    }
+
+    <form method="post">
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" name="Username" class="form-control" autocomplete="username" required />
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" name="Password" class="form-control" autocomplete="new-password" required />
+        </div>
+        <div class="form-group">
+            <label>Confirm Password</label>
+            <input type="password" name="ConfirmPassword" class="form-control" autocomplete="new-password" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Register</button>
+    </form>
+
+    <div class="auth-footer">
+        Already have an account? <a asp-page="/Account/Login">Log in</a>
+    </div>
+</div>

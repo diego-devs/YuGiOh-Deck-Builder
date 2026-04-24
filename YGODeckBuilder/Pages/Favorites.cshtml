@@ -174,11 +174,23 @@
     </div>
 }
 
-<div id="emptyState" class="favorites-empty" style="@(Model.Favorites.Any() ? "display:none" : "")">
-    <span class="empty-star">★</span>
-    <p>No favorites yet.</p>
-    <a class="btn btn-primary" href="/MainPage">Browse cards</a>
-</div>
+@if (!Model.IsAuthenticated)
+{
+    <div class="favorites-empty">
+        <span class="empty-star">★</span>
+        <p>Log in to save and view your favorite cards.</p>
+        <a class="btn btn-primary mr-2" asp-page="/Account/Login">Log In</a>
+        <a class="btn btn-outline-secondary" asp-page="/Account/Register">Register</a>
+    </div>
+}
+else
+{
+    <div id="emptyState" class="favorites-empty" style="@(Model.Favorites.Any() ? "display:none" : "")">
+        <span class="empty-star">★</span>
+        <p>No favorites yet.</p>
+        <a class="btn btn-primary" href="/MainPage">Browse cards</a>
+    </div>
+}
 
 @section Scripts {
 <script>

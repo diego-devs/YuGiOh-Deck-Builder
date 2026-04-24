@@ -24,7 +24,8 @@ namespace YGODeckBuilder.Tests
 
             var mockDeckUtility = new Mock<IDeckUtility>();
             var deckPreviews = new List<DeckPreview> { new DeckPreview { DeckName = "testDeck" } };
-            mockDeckUtility.Setup(d => d.LoadDecksPreview()).Returns(deckPreviews);
+            var previewResult = new DecksPreviewResult { CommunityDecks = deckPreviews };
+            mockDeckUtility.Setup(d => d.LoadDecksPreview(It.IsAny<int?>())).Returns(previewResult);
 
             var decksManager = new DecksManager(mockContext.Object, mockConfig.Object, mockDeckUtility.Object);
 
@@ -32,8 +33,8 @@ namespace YGODeckBuilder.Tests
             await decksManager.OnGetAsync();
 
             // Assert
-            Assert.NotNull(decksManager.Decks);
-            Assert.Equal(deckPreviews, decksManager.Decks);
+            Assert.NotNull(decksManager.CommunityDecks);
+            Assert.Equal(deckPreviews, decksManager.CommunityDecks);
         }
     }
 }

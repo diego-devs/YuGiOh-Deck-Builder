@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using YGODeckBuilder.Data;
 
@@ -10,10 +11,10 @@ namespace YGODeckBuilder.Pages
 {
     public class FavoritesModel : PageModel
     {
-        private const string UserCookie = "_yfav";
         private readonly YgoContext _db;
 
         public List<FavoriteCardView> Favorites { get; set; } = [];
+        public bool IsAuthenticated => User.Identity?.IsAuthenticated == true;
 
         public FavoritesModel(YgoContext db)
         {
@@ -22,7 +23,8 @@ namespace YGODeckBuilder.Pages
 
         public async Task OnGetAsync()
         {
-            if (!Request.Cookies.TryGetValue(UserCookie, out var userId) || string.IsNullOrEmpty(userId))
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userIdStr == null || !int.TryParse(userIdStr, out var userId))
                 return;
 
             Favorites = await _db.FavoriteCards

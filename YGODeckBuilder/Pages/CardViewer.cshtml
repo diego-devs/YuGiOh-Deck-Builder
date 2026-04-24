@@ -2,6 +2,7 @@
 @model YGODeckBuilder.Pages.CardViewerModel
 @{
     ViewData["Title"] = "CardViewer";
+    var isAuthenticated = User.Identity?.IsAuthenticated == true;
 }
 <style>
     .card-viewer-panel {
@@ -188,6 +189,15 @@
         const btn = document.getElementById('btnFavorite');
         if (!btn) return;
         const konamiId = btn.dataset.konamiId;
+        const isAuthenticated = @(isAuthenticated ? "true" : "false");
+
+        if (!isAuthenticated) {
+            btn.title = 'Log in to save favorites';
+            btn.addEventListener('click', () => {
+                window.location.href = '/Account/Login?returnUrl=' + encodeURIComponent(window.location.pathname + window.location.search);
+            });
+            return;
+        }
 
         // Initialize star state from the server
         fetch(`/api/favorites/${konamiId}/status`)

@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.DotNet.Scaffolding.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using YGODeckBuilder.Data;
+using YGODeckBuilder.Data.EntityModels;
 using YGODeckBuilder.DataProviders;
 using YGODeckBuilder.Interfaces;
 
@@ -26,16 +29,14 @@ namespace YGODeckBuilder
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Register the configuration
             services.Configure<AppSettingsReader>(Configuration);
             services.AddControllers()
                 .AddJsonOptions(opt =>
                     opt.JsonSerializerOptions.ReferenceHandler =
                         System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles);
-            // Register IDeckUtility and its implementation
+
             services.AddScoped<IDeckUtility, DeckUtility>();
             services.AddHttpContextAccessor();
             services.AddSession();
@@ -48,12 +49,21 @@ namespace YGODeckBuilder
             services.AddDbContext<YgoContext>(options =>
                 options.UseSqlServer(connectionString, sql => sql.MigrationsAssembly("YugiohDB")));
 
-            services.AddRazorPages();
-           
+            services.AddScoped<IPasswordHasher<UserAccount>, PasswordHasher<UserAccount>>();
 
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(opt =>
+                {
+                    opt.LoginPath = "/Account/Login";
+                    opt.LogoutPath = "/Account/Logout";
+                    opt.ExpireTimeSpan = TimeSpan.FromDays(7);
+                    opt.SlidingExpiration = true;
+                });
+
+            services.AddAuthorization();
+            services.AddRazorPages();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -63,22 +73,20 @@ namespace YGODeckBuilder
             else
             {
                 app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
             app.UseSession();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
-                endpoints.MapControllers(); // Map API endpoints
+                endpoints.MapControllers();
             });
         }
     }

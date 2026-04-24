@@ -125,11 +125,11 @@ namespace YGODeckBuilder.Tests
 
             var util = new DeckUtility(_context, _config);
 
-            var previews = util.LoadDecksPreview();
+            var result = util.LoadDecksPreview();
 
-            Assert.Equal(2, previews.Count);
-            Assert.Contains(previews, p => p.DeckName == "deck1");
-            Assert.Contains(previews, p => p.DeckName == "deck2");
+            Assert.Equal(2, result.CommunityDecks.Count);
+            Assert.Contains(result.CommunityDecks, p => p.DeckName == "deck1");
+            Assert.Contains(result.CommunityDecks, p => p.DeckName == "deck2");
         }
 
         [Fact]
