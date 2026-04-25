@@ -34,31 +34,48 @@ namespace YGODeckBuilder.API
 
             var favorites = await _db.FavoriteCards
                 .Where(f => f.UserId == userId)
-                .Include(f => f.Card)
-                    .ThenInclude(c => c.CardImages)
                 .OrderByDescending(f => f.AddedAt)
-                .Select(f => new
+                .Select(f => new { f.FavoriteId, f.AddedAt, f.KonamiCardId })
+                .ToListAsync();
+
+            var konamiIds = favorites.Select(f => f.KonamiCardId).ToList();
+
+            var cards = await _db.Cards
+                .Where(c => konamiIds.Contains(c.KonamiCardId))
+                .Select(c => new { c.KonamiCardId, c.Name, c.Type, c.Desc, c.Atk, c.Def, c.Level, c.Race, c.Attribute })
+                .ToDictionaryAsync(c => c.KonamiCardId);
+
+            var images = await _db.CardImages
+                .Where(i => konamiIds.Contains(i.CardImageId))
+                .GroupBy(i => i.CardImageId)
+                .Select(g => new { KonamiCardId = g.Key, ImageUrl = g.First().ImageUrl })
+                .ToDictionaryAsync(x => x.KonamiCardId);
+
+            var result = favorites.Select(f =>
+            {
+                cards.TryGetValue(f.KonamiCardId, out var card);
+                images.TryGetValue(f.KonamiCardId, out var img);
+                return new
                 {
                     f.FavoriteId,
                     f.AddedAt,
                     card = new
                     {
-                        f.Card.CardId,
-                        f.Card.KonamiCardId,
-                        f.Card.Name,
-                        f.Card.Type,
-                        f.Card.Desc,
-                        f.Card.Atk,
-                        f.Card.Def,
-                        f.Card.Level,
-                        f.Card.Race,
-                        f.Card.Attribute,
-                        imageUrl = f.Card.CardImages.Select(i => i.ImageUrl).FirstOrDefault()
+                        f.KonamiCardId,
+                        Name = card?.Name,
+                        Type = card?.Type,
+                        Desc = card?.Desc,
+                        Atk = card?.Atk,
+                        Def = card?.Def,
+                        Level = card?.Level,
+                        Race = card?.Race,
+                        Attribute = card?.Attribute,
+                        imageUrl = img?.ImageUrl
                     }
-                })
-                .ToListAsync();
+                };
+            }).ToList();
 
-            return Ok(favorites);
+            return Ok(result);
         }
 
         // GET api/favorites/{konamiCardId}/status
@@ -66,10 +83,8 @@ namespace YGODeckBuilder.API
         public async Task<IActionResult> GetStatus(int konamiCardId)
         {
             var userId = GetUserId();
-
             var isFavorited = await _db.FavoriteCards
-                .AnyAsync(f => f.UserId == userId && f.Card.KonamiCardId == konamiCardId);
-
+                .AnyAsync(f => f.UserId == userId && f.KonamiCardId == konamiCardId);
             return Ok(new { isFavorited });
         }
 
@@ -77,23 +92,22 @@ namespace YGODeckBuilder.API
         [HttpPost]
         public async Task<IActionResult> AddFavorite([FromBody] FavoriteRequest request)
         {
+            if (request.KonamiCardId <= 0)
+                return BadRequest("Invalid card ID.");
+
             var userId = GetUserId();
 
-            var card = await _db.Cards.FirstOrDefaultAsync(c => c.KonamiCardId == request.KonamiCardId);
-            if (card == null)
-                return NotFound("Card not found.");
-
             var alreadyExists = await _db.FavoriteCards
-                .AnyAsync(f => f.UserId == userId && f.CardId == card.CardId);
+                .AnyAsync(f => f.UserId == userId && f.KonamiCardId == request.KonamiCardId);
 
             if (alreadyExists)
                 return Conflict("Card is already in favorites.");
 
             _db.FavoriteCards.Add(new FavoriteCard
             {
-                CardId  = card.CardId,
-                UserId  = userId,
-                AddedAt = DateTime.UtcNow
+                KonamiCardId = request.KonamiCardId,
+                UserId       = userId,
+                AddedAt      = DateTime.UtcNow
             });
 
             await _db.SaveChangesAsync();
@@ -109,7 +123,7 @@ namespace YGODeckBuilder.API
             var userId = GetUserId();
 
             var favorite = await _db.FavoriteCards
-                .FirstOrDefaultAsync(f => f.UserId == userId && f.Card.KonamiCardId == konamiCardId);
+                .FirstOrDefaultAsync(f => f.UserId == userId && f.KonamiCardId == konamiCardId);
 
             if (favorite == null)
                 return NotFound("Favorite not found.");

@@ -11,10 +11,7 @@ namespace YGODeckBuilder.Data.EntityModels
         public int FavoriteId { get; set; }
 
         [Required]
-        public int CardId { get; set; }
-
-        [ForeignKey("CardId")]
-        public Card Card { get; set; }
+        public int KonamiCardId { get; set; }
 
         [Required]
         public int UserId { get; set; }

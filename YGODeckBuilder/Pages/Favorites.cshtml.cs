@@ -27,24 +27,60 @@ namespace YGODeckBuilder.Pages
             if (userIdStr == null || !int.TryParse(userIdStr, out var userId))
                 return;
 
-            Favorites = await _db.FavoriteCards
+            var rows = await _db.FavoriteCards
                 .Where(f => f.UserId == userId)
-                .Include(f => f.Card)
-                    .ThenInclude(c => c.CardImages)
-                .Include(f => f.Card)
-                    .ThenInclude(c => c.CardPrices)
                 .OrderByDescending(f => f.AddedAt)
-                .Select(f => new FavoriteCardView
-                {
-                    KonamiCardId = f.Card.KonamiCardId,
-                    Name         = f.Card.Name,
-                    Type         = f.Card.Type,
-                    Attribute    = f.Card.Attribute,
-                    ImageUrl     = f.Card.CardImages.Select(i => i.ImageUrl).FirstOrDefault(),
-                    Price        = f.Card.CardPrices.Select(p => p.TcgPlayer).FirstOrDefault(),
-                    AddedAt      = f.AddedAt
-                })
+                .Select(f => new { f.KonamiCardId, f.AddedAt })
                 .ToListAsync();
+
+            var ids = rows.Select(r => r.KonamiCardId).ToList();
+
+            var cards = await _db.Cards
+                .Where(c => ids.Contains(c.KonamiCardId))
+                .Select(c => new { c.KonamiCardId, c.Name, c.Type, c.Attribute })
+                .ToDictionaryAsync(c => c.KonamiCardId);
+
+            var images = await _db.CardImages
+                .Where(i => ids.Contains(i.CardImageId))
+                .GroupBy(i => i.CardImageId)
+                .Select(g => new { Id = g.Key, Url = g.First().ImageUrl })
+                .ToDictionaryAsync(x => x.Id);
+
+            var prices = await _db.CardPrices
+                .Where(p => _db.Cards
+                    .Where(c => ids.Contains(c.KonamiCardId))
+                    .Select(c => c.CardId)
+                    .Contains(p.CardId))
+                .GroupBy(p => p.CardId)
+                .Select(g => new { CardId = g.Key, Price = g.First().TcgPlayer })
+                .ToListAsync();
+
+            // map CardId → KonamiCardId for prices
+            var cardIdToKonami = await _db.Cards
+                .Where(c => ids.Contains(c.KonamiCardId))
+                .Select(c => new { c.CardId, c.KonamiCardId })
+                .ToDictionaryAsync(c => c.CardId, c => c.KonamiCardId);
+
+            var priceByKonami = prices
+                .Where(p => cardIdToKonami.ContainsKey(p.CardId))
+                .ToDictionary(p => cardIdToKonami[p.CardId], p => p.Price);
+
+            Favorites = rows.Select(r =>
+            {
+                cards.TryGetValue(r.KonamiCardId, out var card);
+                images.TryGetValue(r.KonamiCardId, out var img);
+                priceByKonami.TryGetValue(r.KonamiCardId, out var price);
+                return new FavoriteCardView
+                {
+                    KonamiCardId = r.KonamiCardId,
+                    Name         = card?.Name,
+                    Type         = card?.Type,
+                    Attribute    = card?.Attribute,
+                    ImageUrl     = img?.Url,
+                    Price        = price,
+                    AddedAt      = r.AddedAt
+                };
+            }).ToList();
         }
     }
 

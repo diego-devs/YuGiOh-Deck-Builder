@@ -40,7 +40,7 @@ namespace YGODeckBuilder.Data
 
             // A user can only favorite a given card once.
             modelBuilder.Entity<FavoriteCard>()
-                .HasIndex(f => new { f.CardId, f.UserId })
+                .HasIndex(f => new { f.KonamiCardId, f.UserId })
                 .IsUnique();
         }
 
