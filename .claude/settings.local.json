@@ -12,7 +12,23 @@
       "Bash(git log *)",
       "Bash(git ls-tree *)",
       "Bash(git -C C:/Users/Diego/Documents/GitHub/YuGiOh-Deck-Builder ls-files YGODeckBuilder/wwwroot/images/)",
-      "Bash(git *)"
+      "Bash(git *)",
+      "Bash(xargs grep *)",
+      "Bash(dotnet run *)",
+      "Bash(curl -s -o /tmp/main.html -w \"HTTP %{http_code}\\\\n\" http://localhost:5000/ -L --max-time 10)",
+      "Read(//tmp/**)",
+      "Bash(curl -s -o /tmp/main.html -w \"HTTP %{http_code}\\\\n\" \"http://localhost:5050/MainPage\" --max-time 15)",
+      "Bash(curl -s -o /tmp/game.html -w \"HTTP %{http_code}\\\\n\" \"http://localhost:5050/Game?DeckName=Test\" --max-time 30)",
+      "Bash(curl -s -o /tmp/game2.html -w \"HTTP %{http_code}\\\\n\" \"http://localhost:5050/Game?DeckName=Gren%20Maju%202025\" --max-time 60)",
+      "Bash(grep -o \"PLAYER_DECK = .\\\\{0,200\\\\}\" /tmp/game2.html)",
+      "Bash(curl -s -o /tmp/dm.html -w \"HTTP %{http_code}\\\\n\" \"http://localhost:5050/DecksManager\" --max-time 30)",
+      "Bash(curl -s -o /tmp/root.html -w \"HTTP %{http_code}\\\\n\" \"http://localhost:5050/\" --max-time 10 -L)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" \"http://localhost:5050/Index\" -L --max-time 5)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" \"http://localhost:5050/MainPage\" -L --max-time 5)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" \"http://localhost:5050/Account/Logout\" --max-time 5 -X POST)",
+      "Bash(taskkill //F //IM dotnet.exe)",
+      "Bash(curl -s -o /dev/null -w \"ROOT: %{http_code}\\\\n\" \"http://localhost:5051/\" --max-time 5)",
+      "Bash(curl -s -o /dev/null -w \"MAINPAGE: %{http_code}\\\\n\" \"http://localhost:5051/MainPage\" --max-time 5)"
     ]
   }
 }

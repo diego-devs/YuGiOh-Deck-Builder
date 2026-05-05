@@ -1,0 +1,1092 @@
+@page
+@model YGODeckBuilder.Pages.GameModel
+@{
+    ViewData["Title"] = "Duel";
+    Layout = "_Layout";
+}
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-warning mt-3">@Model.ErrorMessage</div>
+    <a class="btn btn-primary" asp-page="/DecksManager">Back to Decks</a>
+}
+else
+{
+<div id="duelRoot">
+
+    <div id="duelTopBar">
+        <div class="duel-info">
+            <span class="duel-deck-label">Opponent</span>
+            <span class="duel-deck-name">@Model.OpponentDeck.DeckName</span>
+            <span class="duel-lp" id="lpOpponent">8000</span>
+            <button class="lp-btn" data-target="opponent" data-amount="-500">-500</button>
+            <button class="lp-btn" data-target="opponent" data-amount="-1000">-1000</button>
+            <button class="lp-btn" data-target="opponent" data-amount="500">+500</button>
+        </div>
+        <div class="duel-phase-display">
+            <span class="duel-turn-info">Turn <span id="turnNumber">1</span> — <span id="activePlayerLabel">Your Turn</span></span>
+            <span class="duel-phase-name" id="phaseName">Draw Phase</span>
+        </div>
+        <div class="duel-info">
+            <span class="duel-deck-label">You</span>
+            <span class="duel-deck-name">@Model.PlayerDeck.DeckName</span>
+            <span class="duel-lp" id="lpPlayer">8000</span>
+            <button class="lp-btn" data-target="player" data-amount="-500">-500</button>
+            <button class="lp-btn" data-target="player" data-amount="-1000">-1000</button>
+            <button class="lp-btn" data-target="player" data-amount="500">+500</button>
+        </div>
+    </div>
+
+    <div id="phaseBar">
+        <button class="phase-btn" data-phase="draw">Draw</button>
+        <button class="phase-btn" data-phase="standby">Standby</button>
+        <button class="phase-btn" data-phase="main1">Main 1</button>
+        <button class="phase-btn" data-phase="battle">Battle</button>
+        <button class="phase-btn" data-phase="main2">Main 2</button>
+        <button class="phase-btn" data-phase="end">End</button>
+        <button id="nextPhaseBtn" class="phase-btn primary">Next Phase ▶</button>
+        <button id="endTurnBtn" class="phase-btn danger">End Turn ⟲</button>
+    </div>
+
+    @* Opponent side *@
+    <div class="player-area opponent" data-side="opponent">
+        <div class="hand-row hand-opponent">
+            <div class="hand" id="hand-opponent"></div>
+        </div>
+        <div class="board-row">
+            <div class="side-zones">
+                <div class="zone zone-banished" data-zone="banished" data-side="opponent" title="Banished">B</div>
+                <div class="zone zone-graveyard" data-zone="graveyard" data-side="opponent" title="Graveyard">GY</div>
+            </div>
+            <div class="main-zones">
+                <div class="zone-row spell-row">
+                    <div class="zone zone-field" data-zone="field" data-side="opponent" title="Field Spell">F</div>
+                    <div class="zone zone-spell" data-zone="spell" data-side="opponent" data-index="0">S/T</div>
+                    <div class="zone zone-spell" data-zone="spell" data-side="opponent" data-index="1">S/T</div>
+                    <div class="zone zone-spell" data-zone="spell" data-side="opponent" data-index="2">S/T</div>
+                    <div class="zone zone-spell" data-zone="spell" data-side="opponent" data-index="3">S/T</div>
+                    <div class="zone zone-spell" data-zone="spell" data-side="opponent" data-index="4">S/T</div>
+                </div>
+                <div class="zone-row monster-row">
+                    <div class="zone zone-extra" data-zone="extra" data-side="opponent" title="Extra Deck">EX</div>
+                    <div class="zone zone-monster" data-zone="monster" data-side="opponent" data-index="0">M</div>
+                    <div class="zone zone-monster" data-zone="monster" data-side="opponent" data-index="1">M</div>
+                    <div class="zone zone-monster" data-zone="monster" data-side="opponent" data-index="2">M</div>
+                    <div class="zone zone-monster" data-zone="monster" data-side="opponent" data-index="3">M</div>
+                    <div class="zone zone-monster" data-zone="monster" data-side="opponent" data-index="4">M</div>
+                </div>
+            </div>
+            <div class="side-zones">
+                <div class="zone zone-deck" data-zone="deck" data-side="opponent" title="Deck">
+                    <span class="deck-count" id="deck-count-opponent">0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Player side *@
+    <div class="player-area player" data-side="player">
+        <div class="board-row">
+            <div class="side-zones">
+                <div class="zone zone-banished" data-zone="banished" data-side="player" title="Banished">B</div>
+                <div class="zone zone-graveyard" data-zone="graveyard" data-side="player" title="Graveyard">GY</div>
+            </div>
+            <div class="main-zones">
+                <div class="zone-row monster-row">
+                    <div class="zone zone-monster" data-zone="monster" data-side="player" data-index="0">M</div>
+                    <div class="zone zone-monster" data-zone="monster" data-side="player" data-index="1">M</div>
+                    <div class="zone zone-monster" data-zone="monster" data-side="player" data-index="2">M</div>
+                    <div class="zone zone-monster" data-zone="monster" data-side="player" data-index="3">M</div>
+                    <div class="zone zone-monster" data-zone="monster" data-side="player" data-index="4">M</div>
+                    <div class="zone zone-extra" data-zone="extra" data-side="player" title="Extra Deck">EX</div>
+                </div>
+                <div class="zone-row spell-row">
+                    <div class="zone zone-spell" data-zone="spell" data-side="player" data-index="0">S/T</div>
+                    <div class="zone zone-spell" data-zone="spell" data-side="player" data-index="1">S/T</div>
+                    <div class="zone zone-spell" data-zone="spell" data-side="player" data-index="2">S/T</div>
+                    <div class="zone zone-spell" data-zone="spell" data-side="player" data-index="3">S/T</div>
+                    <div class="zone zone-spell" data-zone="spell" data-side="player" data-index="4">S/T</div>
+                    <div class="zone zone-field" data-zone="field" data-side="player" title="Field Spell">F</div>
+                </div>
+            </div>
+            <div class="side-zones">
+                <div class="zone zone-deck" data-zone="deck" data-side="player" title="Deck">
+                    <span class="deck-count" id="deck-count-player">0</span>
+                </div>
+            </div>
+        </div>
+        <div class="hand-row hand-player">
+            <div class="hand" id="hand-player"></div>
+        </div>
+    </div>
+
+    @* Context menu *@
+    <div id="cardContextMenu" class="context-menu" style="display:none">
+        <ul></ul>
+    </div>
+
+    @* Pile viewer modal *@
+    <div id="pileViewer" class="modal-backdrop" style="display:none">
+        <div class="modal-window">
+            <div class="modal-header">
+                <h4 id="pileViewerTitle">Pile</h4>
+                <button id="pileViewerClose" class="btn btn-sm btn-secondary">Close</button>
+            </div>
+            <div id="pileViewerContent" class="pile-grid"></div>
+        </div>
+    </div>
+
+    @* Card preview tooltip *@
+    <div id="cardPreview" style="display:none"></div>
+
+</div>
+
+<script>
+    const PLAYER_DECK = @Json.Serialize(Model.PlayerDeck.MainDeck);
+    const PLAYER_EXTRA = @Json.Serialize(Model.PlayerDeck.ExtraDeck);
+    const OPPONENT_DECK = @Json.Serialize(Model.OpponentDeck.MainDeck);
+    const OPPONENT_EXTRA = @Json.Serialize(Model.OpponentDeck.ExtraDeck);
+    const CARD_BACK = '/images/default_card_back.png';
+
+    const PHASES = ['draw','standby','main1','battle','main2','end'];
+    const PHASE_LABELS = {
+        draw:'Draw Phase',
+        standby:'Standby Phase',
+        main1:'Main Phase 1',
+        battle:'Battle Phase',
+        main2:'Main Phase 2',
+        end:'End Phase'
+    };
+
+    let nextInstanceId = 1;
+    function instanceFor(card) {
+        return { instanceId: nextInstanceId++, card: card, position: 'atk', faceDown: false };
+    }
+
+    function shuffle(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    function makePlayerState(rawDeck, rawExtra) {
+        const deck = shuffle(rawDeck.slice()).map(instanceFor);
+        const extra = (rawExtra || []).map(instanceFor);
+        return {
+            deck: deck,
+            hand: [],
+            extra: extra,
+            graveyard: [],
+            banished: [],
+            field: null,
+            monsters: [null, null, null, null, null],
+            spells:   [null, null, null, null, null],
+            lp: 8000
+        };
+    }
+
+    const state = {
+        player:   makePlayerState(PLAYER_DECK, PLAYER_EXTRA),
+        opponent: makePlayerState(OPPONENT_DECK, OPPONENT_EXTRA),
+        activeSide: 'player',
+        phaseIndex: 0,
+        turnNumber: 1,
+        firstTurn: true
+    };
+
+    function isExtraDeckType(card) {
+        if (!card || !card.type) return false;
+        const t = card.type.toLowerCase();
+        return t.includes('fusion') || t.includes('synchro') || t.includes('xyz') || t.includes('link');
+    }
+
+    function isMonsterType(card) {
+        if (!card || !card.type) return false;
+        return card.type.toLowerCase().includes('monster');
+    }
+
+    function isSpellType(card) {
+        if (!card || !card.type) return false;
+        const t = card.type.toLowerCase();
+        return t.includes('spell') || t.includes('trap');
+    }
+
+    function isFieldSpell(card) {
+        if (!card || !card.type || !card.race) return false;
+        return card.type.toLowerCase().includes('spell') && card.race.toLowerCase() === 'field';
+    }
+
+    /* ========== Rendering ========== */
+
+    function renderAll() {
+        renderHand('player');
+        renderHand('opponent');
+        renderBoard('player');
+        renderBoard('opponent');
+        renderCounts();
+        renderLP();
+        renderPhase();
+    }
+
+    function renderLP() {
+        document.getElementById('lpPlayer').textContent = state.player.lp;
+        document.getElementById('lpOpponent').textContent = state.opponent.lp;
+    }
+
+    function renderPhase() {
+        document.getElementById('phaseName').textContent = PHASE_LABELS[PHASES[state.phaseIndex]];
+        document.getElementById('turnNumber').textContent = state.turnNumber;
+        document.getElementById('activePlayerLabel').textContent =
+            state.activeSide === 'player' ? 'Your Turn' : "Opponent's Turn";
+        document.querySelectorAll('.phase-btn[data-phase]').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.phase === PHASES[state.phaseIndex]);
+        });
+        document.querySelectorAll('.player-area').forEach(area => {
+            area.classList.toggle('active-side', area.dataset.side === state.activeSide);
+        });
+    }
+
+    function renderCounts() {
+        document.getElementById('deck-count-player').textContent = state.player.deck.length;
+        document.getElementById('deck-count-opponent').textContent = state.opponent.deck.length;
+    }
+
+    function renderHand(side) {
+        const handEl = document.getElementById('hand-' + side);
+        handEl.innerHTML = '';
+        const hand = state[side].hand;
+        const showFaceUp = (side === 'player');
+        hand.forEach((inst, idx) => {
+            const cardEl = buildCardElement(inst, side, 'hand', idx, !showFaceUp);
+            cardEl.draggable = (side === 'player');
+            cardEl.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', JSON.stringify({
+                    side: side, source: 'hand', instanceId: inst.instanceId
+                }));
+            });
+            handEl.appendChild(cardEl);
+        });
+    }
+
+    function renderBoard(side) {
+        const player = state[side];
+        // Monster zones
+        for (let i = 0; i < 5; i++) renderZoneSlot(side, 'monster', i, player.monsters[i]);
+        // Spell zones
+        for (let i = 0; i < 5; i++) renderZoneSlot(side, 'spell', i, player.spells[i]);
+        // Field zone
+        renderZoneSlot(side, 'field', null, player.field);
+    }
+
+    function renderZoneSlot(side, zone, index, inst) {
+        const selector = index !== null
+            ? `.zone[data-side="${side}"][data-zone="${zone}"][data-index="${index}"]`
+            : `.zone[data-side="${side}"][data-zone="${zone}"]`;
+        const slot = document.querySelector(selector);
+        if (!slot) return;
+        slot.innerHTML = '';
+        if (zone === 'monster' || zone === 'spell' || zone === 'field') {
+            slot.appendChild(makeLabel(zone));
+        }
+        if (inst) {
+            const cardEl = buildCardElement(inst, side, zone, index, inst.faceDown);
+            if (inst.position === 'def') cardEl.classList.add('defense');
+            slot.appendChild(cardEl);
+        }
+    }
+
+    function makeLabel(zone) {
+        const span = document.createElement('span');
+        span.className = 'zone-label';
+        span.textContent = zone === 'monster' ? 'M' : zone === 'spell' ? 'S/T' : zone === 'field' ? 'F' : '';
+        return span;
+    }
+
+    function buildCardElement(inst, side, location, index, faceDown) {
+        const el = document.createElement('div');
+        el.className = 'gcard';
+        el.dataset.instanceId = inst.instanceId;
+        el.dataset.side = side;
+        el.dataset.location = location;
+        if (index !== null && index !== undefined) el.dataset.index = index;
+        const img = document.createElement('img');
+        if (faceDown) {
+            img.src = CARD_BACK;
+            img.alt = 'face down';
+        } else {
+            img.src = `/images/${inst.card.id}.jpg`;
+            img.alt = inst.card.name || '';
+            img.onerror = function() { this.src = CARD_BACK; };
+        }
+        el.appendChild(img);
+
+        if (!faceDown) {
+            el.addEventListener('mouseenter', () => showPreview(inst));
+            el.addEventListener('mouseleave', hidePreview);
+        }
+        el.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            showContextMenu(e, inst, side, location, index);
+        });
+        return el;
+    }
+
+    /* ========== Phase / Turn flow ========== */
+
+    function setPhase(idx) {
+        state.phaseIndex = idx;
+        const phase = PHASES[idx];
+        if (phase === 'draw') {
+            // Skip draw on first turn for the starting player (standard rule)
+            if (!(state.firstTurn && state.turnNumber === 1)) {
+                drawCard(state.activeSide, 1);
+            }
+        }
+        renderAll();
+    }
+
+    function nextPhase() {
+        if (state.phaseIndex < PHASES.length - 1) {
+            setPhase(state.phaseIndex + 1);
+        } else {
+            endTurn();
+        }
+    }
+
+    function endTurn() {
+        state.activeSide = state.activeSide === 'player' ? 'opponent' : 'player';
+        state.turnNumber++;
+        state.firstTurn = false;
+        setPhase(0);
+    }
+
+    /* ========== Drawing ========== */
+
+    function drawCard(side, n=1) {
+        for (let i = 0; i < n; i++) {
+            const player = state[side];
+            if (player.deck.length === 0) {
+                flashMessage(`${side === 'player' ? 'You have' : 'Opponent has'} no cards left to draw!`);
+                return;
+            }
+            const inst = player.deck.shift();
+            player.hand.push(inst);
+        }
+        renderAll();
+    }
+
+    function shuffleDeck(side) {
+        shuffle(state[side].deck);
+        flashMessage(`${side === 'player' ? 'Your' : "Opponent's"} deck shuffled.`);
+    }
+
+    /* ========== Drag & Drop ========== */
+
+    function setupDropTargets() {
+        document.querySelectorAll('.zone').forEach(zone => {
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                zone.classList.add('drop-hover');
+            });
+            zone.addEventListener('dragleave', () => zone.classList.remove('drop-hover'));
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('drop-hover');
+                let payload;
+                try { payload = JSON.parse(e.dataTransfer.getData('text/plain')); }
+                catch(err) { return; }
+                handleDrop(payload, zone);
+            });
+        });
+    }
+
+    function handleDrop(payload, zoneEl) {
+        const side = zoneEl.dataset.side;
+        const zone = zoneEl.dataset.zone;
+        const indexAttr = zoneEl.dataset.index;
+        const index = indexAttr !== undefined ? parseInt(indexAttr, 10) : null;
+
+        if (payload.side !== side) {
+            flashMessage("You can't drop a card on the opponent's zones.");
+            return;
+        }
+
+        const player = state[side];
+        const inst = takeFromSource(player, payload.source, payload.instanceId);
+        if (!inst) return;
+
+        if (zone === 'monster') {
+            if (!isMonsterType(inst.card)) {
+                flashMessage('Only monsters can go in monster zones.');
+                returnInstanceTo(player, payload.source, inst);
+                return;
+            }
+            if (player.monsters[index]) {
+                flashMessage('That monster zone is occupied.');
+                returnInstanceTo(player, payload.source, inst);
+                return;
+            }
+            inst.position = 'atk';
+            inst.faceDown = false;
+            player.monsters[index] = inst;
+        } else if (zone === 'spell') {
+            if (!isSpellType(inst.card)) {
+                flashMessage('Only spells/traps go in S/T zones.');
+                returnInstanceTo(player, payload.source, inst);
+                return;
+            }
+            if (player.spells[index]) {
+                flashMessage('That S/T zone is occupied.');
+                returnInstanceTo(player, payload.source, inst);
+                return;
+            }
+            inst.faceDown = false;
+            player.spells[index] = inst;
+        } else if (zone === 'field') {
+            if (!isFieldSpell(inst.card)) {
+                flashMessage('Only field spells go in the field zone.');
+                returnInstanceTo(player, payload.source, inst);
+                return;
+            }
+            if (player.field) {
+                player.graveyard.push(player.field);
+            }
+            inst.faceDown = false;
+            player.field = inst;
+        } else if (zone === 'graveyard') {
+            player.graveyard.push(inst);
+        } else if (zone === 'banished') {
+            player.banished.push(inst);
+        } else {
+            returnInstanceTo(player, payload.source, inst);
+            return;
+        }
+        renderAll();
+    }
+
+    function takeFromSource(player, source, instanceId) {
+        if (source === 'hand') {
+            const idx = player.hand.findIndex(i => i.instanceId === instanceId);
+            if (idx < 0) return null;
+            return player.hand.splice(idx, 1)[0];
+        }
+        if (source === 'extra') {
+            const idx = player.extra.findIndex(i => i.instanceId === instanceId);
+            if (idx < 0) return null;
+            return player.extra.splice(idx, 1)[0];
+        }
+        if (source === 'monster') {
+            for (let i = 0; i < player.monsters.length; i++) {
+                if (player.monsters[i] && player.monsters[i].instanceId === instanceId) {
+                    const inst = player.monsters[i];
+                    player.monsters[i] = null;
+                    return inst;
+                }
+            }
+        }
+        if (source === 'spell') {
+            for (let i = 0; i < player.spells.length; i++) {
+                if (player.spells[i] && player.spells[i].instanceId === instanceId) {
+                    const inst = player.spells[i];
+                    player.spells[i] = null;
+                    return inst;
+                }
+            }
+        }
+        if (source === 'field') {
+            if (player.field && player.field.instanceId === instanceId) {
+                const inst = player.field;
+                player.field = null;
+                return inst;
+            }
+        }
+        if (source === 'graveyard') {
+            const idx = player.graveyard.findIndex(i => i.instanceId === instanceId);
+            if (idx < 0) return null;
+            return player.graveyard.splice(idx, 1)[0];
+        }
+        if (source === 'banished') {
+            const idx = player.banished.findIndex(i => i.instanceId === instanceId);
+            if (idx < 0) return null;
+            return player.banished.splice(idx, 1)[0];
+        }
+        return null;
+    }
+
+    function returnInstanceTo(player, source, inst) {
+        if (source === 'hand') player.hand.push(inst);
+        else if (source === 'extra') player.extra.push(inst);
+        else if (source === 'graveyard') player.graveyard.push(inst);
+        else if (source === 'banished') player.banished.push(inst);
+        renderAll();
+    }
+
+    /* ========== Context menu ========== */
+
+    function showContextMenu(e, inst, side, location, index) {
+        const menu = document.getElementById('cardContextMenu');
+        const ul = menu.querySelector('ul');
+        ul.innerHTML = '';
+        const items = buildMenuItems(inst, side, location, index);
+        items.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = item.label;
+            li.addEventListener('click', () => {
+                item.action();
+                hideContextMenu();
+                renderAll();
+            });
+            ul.appendChild(li);
+        });
+        menu.style.left = e.pageX + 'px';
+        menu.style.top = e.pageY + 'px';
+        menu.style.display = 'block';
+    }
+
+    function hideContextMenu() {
+        document.getElementById('cardContextMenu').style.display = 'none';
+    }
+
+    function buildMenuItems(inst, side, location, index) {
+        const items = [];
+        const player = state[side];
+
+        if (location === 'monster') {
+            items.push({ label: inst.position === 'atk' ? 'Switch to Defense' : 'Switch to Attack', action: () => {
+                inst.position = inst.position === 'atk' ? 'def' : 'atk';
+                if (inst.position === 'atk') inst.faceDown = false;
+            }});
+            items.push({ label: inst.faceDown ? 'Flip Face-up' : 'Set Face-down (Defense)', action: () => {
+                inst.faceDown = !inst.faceDown;
+                if (inst.faceDown) inst.position = 'def';
+            }});
+            items.push({ label: 'Send to Graveyard', action: () => {
+                player.monsters[index] = null;
+                inst.faceDown = false;
+                player.graveyard.push(inst);
+            }});
+            items.push({ label: 'Banish', action: () => {
+                player.monsters[index] = null;
+                inst.faceDown = false;
+                player.banished.push(inst);
+            }});
+            items.push({ label: 'Return to Hand', action: () => {
+                player.monsters[index] = null;
+                inst.faceDown = false;
+                player.hand.push(inst);
+            }});
+        } else if (location === 'spell') {
+            items.push({ label: inst.faceDown ? 'Activate (Flip Up)' : 'Set Face-down', action: () => {
+                inst.faceDown = !inst.faceDown;
+            }});
+            items.push({ label: 'Send to Graveyard', action: () => {
+                player.spells[index] = null;
+                inst.faceDown = false;
+                player.graveyard.push(inst);
+            }});
+            items.push({ label: 'Banish', action: () => {
+                player.spells[index] = null;
+                inst.faceDown = false;
+                player.banished.push(inst);
+            }});
+        } else if (location === 'field') {
+            items.push({ label: 'Send to Graveyard', action: () => {
+                player.field = null;
+                inst.faceDown = false;
+                player.graveyard.push(inst);
+            }});
+        } else if (location === 'hand') {
+            if (isMonsterType(inst.card)) {
+                items.push({ label: 'Set Face-down (Defense) — pick zone', action: () => {
+                    const free = player.monsters.findIndex(m => m === null);
+                    if (free < 0) { flashMessage('No free monster zone.'); return; }
+                    inst.faceDown = true;
+                    inst.position = 'def';
+                    removeFromHand(player, inst.instanceId);
+                    player.monsters[free] = inst;
+                }});
+            } else if (isSpellType(inst.card)) {
+                items.push({ label: 'Set Face-down', action: () => {
+                    if (isFieldSpell(inst.card)) {
+                        if (player.field) player.graveyard.push(player.field);
+                        inst.faceDown = true;
+                        removeFromHand(player, inst.instanceId);
+                        player.field = inst;
+                        return;
+                    }
+                    const free = player.spells.findIndex(s => s === null);
+                    if (free < 0) { flashMessage('No free S/T zone.'); return; }
+                    inst.faceDown = true;
+                    removeFromHand(player, inst.instanceId);
+                    player.spells[free] = inst;
+                }});
+            }
+            items.push({ label: 'Discard to Graveyard', action: () => {
+                removeFromHand(player, inst.instanceId);
+                player.graveyard.push(inst);
+            }});
+            items.push({ label: 'Banish', action: () => {
+                removeFromHand(player, inst.instanceId);
+                player.banished.push(inst);
+            }});
+        }
+        return items;
+    }
+
+    function removeFromHand(player, instanceId) {
+        const idx = player.hand.findIndex(i => i.instanceId === instanceId);
+        if (idx >= 0) player.hand.splice(idx, 1);
+    }
+
+    /* ========== Pile viewer ========== */
+
+    function openPileViewer(side, pile) {
+        const titles = { graveyard: 'Graveyard', banished: 'Banished', deck: 'Deck', extra: 'Extra Deck' };
+        document.getElementById('pileViewerTitle').textContent =
+            (side === 'player' ? 'Your ' : "Opponent's ") + titles[pile];
+        const list = state[side][pile];
+        const container = document.getElementById('pileViewerContent');
+        container.innerHTML = '';
+        if (!list || list.length === 0) {
+            container.innerHTML = '<p class="text-muted">Empty.</p>';
+        } else {
+            list.forEach(inst => {
+                const el = document.createElement('div');
+                el.className = 'pile-card';
+                const img = document.createElement('img');
+                img.src = `/images/${inst.card.id}.jpg`;
+                img.onerror = function() { this.src = CARD_BACK; };
+                img.alt = inst.card.name || '';
+                img.title = inst.card.name || '';
+                el.appendChild(img);
+                if (side === 'player') {
+                    el.style.cursor = 'pointer';
+                    el.title = 'Click to return to hand';
+                    el.addEventListener('click', () => {
+                        const idx = list.findIndex(i => i.instanceId === inst.instanceId);
+                        if (idx >= 0) {
+                            list.splice(idx, 1);
+                            inst.faceDown = false;
+                            state[side].hand.push(inst);
+                            openPileViewer(side, pile);
+                            renderAll();
+                        }
+                    });
+                }
+                container.appendChild(el);
+            });
+        }
+        document.getElementById('pileViewer').style.display = 'flex';
+    }
+
+    /* ========== Preview tooltip ========== */
+
+    let previewTimer = null;
+    function showPreview(inst) {
+        clearTimeout(previewTimer);
+        previewTimer = setTimeout(() => {
+            const el = document.getElementById('cardPreview');
+            const c = inst.card;
+            el.innerHTML = `
+                <div class="preview-name">${escapeHtml(c.name || '')}</div>
+                <div class="preview-type">${escapeHtml(c.type || '')} ${c.race ? '· ' + escapeHtml(c.race) : ''} ${c.attribute ? '· ' + escapeHtml(c.attribute) : ''}</div>
+                ${(c.atk !== null && c.atk !== undefined) ? `<div class="preview-stats">ATK ${c.atk} / DEF ${c.def ?? '-'}</div>` : ''}
+                <div class="preview-desc">${escapeHtml(c.desc || '')}</div>`;
+            el.style.display = 'block';
+        }, 350);
+    }
+
+    function hidePreview() {
+        clearTimeout(previewTimer);
+        document.getElementById('cardPreview').style.display = 'none';
+    }
+
+    document.addEventListener('mousemove', (e) => {
+        const el = document.getElementById('cardPreview');
+        if (el.style.display !== 'none') {
+            const x = Math.min(window.innerWidth - 360, e.pageX + 16);
+            const y = Math.min(window.innerHeight - 280, e.pageY + 16);
+            el.style.left = x + 'px';
+            el.style.top = y + 'px';
+        }
+    });
+
+    function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    /* ========== Misc UI ========== */
+
+    function flashMessage(msg) {
+        if (typeof showToast === 'function') showToast(msg, 'info');
+        else console.log(msg);
+    }
+
+    /* ========== Wiring ========== */
+
+    function setupZoneClicks() {
+        document.querySelectorAll('.zone-deck').forEach(d => {
+            d.addEventListener('click', () => {
+                const side = d.dataset.side;
+                if (side === 'player') drawCard('player', 1);
+            });
+            d.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                const side = d.dataset.side;
+                const menu = document.getElementById('cardContextMenu');
+                const ul = menu.querySelector('ul');
+                ul.innerHTML = '';
+                [
+                    { label: 'View Deck (top to bottom)', action: () => openPileViewer(side, 'deck') },
+                    { label: 'Shuffle Deck', action: () => { shuffleDeck(side); renderAll(); } },
+                    { label: 'Draw 1', action: () => drawCard(side, 1) },
+                    { label: 'Draw 5', action: () => drawCard(side, 5) }
+                ].forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item.label;
+                    li.addEventListener('click', () => { item.action(); hideContextMenu(); });
+                    ul.appendChild(li);
+                });
+                menu.style.left = e.pageX + 'px';
+                menu.style.top = e.pageY + 'px';
+                menu.style.display = 'block';
+            });
+        });
+
+        document.querySelectorAll('.zone-graveyard, .zone-banished, .zone-extra').forEach(zoneEl => {
+            zoneEl.addEventListener('click', () => {
+                const side = zoneEl.dataset.side;
+                const pile = zoneEl.dataset.zone;
+                openPileViewer(side, pile);
+            });
+        });
+    }
+
+    function setupPhaseButtons() {
+        document.querySelectorAll('.phase-btn[data-phase]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const phase = btn.dataset.phase;
+                const idx = PHASES.indexOf(phase);
+                if (idx >= 0) setPhase(idx);
+            });
+        });
+        document.getElementById('nextPhaseBtn').addEventListener('click', nextPhase);
+        document.getElementById('endTurnBtn').addEventListener('click', endTurn);
+    }
+
+    function setupLPButtons() {
+        document.querySelectorAll('.lp-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const side = btn.dataset.target;
+                const amount = parseInt(btn.dataset.amount, 10);
+                state[side].lp = Math.max(0, state[side].lp + amount);
+                renderLP();
+                if (state[side].lp === 0) {
+                    flashMessage(`${side === 'player' ? 'You' : 'Opponent'} reached 0 LP!`);
+                }
+            });
+        });
+    }
+
+    function setupGlobalHandlers() {
+        document.addEventListener('click', (e) => {
+            const menu = document.getElementById('cardContextMenu');
+            if (menu.style.display === 'block' && !menu.contains(e.target)) {
+                hideContextMenu();
+            }
+        });
+        document.getElementById('pileViewerClose').addEventListener('click', () => {
+            document.getElementById('pileViewer').style.display = 'none';
+        });
+        document.getElementById('pileViewer').addEventListener('click', (e) => {
+            if (e.target.id === 'pileViewer') {
+                document.getElementById('pileViewer').style.display = 'none';
+            }
+        });
+    }
+
+    /* ========== Init ========== */
+
+    function init() {
+        setupDropTargets();
+        setupZoneClicks();
+        setupPhaseButtons();
+        setupLPButtons();
+        setupGlobalHandlers();
+        // Opening hands
+        drawCard('player', 5);
+        drawCard('opponent', 5);
+        renderAll();
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+</script>
+
+<style>
+    .container { max-width: 100% !important; padding: 0 8px !important; }
+
+    #duelRoot {
+        font-family: 'Rajdhani', sans-serif;
+        color: #e0e0e0;
+        user-select: none;
+    }
+
+    #duelTopBar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 14px;
+        background: linear-gradient(90deg, #1a1a2e 0%, #16213e 50%, #1a1a2e 100%);
+        border: 1px solid rgba(125,90,255,0.25);
+        border-radius: 6px;
+        margin-bottom: 6px;
+    }
+
+    .duel-info { display: flex; align-items: center; gap: 8px; }
+    .duel-deck-label { color: #888; font-size: 12px; text-transform: uppercase; }
+    .duel-deck-name { font-weight: 600; color: #c0c0e8; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .duel-lp {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 22px;
+        font-weight: 700;
+        color: #ffd166;
+        min-width: 80px;
+        text-align: right;
+        margin-right: 6px;
+    }
+    .lp-btn {
+        background: rgba(125,90,255,0.15);
+        color: #c0c0e8;
+        border: 1px solid rgba(125,90,255,0.4);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 11px;
+        cursor: pointer;
+    }
+    .lp-btn:hover { background: rgba(125,90,255,0.35); color: #fff; }
+
+    .duel-phase-display {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+    .duel-turn-info { font-size: 12px; color: #888; }
+    .duel-phase-name { font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700; color: #7d5aff; }
+
+    #phaseBar {
+        display: flex;
+        gap: 4px;
+        justify-content: center;
+        padding: 6px;
+        background: rgba(26,26,46,0.6);
+        border: 1px solid rgba(125,90,255,0.2);
+        border-radius: 6px;
+        margin-bottom: 8px;
+    }
+    .phase-btn {
+        background: rgba(0,0,0,0.4);
+        color: #c0c0e8;
+        border: 1px solid rgba(125,90,255,0.3);
+        border-radius: 4px;
+        padding: 4px 12px;
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 13px;
+        cursor: pointer;
+        transition: background 0.15s;
+    }
+    .phase-btn:hover { background: rgba(125,90,255,0.25); }
+    .phase-btn.active { background: #7d5aff; color: #fff; border-color: #7d5aff; }
+    .phase-btn.primary { background: rgba(91,48,200,0.6); border-color: #7d5aff; color: #fff; }
+    .phase-btn.primary:hover { background: #7d5aff; }
+    .phase-btn.danger { background: rgba(180,40,40,0.4); border-color: rgba(220,80,80,0.6); color: #fff; }
+    .phase-btn.danger:hover { background: rgba(220,80,80,0.7); }
+
+    .player-area {
+        background: linear-gradient(180deg, rgba(20,20,35,0.8) 0%, rgba(15,15,30,0.8) 100%);
+        border: 1px solid rgba(125,90,255,0.15);
+        border-radius: 6px;
+        padding: 6px;
+        margin-bottom: 6px;
+        transition: border-color 0.3s;
+    }
+    .player-area.active-side {
+        border-color: #7d5aff;
+        box-shadow: 0 0 12px rgba(125,90,255,0.35);
+    }
+    .player-area.opponent { transform: rotate(180deg); }
+    .player-area.opponent .gcard img,
+    .player-area.opponent .zone-label,
+    .player-area.opponent .deck-count { transform: rotate(180deg); }
+
+    .board-row {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .side-zones {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .main-zones { display: flex; flex-direction: column; gap: 4px; }
+    .zone-row { display: flex; gap: 4px; }
+
+    .zone {
+        width: 78px;
+        height: 110px;
+        background: rgba(0,0,0,0.45);
+        border: 1px dashed rgba(125,90,255,0.4);
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        color: rgba(125,90,255,0.5);
+        font-size: 12px;
+        font-weight: 600;
+    }
+    .zone-label {
+        position: absolute;
+        font-size: 11px;
+        color: rgba(125,90,255,0.35);
+        pointer-events: none;
+    }
+    .zone-monster { border-color: rgba(220,140,40,0.55); color: rgba(220,140,40,0.45); }
+    .zone-spell   { border-color: rgba(40,180,140,0.55); color: rgba(40,180,140,0.45); }
+    .zone-field   { border-color: rgba(120,200,80,0.6); color: rgba(120,200,80,0.45); width: 60px; }
+    .zone-extra   { border-color: rgba(160,80,200,0.6); color: rgba(160,80,200,0.5); width: 60px; cursor: pointer; }
+    .zone-graveyard { border-color: rgba(200,200,200,0.4); color: rgba(200,200,200,0.4); cursor: pointer; }
+    .zone-banished  { border-color: rgba(255,140,140,0.45); color: rgba(255,140,140,0.45); cursor: pointer; }
+    .zone-deck      { border-color: rgba(125,90,255,0.7); cursor: pointer; background: rgba(125,90,255,0.15); }
+    .zone.drop-hover { background: rgba(125,90,255,0.3); border-style: solid; }
+
+    .zone .deck-count {
+        position: absolute;
+        bottom: 2px;
+        right: 4px;
+        font-size: 11px;
+        background: rgba(0,0,0,0.7);
+        color: #fff;
+        padding: 1px 4px;
+        border-radius: 3px;
+    }
+
+    .gcard {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0; left: 0;
+        cursor: grab;
+        transition: transform 0.15s;
+    }
+    .gcard img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 3px;
+        pointer-events: none;
+    }
+    .gcard:hover { transform: scale(1.04); z-index: 10; }
+    .gcard.defense img { transform: rotate(90deg) scale(0.8); }
+    .player-area.opponent .gcard.defense img { transform: rotate(-90deg) scale(0.8); }
+
+    .hand-row {
+        display: flex;
+        justify-content: center;
+        padding: 4px 6px;
+        min-height: 110px;
+    }
+    .hand {
+        display: flex;
+        gap: 4px;
+        flex-wrap: nowrap;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+    .hand .gcard {
+        position: relative;
+        width: 72px;
+        height: 105px;
+        flex: 0 0 auto;
+    }
+
+    .context-menu {
+        position: absolute;
+        background: #16213e;
+        border: 1px solid #7d5aff;
+        border-radius: 4px;
+        z-index: 9000;
+        min-width: 180px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+    .context-menu ul { list-style: none; padding: 4px 0; margin: 0; }
+    .context-menu li {
+        padding: 6px 14px;
+        cursor: pointer;
+        color: #e0e0e0;
+        font-size: 13px;
+    }
+    .context-menu li:hover { background: rgba(125,90,255,0.3); }
+
+    .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.75);
+        z-index: 8000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .modal-window {
+        background: #1a1a2e;
+        border: 1px solid #7d5aff;
+        border-radius: 6px;
+        max-width: 80%;
+        max-height: 80%;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    .modal-window .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 14px;
+        background: #16213e;
+        border-bottom: 1px solid rgba(125,90,255,0.3);
+    }
+    .modal-window h4 { margin: 0; color: #c0c0e8; font-family: 'Orbitron', sans-serif; }
+    .pile-grid {
+        padding: 10px;
+        overflow-y: auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, 90px);
+        gap: 8px;
+    }
+    .pile-card img { width: 90px; height: 130px; object-fit: cover; border-radius: 3px; }
+
+    #cardPreview {
+        position: absolute;
+        z-index: 9500;
+        background: #16213e;
+        border: 1px solid #7d5aff;
+        border-radius: 6px;
+        padding: 10px;
+        max-width: 320px;
+        color: #e0e0e0;
+        font-size: 12px;
+        pointer-events: none;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+    }
+    .preview-name { font-family: 'Orbitron', sans-serif; font-weight: 700; color: #ffd166; margin-bottom: 4px; }
+    .preview-type { color: #9090c8; margin-bottom: 4px; }
+    .preview-stats { color: #ff8866; font-weight: 600; margin-bottom: 6px; }
+    .preview-desc { color: #c0c0e0; line-height: 1.35; max-height: 180px; overflow-y: auto; }
+</style>
+}

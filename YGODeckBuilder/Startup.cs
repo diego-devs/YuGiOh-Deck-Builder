@@ -61,7 +61,10 @@ namespace YGODeckBuilder
                 });
 
             services.AddAuthorization();
-            services.AddRazorPages();
+            services.AddRazorPages(options =>
+            {
+                options.Conventions.AddPageRoute("/MainPage", "");
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

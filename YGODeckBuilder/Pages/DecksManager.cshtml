@@ -37,6 +37,7 @@
                             <a href="/DeckBuilder?DeckFileName=@deck.DeckName&personal=true" class="text-white text-uppercase">@deck.DeckName</a>
                             <div class="btn-group" role="group">
                                 <a class="btn btn-primary btn-sm mr-1" href="/DeckBuilder?DeckFileName=@deck.DeckName&personal=true">Edit</a>
+                                <a class="btn btn-info btn-sm mr-1" href="/Game?DeckName=@deck.DeckName&Personal=true">Play</a>
                                 <button type="button" class="btn btn-success btn-sm mr-1" onclick="duplicateDeck('@deck.DeckName')">Duplicate</button>
                                 <button type="button" class="btn btn-warning btn-sm mr-1" onclick="showRenameModal('@deck.DeckName')">Rename</button>
                                 <button type="button" class="btn btn-danger btn-sm" onclick="showDeleteConfirm('@deck.DeckName')">Delete</button>
@@ -47,7 +48,7 @@
             }
             else
             {
-                <p class="text-muted small">No personal decks yet. Create one or fork a community deck below.</p>
+                <p id="personalDecksEmpty" class="text-muted small">No personal decks yet. Create one or fork a community deck below.</p>
             }
         </div>
     }
@@ -72,6 +73,7 @@
                     <div class="list-group-item d-flex justify-content-between align-items-center bg-dark border-light">
                         <span class="text-white text-uppercase">@deck.DeckName</span>
                         <div class="btn-group" role="group">
+                            <a class="btn btn-outline-info btn-sm mr-1" href="/Game?DeckName=@deck.DeckName">Play</a>
                             @if (Model.IsAuthenticated)
                             {
                                 <button type="button" class="btn btn-outline-info btn-sm" onclick="forkDeck('@deck.DeckName')">Fork to My Decks</button>

@@ -6,7 +6,11 @@
       "Bash(git commit -m ' *)",
       "Bash(powershell -ExecutionPolicy Bypass -File \"C:/Users/Diego/Documents/GitHub/YuGiOh-Deck-Builder/setup-database.ps1\")",
       "Bash(dotnet ef *)",
-      "Bash(powershell *)"
+      "Bash(powershell *)",
+      "Bash(git push *)",
+      "Bash(git -C .. add YugiohDB/Migrations/20260424215952_AddFavoriteCards.cs YugiohDB/Migrations/20260424215952_AddFavoriteCards.Designer.cs YugiohDB/Migrations/YgoContextModelSnapshot.cs)",
+      "Bash(grep -E \"\\\\.\\(cs|csproj\\)$\")",
+      "Bash(git commit *)"
     ]
   }
 }
