@@ -25,7 +25,7 @@
 
 <div id="gameArea" class="game-area">
     <div id="deck" class="deck-area">
-        <img src="/images/default_card_back.jpg" alt="Deck" id="deckImage">
+        <img src="/images/default_card_back.png" alt="Deck" id="deckImage">
         <span id="deckCount"></span>
     </div>
 </div>
@@ -33,6 +33,16 @@
 <div class="button-area">
     <button id="drawButton">Draw Card</button>
     <button id="shuffleButton">Shuffle Deck</button>
+</div>
+
+<div id="llmAnalysisPanel">
+    <div id="llmAnalysisHeader">
+        <span>Hand Analysis</span>
+        <button id="analyzeHandButton" disabled title="Coming soon">Analyze Hand</button>
+    </div>
+    <div id="llmAnalysisContent">
+        <p id="llmPlaceholderText">AI hand analysis coming soon. This panel will show tips and strategies based on your current hand.</p>
+    </div>
 </div>
 
 <script>
@@ -58,20 +68,22 @@
     function createCardElement(card) {
         const cardElement = document.createElement('div');
         cardElement.className = 'card';
-        
+
         const imgElement = document.createElement('img');
         imgElement.src = `/images/${card.id}.jpg`;
         imgElement.alt = card.name;
         imgElement.onerror = function() {
-            this.src = '/images/default_card_back.jpg';
+            this.src = '/images/default_card_back.png';
             console.log(`Failed to load image for card: ${card.name}`);
         };
-        
+
         cardElement.appendChild(imgElement);
         cardElement.dataset.cardId = card.id;
         cardElement.dataset.cardName = card.name;
         cardElement.addEventListener('mousedown', startDragging);
         cardElement.style.transition = `all ${transitionRate}ms ease`;
+        cardElement.style.width = `${cardSize}px`;
+        cardElement.style.height = `${cardSize * 1.5}px`;
         return cardElement;
     }
 
@@ -286,5 +298,55 @@
 
     #cardSize {
         vertical-align: middle;
+    }
+
+    #llmAnalysisPanel {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 150px;
+        background-color: #1a1a2e;
+        border-top: 2px solid #4a4a8a;
+        color: #e0e0e0;
+        z-index: 50;
+        max-height: 180px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #llmAnalysisHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 16px;
+        background-color: #16213e;
+        border-bottom: 1px solid #4a4a8a;
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    #analyzeHandButton {
+        padding: 4px 14px;
+        background-color: #4a4a8a;
+        color: #e0e0e0;
+        border: 1px solid #6a6aaa;
+        border-radius: 4px;
+        cursor: not-allowed;
+        font-size: 13px;
+        opacity: 0.6;
+    }
+
+    #llmAnalysisContent {
+        padding: 10px 16px;
+        overflow-y: auto;
+        flex: 1;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    #llmPlaceholderText {
+        margin: 0;
+        color: #888;
+        font-style: italic;
     }
 </style>
