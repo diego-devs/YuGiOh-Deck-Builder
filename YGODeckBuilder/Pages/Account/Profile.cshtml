@@ -1,0 +1,137 @@
+@page
+@model YGODeckBuilder.Pages.Account.ProfileModel
+@{ ViewData["Title"] = "My Profile"; }
+
+<style>
+    .profile-card {
+        background: linear-gradient(135deg, rgba(12,8,35,0.97), rgba(28,16,58,0.97));
+        border: 1px solid rgba(125,90,255,0.3);
+        border-radius: 10px;
+        padding: 2rem 2.5rem;
+        box-shadow: 0 0 32px rgba(100,60,200,0.18);
+    }
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #5b30c8, #7b4de8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.2rem;
+        color: #fff;
+        flex-shrink: 0;
+    }
+    .profile-username {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.6rem;
+        color: #fff;
+        letter-spacing: 0.04em;
+    }
+    .profile-since {
+        color: #7070a0;
+        font-size: 0.88rem;
+        margin-top: 0.25rem;
+    }
+    .stat-box {
+        background: rgba(125,90,255,0.1);
+        border: 1px solid rgba(125,90,255,0.25);
+        border-radius: 8px;
+        padding: 1rem 1.5rem;
+        text-align: center;
+    }
+    .stat-box .stat-value {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 2rem;
+        color: #c0a0ff;
+        line-height: 1;
+    }
+    .stat-box .stat-label {
+        color: #8080b0;
+        font-size: 0.82rem;
+        margin-top: 0.4rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+    .section-title {
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #8080b0;
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.4rem;
+        border-bottom: 1px solid rgba(125,90,255,0.2);
+    }
+    .deck-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.55rem 0;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        color: #d0d0f0;
+        font-size: 0.92rem;
+    }
+    .deck-row:last-child { border-bottom: none; }
+    .deck-row a { color: #a090e8; text-decoration: none; }
+    .deck-row a:hover { color: #c0b0ff; text-decoration: underline; }
+    .deck-card-count { color: #6060a0; font-size: 0.82rem; }
+    .empty-state { color: #606080; font-size: 0.9rem; padding: 0.5rem 0; }
+</style>
+
+<div class="row justify-content-center mt-4">
+    <div class="col-lg-7 col-md-9">
+
+        <div class="profile-card mb-4">
+            <div class="d-flex align-items-center mb-4">
+                <div class="profile-avatar mr-4">👤</div>
+                <div>
+                    <div class="profile-username">@Model.Username</div>
+                    <div class="profile-since">Member since @Model.MemberSince.ToString("MMMM d, yyyy")</div>
+                </div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-6">
+                    <div class="stat-box">
+                        <div class="stat-value">@Model.DeckCount</div>
+                        <div class="stat-label">Decks</div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="stat-box">
+                        <div class="stat-value">@Model.FavoriteCount</div>
+                        <div class="stat-label">Favorites</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-card">
+            <div class="section-title">My Decks</div>
+
+            @if (Model.Decks.Any())
+            {
+                @foreach (var deck in Model.Decks)
+                {
+                    <div class="deck-row">
+                        <a href="/DeckBuilder?DeckFileName=@Uri.EscapeDataString(deck.DeckName)&personal=true">
+                            @deck.DeckName
+                        </a>
+                        <span class="deck-card-count">@deck.CardsCount cards</span>
+                    </div>
+                }
+                <div class="mt-3">
+                    <a asp-page="/DecksManager" class="btn btn-sm btn-outline-secondary" style="border-color:rgba(125,90,255,0.35);color:#a0a0c8;font-size:0.82rem;">
+                        Manage decks →
+                    </a>
+                </div>
+            }
+            else
+            {
+                <p class="empty-state">No decks yet. <a asp-page="/DecksManager" style="color:#9090d8;">Create one</a>.</p>
+            }
+        </div>
+
+    </div>
+</div>

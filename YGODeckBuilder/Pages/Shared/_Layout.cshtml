@@ -24,6 +24,12 @@
             border: 1px solid rgba(125,90,255,0.3);
             border-radius: 20px;
             white-space: nowrap;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .nav-user-chip:hover {
+            background: rgba(125,90,255,0.28);
+            border-color: rgba(125,90,255,0.55);
+            color: #fff;
         }
         .btn-nav-login {
             color: #c0c0e8;
@@ -87,7 +93,7 @@
                         @if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item mr-2">
-                                <span class="nav-user-chip">👤 @User.Identity.Name</span>
+                                <a href="/Account/Profile" class="nav-user-chip" style="text-decoration:none;">👤 @User.Identity.Name</a>
                             </li>
                             <li class="nav-item">
                                 <form asp-page="/Account/Logout" method="post" class="d-inline">

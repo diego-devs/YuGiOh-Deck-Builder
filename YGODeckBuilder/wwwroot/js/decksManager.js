@@ -3,25 +3,39 @@ function createDeckItemHtml(deckName) {
     var escaped = deckName.replace(/'/g, "\\'");
     var encoded = encodeURIComponent(deckName);
     return '<div class="list-group-item d-flex justify-content-between align-items-center bg-dark border-light" data-deck-name="' + deckName + '">' +
-        '<a href="/DeckBuilder?DeckFileName=' + encoded + '" class="text-white text-uppercase">' + deckName + '</a>' +
+        '<a href="/DeckBuilder?DeckFileName=' + encoded + '&personal=true" class="text-white text-uppercase">' + deckName + '</a>' +
         '<div class="btn-group" role="group" aria-label="Deck Actions">' +
-        '<a class="btn btn-primary mr-1" href="/DeckBuilder?DeckFileName=' + encoded + '">Edit</a>' +
-        '<button type="button" class="btn btn-success mr-1" onclick="duplicateDeck(\'' + escaped + '\')">Duplicate</button>' +
-        '<button type="button" class="btn btn-warning mr-1" onclick="showRenameModal(\'' + escaped + '\')">Rename</button>' +
-        '<button type="button" class="btn btn-danger" onclick="showDeleteConfirm(\'' + escaped + '\')">Delete</button>' +
+        '<a class="btn btn-primary btn-sm mr-1" href="/DeckBuilder?DeckFileName=' + encoded + '&personal=true">Edit</a>' +
+        '<button type="button" class="btn btn-success btn-sm mr-1" onclick="duplicateDeck(\'' + escaped + '\')">Duplicate</button>' +
+        '<button type="button" class="btn btn-warning btn-sm mr-1" onclick="showRenameModal(\'' + escaped + '\')">Rename</button>' +
+        '<button type="button" class="btn btn-danger btn-sm" onclick="showDeleteConfirm(\'' + escaped + '\')">Delete</button>' +
         '</div></div>';
 }
 
-function getDeckList() { return document.getElementById('deckList'); }
-function getEmptyMsg() { return document.getElementById('emptyDeckMessage'); }
+function getDeckList() { return document.getElementById('personalDeckList'); }
+
+function getOrCreateDeckList() {
+    var list = getDeckList();
+    if (!list) {
+        list = document.createElement('div');
+        list.id = 'personalDeckList';
+        list.className = 'list-group';
+        var empty = document.getElementById('personalDecksEmpty');
+        if (empty) {
+            empty.style.display = 'none';
+            empty.parentNode.insertBefore(list, empty);
+        }
+    }
+    return list;
+}
 
 function syncEmptyState() {
     var list = getDeckList();
-    var empty = getEmptyMsg();
-    if (!list || !empty) return;
+    var empty = document.getElementById('personalDecksEmpty');
+    if (!list) return;
     var hasItems = list.querySelectorAll('[data-deck-name]').length > 0;
     list.style.display = hasItems ? '' : 'none';
-    empty.style.display = hasItems ? 'none' : '';
+    if (empty) empty.style.display = hasItems ? 'none' : '';
 }
 
 // ---- Deck actions ----
@@ -34,10 +48,7 @@ function duplicateDeck(deckName) {
         .then(function (response) {
             if (response.ok) {
                 var copyName = 'Copy_' + deckName;
-                var list = getDeckList();
-                if (list) {
-                    list.insertAdjacentHTML('beforeend', createDeckItemHtml(copyName));
-                }
+                getOrCreateDeckList().insertAdjacentHTML('beforeend', createDeckItemHtml(copyName));
                 syncEmptyState();
                 showToast('Deck duplicated successfully.', 'success');
             } else {
@@ -211,10 +222,7 @@ function newDeck(newDeckName) {
     })
         .then(function (response) {
             if (response.ok) {
-                var list = getDeckList();
-                if (list) {
-                    list.insertAdjacentHTML('beforeend', createDeckItemHtml(newDeckName));
-                }
+                getOrCreateDeckList().insertAdjacentHTML('beforeend', createDeckItemHtml(newDeckName));
                 syncEmptyState();
                 showToast('Deck created successfully.', 'success');
             } else {
