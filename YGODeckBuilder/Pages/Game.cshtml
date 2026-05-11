@@ -139,6 +139,12 @@ else
     @* Card preview tooltip *@
     <div id="cardPreview" style="display:none"></div>
 
+    @* Animation layer for flying card clones *@
+    <div id="animLayer"></div>
+
+    @* Phase / turn change banner *@
+    <div id="phaseBanner"></div>
+
 </div>
 
 <script>
@@ -216,6 +222,191 @@ else
     function isFieldSpell(card) {
         if (!card || !card.type || !card.race) return false;
         return card.type.toLowerCase().includes('spell') && card.race.toLowerCase() === 'field';
+    }
+
+    /* ========== Sound (Web Audio synth) ========== */
+
+    let audioCtx = null;
+    function getAudioCtx() {
+        if (!audioCtx) {
+            try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+            catch (e) { audioCtx = null; }
+        }
+        return audioCtx;
+    }
+
+    const SOUND_RECIPES = {
+        draw:         { type: 'sine',     freq: 520, freqEnd: 880, dur: 0.18, vol: 0.18 },
+        play_monster: { type: 'sawtooth', freq: 220, freqEnd: 110, dur: 0.28, vol: 0.20 },
+        play_spell:   { type: 'triangle', freq: 660, freqEnd: 990, dur: 0.20, vol: 0.18 },
+        play_field:   { type: 'square',   freq: 330, freqEnd: 165, dur: 0.32, vol: 0.16 },
+        to_grave:     { type: 'sine',     freq: 240, freqEnd: 70,  dur: 0.32, vol: 0.20 },
+        banish:       { type: 'sawtooth', freq: 880, freqEnd: 220, dur: 0.30, vol: 0.16 },
+        to_hand:      { type: 'sine',     freq: 660, freqEnd: 880, dur: 0.18, vol: 0.16 },
+        flip:         { type: 'triangle', freq: 520, freqEnd: 720, dur: 0.10, vol: 0.14 },
+        set_card:     { type: 'square',   freq: 200, freqEnd: 220, dur: 0.10, vol: 0.12 },
+        position:     { type: 'triangle', freq: 440, freqEnd: 440, dur: 0.08, vol: 0.12 },
+        shuffle:      { type: 'sawtooth', freq: 120, freqEnd: 60,  dur: 0.40, vol: 0.10, noise: true },
+        phase:        { type: 'sine',     freq: 520, freqEnd: 780, dur: 0.25, vol: 0.18 },
+        turn:         { type: 'square',   freq: 330, freqEnd: 660, dur: 0.45, vol: 0.18 }
+    };
+
+    function playSound(name) {
+        const ctx = getAudioCtx();
+        if (!ctx) return;
+        const r = SOUND_RECIPES[name];
+        if (!r) return;
+        if (ctx.state === 'suspended') ctx.resume();
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = r.type;
+        osc.frequency.setValueAtTime(r.freq, now);
+        osc.frequency.exponentialRampToValueAtTime(Math.max(20, r.freqEnd), now + r.dur);
+        gain.gain.setValueAtTime(0, now);
+        gain.gain.linearRampToValueAtTime(r.vol, now + 0.012);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + r.dur);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + r.dur + 0.05);
+
+        if (r.noise) {
+            const buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * r.dur), ctx.sampleRate);
+            const data = buf.getChannelData(0);
+            for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * 0.5;
+            const noise = ctx.createBufferSource();
+            const ng = ctx.createGain();
+            noise.buffer = buf;
+            ng.gain.setValueAtTime(0.10, now);
+            ng.gain.exponentialRampToValueAtTime(0.0001, now + r.dur);
+            noise.connect(ng).connect(ctx.destination);
+            noise.start(now);
+            noise.stop(now + r.dur);
+        }
+    }
+
+    /* Unlock audio on first user gesture (browser autoplay policy) */
+    function unlockAudio() {
+        const ctx = getAudioCtx();
+        if (ctx && ctx.state === 'suspended') ctx.resume();
+    }
+    document.addEventListener('click', unlockAudio, { once: true });
+    document.addEventListener('keydown', unlockAudio, { once: true });
+
+    /* ========== Animation ========== */
+
+    let animationsEnabled = true;
+    function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+    function findCardEl(side, instanceId) {
+        return document.querySelector(`.gcard[data-side="${side}"][data-instance-id="${instanceId}"]`);
+    }
+
+    function findZoneEl(side, zone, index) {
+        if (index !== null && index !== undefined) {
+            return document.querySelector(`.zone[data-side="${side}"][data-zone="${zone}"][data-index="${index}"]`);
+        }
+        return document.querySelector(`.zone[data-side="${side}"][data-zone="${zone}"]`);
+    }
+
+    /* Capture the on-screen visual of a card before its DOM is destroyed by re-render.
+       Returns a "handle" to be passed to finishMoveAnim. */
+    function startMoveAnim(side, instanceId) {
+        if (!animationsEnabled) return null;
+        const el = findCardEl(side, instanceId);
+        if (!el) {
+            // Fallback: caller may pass a zone element via startMoveAnimFromEl
+            return null;
+        }
+        const rect = el.getBoundingClientRect();
+        const cloneTemplate = el.cloneNode(true);
+        return { srcRect: rect, cloneTemplate, side };
+    }
+
+    function startMoveAnimFromEl(srcEl, side) {
+        if (!animationsEnabled || !srcEl) return null;
+        const rect = srcEl.getBoundingClientRect();
+        const cloneTemplate = srcEl.cloneNode(true);
+        return { srcRect: rect, cloneTemplate, side };
+    }
+
+    /* Fly the cloned card from its captured source position to the destination.
+       destLocation: 'monster' | 'spell' | 'field' | 'hand' | 'graveyard' | 'banished' | 'deck' | 'extra'
+       For card-shaped destinations (monster/spell/field/hand) we hide the freshly
+       rendered card during the flight; for piles we just fly to the zone. */
+    function finishMoveAnim(handle, side, instanceId, destLocation, destIndex, durationMs = 350) {
+        if (!handle) return;
+        let destEl, isCard = false;
+        if (destLocation === 'monster' || destLocation === 'spell' || destLocation === 'field' || destLocation === 'hand') {
+            destEl = findCardEl(side, instanceId);
+            isCard = true;
+        } else {
+            destEl = findZoneEl(side, destLocation, null);
+        }
+        if (!destEl) {
+            // Nothing to fly to — drop the clone silently.
+            return;
+        }
+        const destRect = destEl.getBoundingClientRect();
+        const layer = document.getElementById('animLayer');
+        const clone = handle.cloneTemplate;
+        clone.style.position = 'fixed';
+        clone.style.left = handle.srcRect.left + 'px';
+        clone.style.top = handle.srcRect.top + 'px';
+        clone.style.width = handle.srcRect.width + 'px';
+        clone.style.height = handle.srcRect.height + 'px';
+        clone.style.margin = '0';
+        clone.style.zIndex = '9999';
+        clone.style.pointerEvents = 'none';
+        clone.style.transition = `transform ${durationMs}ms cubic-bezier(0.22, 0.61, 0.36, 1), opacity ${durationMs}ms ease`;
+        const rot = (handle.side === 'opponent') ? 180 : 0;
+        clone.style.transform = `rotate(${rot}deg)`;
+        layer.appendChild(clone);
+        if (isCard) destEl.style.visibility = 'hidden';
+        // Force layout so the initial transform is committed before the next one.
+        void clone.offsetHeight;
+        const dx = destRect.left - handle.srcRect.left;
+        const dy = destRect.top - handle.srcRect.top;
+        const sx = handle.srcRect.width  > 0 ? destRect.width  / handle.srcRect.width  : 1;
+        const sy = handle.srcRect.height > 0 ? destRect.height / handle.srcRect.height : 1;
+        clone.style.transform = `translate(${dx}px, ${dy}px) scale(${sx}, ${sy}) rotate(${rot}deg)`;
+        if (!isCard) clone.style.opacity = '0.15';
+        let cleaned = false;
+        const finish = () => {
+            if (cleaned) return;
+            cleaned = true;
+            if (clone.parentNode) clone.parentNode.removeChild(clone);
+            if (isCard && destEl) destEl.style.visibility = '';
+        };
+        clone.addEventListener('transitionend', finish, { once: true });
+        setTimeout(finish, durationMs + 120);
+    }
+
+    /* High-level helper: mutate state then animate from inst's current location to dest. */
+    function moveCard(side, instanceId, sound, mutate, destLocation, destIndex) {
+        const handle = startMoveAnim(side, instanceId);
+        if (sound) playSound(sound);
+        mutate();
+        renderAll();
+        finishMoveAnim(handle, side, instanceId, destLocation, destIndex);
+    }
+
+    /* ========== Phase banner ========== */
+
+    let bannerTimer = null;
+    function showPhaseBanner(text, holdMs = 600) {
+        const el = document.getElementById('phaseBanner');
+        if (bannerTimer) { clearTimeout(bannerTimer); bannerTimer = null; }
+        el.textContent = text;
+        el.style.display = 'block';
+        // Re-trigger the fade-in even if it's already shown.
+        el.classList.remove('show');
+        void el.offsetHeight;
+        el.classList.add('show');
+        bannerTimer = setTimeout(() => {
+            el.classList.remove('show');
+            bannerTimer = setTimeout(() => { el.style.display = 'none'; bannerTimer = null; }, 220);
+        }, holdMs);
     }
 
     /* ========== Rendering ========== */
@@ -335,50 +526,79 @@ else
 
     /* ========== Phase / Turn flow ========== */
 
-    function setPhase(idx) {
-        state.phaseIndex = idx;
-        const phase = PHASES[idx];
-        if (phase === 'draw') {
-            // Skip draw on first turn for the starting player (standard rule)
-            if (!(state.firstTurn && state.turnNumber === 1)) {
-                drawCard(state.activeSide, 1);
+    let phaseChanging = false;
+
+    async function setPhase(idx) {
+        if (phaseChanging) return;
+        phaseChanging = true;
+        try {
+            state.phaseIndex = idx;
+            const phase = PHASES[idx];
+            playSound('phase');
+            showPhaseBanner(PHASE_LABELS[phase], 550);
+            renderAll();
+            await delay(450);
+            if (phase === 'draw') {
+                // Skip draw on first turn for the starting player (standard rule)
+                if (!(state.firstTurn && state.turnNumber === 1)) {
+                    await drawCard(state.activeSide, 1);
+                }
             }
+        } finally {
+            phaseChanging = false;
         }
-        renderAll();
     }
 
-    function nextPhase() {
+    async function nextPhase() {
         if (state.phaseIndex < PHASES.length - 1) {
-            setPhase(state.phaseIndex + 1);
+            await setPhase(state.phaseIndex + 1);
         } else {
-            endTurn();
+            await endTurn();
         }
     }
 
-    function endTurn() {
+    async function endTurn() {
+        if (phaseChanging) return;
         state.activeSide = state.activeSide === 'player' ? 'opponent' : 'player';
         state.turnNumber++;
         state.firstTurn = false;
-        setPhase(0);
+        playSound('turn');
+        const label = `Turn ${state.turnNumber} — ${state.activeSide === 'player' ? 'Your Turn' : "Opponent's Turn"}`;
+        showPhaseBanner(label, 850);
+        renderAll();
+        await delay(700);
+        await setPhase(0);
     }
 
     /* ========== Drawing ========== */
 
-    function drawCard(side, n=1) {
+    async function drawCard(side, n=1, opts={}) {
+        const animate = opts.animate !== false;
+        const flights = [];
         for (let i = 0; i < n; i++) {
             const player = state[side];
             if (player.deck.length === 0) {
                 flashMessage(`${side === 'player' ? 'You have' : 'Opponent has'} no cards left to draw!`);
-                return;
+                break;
             }
+            const deckEl = findZoneEl(side, 'deck', null);
+            const handle = animate ? startMoveAnimFromEl(deckEl, side) : null;
             const inst = player.deck.shift();
             player.hand.push(inst);
+            renderAll();
+            if (handle) {
+                playSound('draw');
+                finishMoveAnim(handle, side, inst.instanceId, 'hand', null, 320);
+                flights.push(delay(320));
+                if (i < n - 1) await delay(90); // stagger consecutive draws
+            }
         }
-        renderAll();
+        await Promise.all(flights);
     }
 
     function shuffleDeck(side) {
         shuffle(state[side].deck);
+        playSound('shuffle');
         flashMessage(`${side === 'player' ? 'Your' : "Opponent's"} deck shuffled.`);
     }
 
@@ -413,9 +633,16 @@ else
             return;
         }
 
+        // Capture the source visual *before* state changes so the flying clone matches.
+        const animHandle = startMoveAnim(side, payload.instanceId);
+
         const player = state[side];
         const inst = takeFromSource(player, payload.source, payload.instanceId);
         if (!inst) return;
+
+        let sound = null;
+        let destLocation = zone;
+        let destIndex = (index !== null) ? index : null;
 
         if (zone === 'monster') {
             if (!isMonsterType(inst.card)) {
@@ -431,6 +658,7 @@ else
             inst.position = 'atk';
             inst.faceDown = false;
             player.monsters[index] = inst;
+            sound = 'play_monster';
         } else if (zone === 'spell') {
             if (!isSpellType(inst.card)) {
                 flashMessage('Only spells/traps go in S/T zones.');
@@ -444,6 +672,7 @@ else
             }
             inst.faceDown = false;
             player.spells[index] = inst;
+            sound = 'play_spell';
         } else if (zone === 'field') {
             if (!isFieldSpell(inst.card)) {
                 flashMessage('Only field spells go in the field zone.');
@@ -455,15 +684,20 @@ else
             }
             inst.faceDown = false;
             player.field = inst;
+            sound = 'play_field';
         } else if (zone === 'graveyard') {
             player.graveyard.push(inst);
+            sound = 'to_grave';
         } else if (zone === 'banished') {
             player.banished.push(inst);
+            sound = 'banish';
         } else {
             returnInstanceTo(player, payload.source, inst);
             return;
         }
+        if (sound) playSound(sound);
         renderAll();
+        finishMoveAnim(animHandle, side, inst.instanceId, destLocation, destIndex);
     }
 
     function takeFromSource(player, source, instanceId) {
@@ -557,79 +791,104 @@ else
             items.push({ label: inst.position === 'atk' ? 'Switch to Defense' : 'Switch to Attack', action: () => {
                 inst.position = inst.position === 'atk' ? 'def' : 'atk';
                 if (inst.position === 'atk') inst.faceDown = false;
+                playSound('position');
             }});
             items.push({ label: inst.faceDown ? 'Flip Face-up' : 'Set Face-down (Defense)', action: () => {
                 inst.faceDown = !inst.faceDown;
                 if (inst.faceDown) inst.position = 'def';
+                playSound('flip');
             }});
             items.push({ label: 'Send to Graveyard', action: () => {
-                player.monsters[index] = null;
-                inst.faceDown = false;
-                player.graveyard.push(inst);
+                moveCard(side, inst.instanceId, 'to_grave', () => {
+                    player.monsters[index] = null;
+                    inst.faceDown = false;
+                    player.graveyard.push(inst);
+                }, 'graveyard', null);
             }});
             items.push({ label: 'Banish', action: () => {
-                player.monsters[index] = null;
-                inst.faceDown = false;
-                player.banished.push(inst);
+                moveCard(side, inst.instanceId, 'banish', () => {
+                    player.monsters[index] = null;
+                    inst.faceDown = false;
+                    player.banished.push(inst);
+                }, 'banished', null);
             }});
             items.push({ label: 'Return to Hand', action: () => {
-                player.monsters[index] = null;
-                inst.faceDown = false;
-                player.hand.push(inst);
+                moveCard(side, inst.instanceId, 'to_hand', () => {
+                    player.monsters[index] = null;
+                    inst.faceDown = false;
+                    player.hand.push(inst);
+                }, 'hand', null);
             }});
         } else if (location === 'spell') {
             items.push({ label: inst.faceDown ? 'Activate (Flip Up)' : 'Set Face-down', action: () => {
                 inst.faceDown = !inst.faceDown;
+                playSound('flip');
             }});
             items.push({ label: 'Send to Graveyard', action: () => {
-                player.spells[index] = null;
-                inst.faceDown = false;
-                player.graveyard.push(inst);
+                moveCard(side, inst.instanceId, 'to_grave', () => {
+                    player.spells[index] = null;
+                    inst.faceDown = false;
+                    player.graveyard.push(inst);
+                }, 'graveyard', null);
             }});
             items.push({ label: 'Banish', action: () => {
-                player.spells[index] = null;
-                inst.faceDown = false;
-                player.banished.push(inst);
+                moveCard(side, inst.instanceId, 'banish', () => {
+                    player.spells[index] = null;
+                    inst.faceDown = false;
+                    player.banished.push(inst);
+                }, 'banished', null);
             }});
         } else if (location === 'field') {
             items.push({ label: 'Send to Graveyard', action: () => {
-                player.field = null;
-                inst.faceDown = false;
-                player.graveyard.push(inst);
+                moveCard(side, inst.instanceId, 'to_grave', () => {
+                    player.field = null;
+                    inst.faceDown = false;
+                    player.graveyard.push(inst);
+                }, 'graveyard', null);
             }});
         } else if (location === 'hand') {
             if (isMonsterType(inst.card)) {
                 items.push({ label: 'Set Face-down (Defense) — pick zone', action: () => {
                     const free = player.monsters.findIndex(m => m === null);
                     if (free < 0) { flashMessage('No free monster zone.'); return; }
-                    inst.faceDown = true;
-                    inst.position = 'def';
-                    removeFromHand(player, inst.instanceId);
-                    player.monsters[free] = inst;
+                    moveCard(side, inst.instanceId, 'set_card', () => {
+                        inst.faceDown = true;
+                        inst.position = 'def';
+                        removeFromHand(player, inst.instanceId);
+                        player.monsters[free] = inst;
+                    }, 'monster', free);
                 }});
             } else if (isSpellType(inst.card)) {
                 items.push({ label: 'Set Face-down', action: () => {
                     if (isFieldSpell(inst.card)) {
-                        if (player.field) player.graveyard.push(player.field);
-                        inst.faceDown = true;
-                        removeFromHand(player, inst.instanceId);
-                        player.field = inst;
+                        moveCard(side, inst.instanceId, 'set_card', () => {
+                            if (player.field) player.graveyard.push(player.field);
+                            inst.faceDown = true;
+                            removeFromHand(player, inst.instanceId);
+                            player.field = inst;
+                        }, 'field', null);
                         return;
                     }
                     const free = player.spells.findIndex(s => s === null);
                     if (free < 0) { flashMessage('No free S/T zone.'); return; }
-                    inst.faceDown = true;
-                    removeFromHand(player, inst.instanceId);
-                    player.spells[free] = inst;
+                    moveCard(side, inst.instanceId, 'set_card', () => {
+                        inst.faceDown = true;
+                        removeFromHand(player, inst.instanceId);
+                        player.spells[free] = inst;
+                    }, 'spell', free);
                 }});
             }
             items.push({ label: 'Discard to Graveyard', action: () => {
-                removeFromHand(player, inst.instanceId);
-                player.graveyard.push(inst);
+                moveCard(side, inst.instanceId, 'to_grave', () => {
+                    removeFromHand(player, inst.instanceId);
+                    player.graveyard.push(inst);
+                }, 'graveyard', null);
             }});
             items.push({ label: 'Banish', action: () => {
-                removeFromHand(player, inst.instanceId);
-                player.banished.push(inst);
+                moveCard(side, inst.instanceId, 'banish', () => {
+                    removeFromHand(player, inst.instanceId);
+                    player.banished.push(inst);
+                }, 'banished', null);
             }});
         }
         return items;
@@ -667,11 +926,15 @@ else
                     el.addEventListener('click', () => {
                         const idx = list.findIndex(i => i.instanceId === inst.instanceId);
                         if (idx >= 0) {
+                            const handle = startMoveAnimFromEl(el, side);
                             list.splice(idx, 1);
                             inst.faceDown = false;
                             state[side].hand.push(inst);
-                            openPileViewer(side, pile);
+                            playSound('to_hand');
+                            // Close the modal first so the hand is visible to fly to.
+                            document.getElementById('pileViewer').style.display = 'none';
                             renderAll();
+                            finishMoveAnim(handle, side, inst.instanceId, 'hand', null);
                         }
                     });
                 }
@@ -1088,5 +1351,51 @@ else
     .preview-type { color: #9090c8; margin-bottom: 4px; }
     .preview-stats { color: #ff8866; font-weight: 600; margin-bottom: 6px; }
     .preview-desc { color: #c0c0e0; line-height: 1.35; max-height: 180px; overflow-y: auto; }
+
+    /* Animation layer holds the in-flight card clones. */
+    #animLayer {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 9999;
+    }
+    #animLayer .gcard {
+        box-shadow: 0 8px 28px rgba(125, 90, 255, 0.55), 0 0 14px rgba(255, 209, 102, 0.25);
+        border-radius: 4px;
+        will-change: transform;
+    }
+
+    /* Phase / turn change banner. */
+    #phaseBanner {
+        position: fixed;
+        top: 32%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.85);
+        padding: 18px 60px;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 34px;
+        font-weight: 800;
+        letter-spacing: 2px;
+        color: #ffd166;
+        text-shadow: 0 0 18px rgba(125, 90, 255, 0.85), 0 0 4px rgba(0, 0, 0, 0.9);
+        background: linear-gradient(90deg,
+            rgba(20, 20, 40, 0.0) 0%,
+            rgba(20, 20, 40, 0.85) 30%,
+            rgba(40, 25, 80, 0.92) 50%,
+            rgba(20, 20, 40, 0.85) 70%,
+            rgba(20, 20, 40, 0.0) 100%);
+        border-top: 2px solid rgba(125, 90, 255, 0.7);
+        border-bottom: 2px solid rgba(125, 90, 255, 0.7);
+        z-index: 9800;
+        opacity: 0;
+        pointer-events: none;
+        display: none;
+        white-space: nowrap;
+        transition: opacity 0.22s ease, transform 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
+    }
+    #phaseBanner.show {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
 </style>
 }
